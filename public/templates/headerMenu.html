@@ -1,11 +1,11 @@
-<header class='header'>
+<header class='hidden-xs'>
     <div class='header-container'>
-        <div class='logo-container'>
-            <a href='./'>
+        <div class='col-xs-12 col-sm-12 col-md-12 col-lg-2 logo-container'>
+            <a href='./' title='MediaNovak Homepage'>
                 <img src='./content/sources/logo.png' alt='MediaNovak Logo'>
             </a>
         </div>
-        <div class='menu-container'>
+        <div class='col-xs-12 col-sm-12 col-md-12 col-lg-10 navigations menu-container hidden-xs'>
             <ul class='menu-ul'>
                 <% _.forEach(menus, function(menu){ %>
                 <li class='menu-title'> 
@@ -13,8 +13,7 @@
                 </li>
                 <% }) %>
             </ul>
-            <ul class='socials'>
-                
+            <ul class='socials'>               
             </ul>
         </div>
     </div>
