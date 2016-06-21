@@ -1,0 +1,8 @@
+<#if licenseFirst??>
+${licenseFirst}
+</#if>
+${licensePrefix}AB-Soft test project
+${licensePrefix}@author Borshchov Dimitriy <grimstal@bigmir.net> 
+<#if licenseLast??>
+${licenseLast}
+</#if>
