@@ -30,6 +30,20 @@ gulp.task('styles', function () {
             .pipe(gulp.dest(stylesheets));
 });
 
-gulp.task('watch', function(){
+gulp.task('content', function () {
+    return gulp.src(["sources/**/*.*", "!sources/scss/**/*.*"], {since: gulp.lastRun('content')})
+            .pipe(plumber({
+                errorHandler: notify.onError(function (err) {
+                    return {
+                        title: "addStyles",
+                        error: err.message
+                    };
+                })
+            }))
+            .pipe(gulp.dest('public'));
+});
+
+gulp.task('watch', function () {
     gulp.watch("sources/scss/**/*.*", gulp.series('styles'));
+    gulp.watch(["sources/**/*.*", "!sources/scss/**/*.*"], gulp.series('content'));
 });
