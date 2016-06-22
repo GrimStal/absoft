@@ -1,0 +1,35 @@
+.nav {
+    padding-left: 0;
+    margin-bottom: 0;
+    list-style: none;
+    
+    &.navmenu-nav {
+        li{
+            &.menu-item-has-children{
+                ul {
+                    display: block;
+                    position: relative;
+                    background-color: transparent;
+                    top: auto;
+                    margin-left: auto;
+                    padding: 0;
+                    width: auto;
+                    text-align: left;
+                    
+                    li{
+                        padding-left: 15px;
+                        
+                        a {
+                            position: relative;
+                            display: block;
+                            padding: 10px 15px;
+                            color: #777;
+                            text-transform: uppercase;
+                            font-size: 18px;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

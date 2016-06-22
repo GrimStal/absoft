@@ -1,0 +1,34 @@
+<nav id="mobile-navmenu" class="navmenu navmenu-default navmenu-fixed-left offcanvas canvas-slid" role="navigation">
+    <ul id="mobile-menu-ul" class="nav navmenu-nav">
+        <% _.forEach(menus, function(menu){ %>
+            <% if(_.isObject(menu) && menu.hasOwnProperty("name")) { %>
+                <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children">
+                    <a href=<%= (menu.link ? menu.link : "./" + menu.name.replace(/\s/ig, "-"))%>><%=_.capitalize(menu.name)%></a>
+                    <% if(menu.hasOwnProperty("children") && _.isArray(menu.children)){ %>
+                        <ul class="sub-menu">
+                            <% _.forEach(menu.children, function(child) { %>
+                                <li class="menu-item menu-item-type-post_type menu-item-object-page">
+                                    <a href=<%= "./" + child.replace(/\s/ig, "-") %>><%-_.capitalize(child)%></a>
+                                </li>
+                            <% }) %>
+                        </ul>
+                    <% } %>
+            <% } else { %>
+                <li class="menu-item menu-item-type-post_type menu-item-object-page">
+                    <a href=<%= "./" + menu.replace(/\s/ig, "-") %>><%=_.capitalize(menu)%></a>
+                </li>
+            <% } %>
+        <% }) %>
+    </ul>
+</nav>
+
+<div class="navbar navbar-default navbar-fixed-top hidden-sm hidden-lg hidden-md">
+    <button type="button" class="navbar-toggle" data-toggle="offcanvas" data-target="#mobile-navmenu" data-canvas="body">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+    </button>
+    <a href="./" title="MediaNovak Homepage">
+        <img src='./content/sources/logo.png' height="40" width="243" alt="MediaNovak Logo">
+    </a>
+</div>

@@ -1,0 +1,135 @@
+@media only screen and (max-width: 1352px){
+    .logo-container, header .navigations {
+        text-align: center;
+    }
+}
+
+@media (min-width: 1200px){
+    .col-lg-10 {
+        width: 83.33333333%;
+    }
+}
+
+@media (max-width: 1200px){  
+    header{
+        .navigations {
+            ul{
+                &.header-menu-ul{
+                    li{
+                        a{
+                            padding-top: 15px;
+                            padding-bottom: 20px;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@media only screen and (max-width: 992px){
+    header {
+        &.sticky{
+            .navigations{
+                ul{
+                    &.header-menu-ul{
+                        li{
+                            a{
+                                padding: 15px 7px;
+                            }
+                        }
+                    }
+                }
+            } 
+        }
+        
+        .navigations{
+            ul{
+                &.socials {
+                    display: none;
+                }
+                
+                &.header-menu-ul{
+                    li{
+                        a{
+                            padding: 15px 7px;
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    .navbar {
+        text-align: center;
+        padding: 15px;
+        
+        a {
+            line-height: 51px;
+            display: inline-block;
+            margin-left: 44px;
+            padding-left: 15px;
+        }
+    }
+    
+    .navbar-toggle {
+        float: left;
+        margin-right: 0;
+        position: absolute;
+        top: 15px;
+        left: 15px;
+    }
+}
+
+@media (max-width: 767px){
+    .hidden-xs {
+        display: none !important;
+    }
+}
+
+@media only screen and (max-width: 700px){
+    .nav {
+        li{          
+            a {
+                text-transform: uppercase;
+                font-size: 18px;
+            }
+        }
+    }
+    
+    .navbar-offcanvas, .navmenu {
+        width: 200px;
+    }
+}
+
+@media only screen and (max-width: 600px){
+    .navbar {
+        padding: 10px;
+    }
+    
+    .navbar-toggle {
+        top: 10px;
+    }
+    
+    li{
+        &.menu-item-has-children{
+            ul {
+                li {
+                    a {
+                        font-size: 16px;
+                        padding: 10px !important;
+                    }
+                }
+            }
+        }
+    }
+    
+    .nav{
+        li{
+            a {
+                font-size: 16px;
+                padding: 10px;
+            }
+        }
+    }
+}

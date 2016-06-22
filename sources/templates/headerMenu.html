@@ -5,11 +5,11 @@
                 <img src='./content/sources/logo.png' alt='MediaNovak Logo'>
             </a>
         </div>
-        <div class='col-xs-12 col-sm-12 col-md-12 col-lg-10 navigations menu-container hidden-xs'>
-            <ul class='menu-ul'>
+        <div class='col-xs-12 col-sm-12 col-md-12 col-lg-10 navigations hidden-xs'>
+            <ul class='header-menu-ul' id='header-menu'>
                 <% _.forEach(menus, function(menu){ %>
-                <li class='menu-title'> 
-                    <%-menu%>
+                <li class='menu-item menu-item-type-post_type menu-item-object-page'> 
+                    <a href='<%= ("./" + menu.replace(/\s/ig, "-"))%>'><%-menu%></a>
                 </li>
                 <% }) %>
             </ul>
