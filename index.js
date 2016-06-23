@@ -7,8 +7,10 @@ var router = require('./app_modules/router');
 var requestHandlers = require('./app_modules/requestHandlers');
 
 var handle = {};
-handle["/"] = requestHandlers.start;
-handle["/start"] = requestHandlers.start;
+handle["/"] = requestHandlers.home;
+handle["/home"] = requestHandlers.home;
+handle["/unknown"] = requestHandlers.unknown;
 handle["/upload"] = requestHandlers.upload;
+handle["/show"] = requestHandlers.show;
 
 server.start(router.route, handle);

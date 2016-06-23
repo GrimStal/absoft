@@ -10,7 +10,9 @@
   ],
   "author": "Borshev",
   "contributors": [],
-  "dependencies": {},
+  "dependencies": {
+    "formidable": "^1.0.17"
+  },
   "description": "0.0.1",
   "main": "main.js",
   "scripts": {
