@@ -2,12 +2,13 @@
  * AB-Soft test project
  * @author Borshchov Dimitriy <grimstal@bigmir.net> 
  */
-function route(handle, pathname){
-    if (typeof handle[pathname] !== "function"){
-        console.log("No handler for current pathname: " + pathname);
+function route(handle, pathname, response, request) {
+    if (typeof handle[pathname] !== "function") {
+        return handle["/unknown"](response, request);
     } else {
-        handle[pathname]();
+        return handle[pathname](response, request);
     }
+
 }
 
 exports.route = route;
