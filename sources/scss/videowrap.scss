@@ -1,0 +1,90 @@
+.video-wrap{
+    position: absolute;
+    height: 90%;
+    width: 100%;
+    top: 0;
+    left: 0;
+    background-color: #000;
+    z-index: 0;
+    
+    .big-video-wrapper{
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 4;
+        
+        video{
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 4;
+        }
+    }
+    
+    .big-image{
+        -webkit-transition: all 1s;
+        transition: all 1s;
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 2;
+        background-image: url("../content/sources/new-video-background.jpg");
+        background-size: cover;
+    }
+    
+    .big-video-border{
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        border: 20px solid white;
+        z-index: 5;
+        transition: all 1s;
+    }
+    
+    .intro-text{
+        position: relative;
+        top: 60%;
+        left: 50%;
+        width: 950px;
+        color: #fff;
+        text-align: center;
+        font-style: italic;
+        transform: translate(-50%, -60%);
+        -webkit-transform: translate(-50%, -60%);
+        -ms-transform: translate(-50%, -60%);
+        z-index: 5;
+        
+        h1{
+            text-transform: capitalize;
+            font-size: 55px;
+            
+            &:before{
+                content: '';
+                position: absolute;
+                width: 100%;
+                height: 130px;
+                left: 0;
+                top: -45px;
+                background-image: url("../content/sources/title-bg.png");
+                background-repeat: no-repeat;
+                background-position: center top;
+                display: block;
+            }
+        }
+        
+        p{
+            font-size: 18px;
+            font-family: "Lato", sans-serif;
+            font-weight: 300;
+            padding: 30px 0;
+        }
+    }
+}

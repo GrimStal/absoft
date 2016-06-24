@@ -6,7 +6,7 @@ var fs = require("fs");
 var formidable = require("formidable");
 
 function _getResponse(response, request, type) {
-    return fs.readFile("public/" + request.url, function (err, data) {    
+    return fs.readFile("public/" + request.url, function (err, data) {
         if (err) {
             response.writeHead(500, {"Content-Type": "text/plain"});
             response.write("Error opening file: " + request.url);
@@ -41,23 +41,37 @@ function unknown(response, request) {
     } else if (request.url.indexOf(".html") !== -1) {
         _getResponse(response, request, "text/html");
     } else if (request.url.indexOf(".png") !== -1 || request.url.indexOf(".gif") !== -1
-            || request.url.indexOf(".ico") !== -1) {
+            || request.url.indexOf(".ico") !== -1 || request.url.indexOf(".jpg") !== -1) {
         _getResponse(response, request, "image");
     } else if (request.url.indexOf(".mp4") !== -1) {
-        _getResponse(response, request, "video");
+        fs.readFile("public/" + request.url, function (error, data) {
+            var start, end, total, positions;
+            if (error) {
+                unknown(response, request);
+            } else {
+                total = data.length;
+                positions = request.headers.range.replace(/bytes=/, "").split("-");
+                start = parseInt(positions[0], 10);
+                end = positions[1] ? parseInt(positions[1], 10) : total - 1;
+                
+                response.writeHead(200, {"Content-Type": "text/html"});
+                response.write(data);
+                response.end();
+            }
+        })
     } else {
         console.log("Unknown handler:");
         fs.readFile("public/nf.html", function (error, data) {
-        if (error) {
-            response.writeHead(500, {"Content-Type": "text/plain"});
-            response.write(error);
-            response.end();
-        } else {
-            response.writeHead(404, {"Content-Type": "text/html"});
-            response.write(data);
-            response.end();
-        }
-    });
+            if (error) {
+                response.writeHead(500, {"Content-Type": "text/plain"});
+                response.write(error);
+                response.end();
+            } else {
+                response.writeHead(404, {"Content-Type": "text/html"});
+                response.write(data);
+                response.end();
+            }
+        });
     }
 }
 

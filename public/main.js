@@ -7,11 +7,14 @@
 
     var menuTemplate;
     var mobileTemplate;
-    
-    $.ajax({
+
+    var mobileMenu = $.Deferred();
+    var headerMenu = $.Deferred();
+
+    mobileMenu = $.ajax({
         url: "./templates/mobileNavmenu.html",
         method: "GET",
-        async: false,
+        async: true,
         success: function (data) {
             var html = '';
             mobileTemplate = _.template(data);
@@ -35,12 +38,12 @@
             });
             $(document.body).append(html);
         }
-    })
+    });
 
-    $.ajax({
+    headerMenu = $.ajax({
         url: "./templates/headerMenu.html",
         method: "GET",
-        async: false,
+        async: true,
         success: function (data) {
             var html = '';
             menuTemplate = _.template(data);
@@ -64,7 +67,12 @@
             });
             $(document.body).append(html);
         }
-    })
+    });
 
-    
+    $.when(mobileMenu, headerMenu).always(
+            function () {
+                $(".loader").remove();
+            });
+
+
 })();

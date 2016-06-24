@@ -1,69 +1,46 @@
-@media only screen and (max-width: 600px){
-    .navbar {
-        padding: 10px;
+@media only screen and (max-width: 1352px){
+    .logo-container, header .navigations {
+        text-align: center;
     }
-    
-    .navbar-toggle {
-        top: 10px;
-    }
-    
-    li{
-        &.menu-item-has-children{
-            ul {
-                li {
-                    a {
-                        font-size: 16px;
-                        padding: 10px !important;
+}
+
+
+@media (max-width: 1200px){  
+    header{
+        .navigations {
+            ul{
+                &.header-menu-ul{
+                    li{
+                        a{
+                            padding-top: 15px;
+                            padding-bottom: 20px;
+                        }
                     }
                 }
             }
         }
     }
-    
-    .nav{
-        li{
-            a {
-                font-size: 16px;
-                padding: 10px;
-            }
-        }
-    }
 }
 
-@media only screen and (max-width: 700px){
-    .nav {
-        li{          
-            a {
-                text-transform: uppercase;
-                font-size: 18px;
-            }
-        }
-    }
-    
-    .navbar-offcanvas, .navmenu {
-        width: 200px;
+@media (min-width: 1200px){
+    .col-lg-10 {
+        width: 83.33333333%;
     }
     
     #not-found{
         .nf-container{
             .nf-title{
-                font-size: 25px;
+                font-size: 40px;
             }
             
             .nf-text{
-                font-size: 12px;
+                font-size: 25px;
             }
             
             .nf-advice{
-                font-size: 12px;
+                font-size: 20px;
             }
         }
-    }
-}
-
-@media (max-width: 767px){
-    .hidden-xs {
-        display: none !important;
     }
 }
 
@@ -120,6 +97,21 @@
         left: 15px;
     }
     
+    .video-wrap{
+        .intro-text{
+            top: 55%;
+            width: 90%;
+            
+            h1{
+                font-size: 45px;
+                
+                &:before{
+                    display: none;
+                }
+            }
+        }
+    }
+    
     #not-found{
         .nf-container{
             .nf-title{
@@ -137,47 +129,100 @@
     }
 }
 
-@media (min-width: 1200px){
-    .col-lg-10 {
-        width: 83.33333333%;
+
+@media only screen and (max-width: 767px){
+    .hidden-xs {
+        display: none !important;
+    }
+}
+
+@media only screen and (max-width: 700px){
+    .nav {
+        li{          
+            a {
+                text-transform: uppercase;
+                font-size: 18px;
+            }
+        }
+    }
+    
+    .navbar-offcanvas, .navmenu {
+        width: 200px;
     }
     
     #not-found{
         .nf-container{
             .nf-title{
-                font-size: 40px;
-            }
-            
-            .nf-text{
                 font-size: 25px;
             }
             
+            .nf-text{
+                font-size: 12px;
+            }
+            
             .nf-advice{
-                font-size: 20px;
+                font-size: 12px;
             }
         }
     }
+    
+    .video-wrap{
+        .big-video-border{
+            display: none;    
+        }
+        
+        .intro-text{
+            top: 50%;
+            width: 90%;
+            
+            h1{
+                font-size: 35px;
+            }
+        }
+    }  
 }
 
-@media (max-width: 1200px){  
-    header{
-        .navigations {
-            ul{
-                &.header-menu-ul{
-                    li{
-                        a{
-                            padding-top: 15px;
-                            padding-bottom: 20px;
-                        }
+@media only screen and (max-width: 600px){
+    .navbar {
+        padding: 10px;
+    }
+    
+    .navbar-toggle {
+        top: 10px;
+    }
+    
+    li{
+        &.menu-item-has-children{
+            ul {
+                li {
+                    a {
+                        font-size: 16px;
+                        padding: 10px !important;
                     }
                 }
             }
         }
     }
+    
+    .nav{
+        li{
+            a {
+                font-size: 16px;
+                padding: 10px;
+            }
+        }
+    }
 }
 
-@media only screen and (max-width: 1352px){
-    .logo-container, header .navigations {
-        text-align: center;
-    }
+@media only screen and (max-width: 380px){
+    .video-wrap{
+        .intro-text{           
+            h1{
+                font-size: 25px;
+            }
+            p{
+                font-size: 14px;
+            }
+        }
+    }  
 }

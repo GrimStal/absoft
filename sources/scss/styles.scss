@@ -114,6 +114,12 @@ li{
         }
     }
 }
+
+h1, h2, h3, h4, h5, h6 {
+    color: #736668;
+    font-family: "BodoniStdItalic" !important;
+}
+
 #not-found{
     position: absolute;
     width: inherit;
@@ -138,6 +144,33 @@ li{
         
         .nf-advice{
             font-size: 20px;
+        }
+    }
+}
+
+.loader {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    margin: auto;
+    background-color: #fff;
+    z-index: 999999999999;
+    
+    div {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        -webkit-transform: translate(-50%, -50%);
+        -ms-transform: translate(-50%, -50%);
+        transform: translate(-50%, -50%);
+        text-align: center;
+        
+        p {
+            text-transform: lowercase;
+            margin-top: 15px;
+            font-family: 'latin_modern_roman10_italic';
         }
     }
 }
