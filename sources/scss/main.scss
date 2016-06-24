@@ -26,31 +26,3 @@ img {
     max-width: 100%;
     height: auto;
 }
-
-#not-found{
-    position: absolute;
-    width: inherit;
-    height: inherit;
-    background: radial-gradient(#fff 0%, #f8f8f8 100%);
-    
-    .nf-container{                
-        position: absolute;
-        width: inherit;
-        height: 40%;
-        top: 30%;
-        text-align: center;
-        
-        .nf-title{
-            font-size: 40px;
-            font-weight: 600;
-        }
-        
-        .nf-text{
-            font-size: 25px;
-        }
-        
-        .nf-advice{
-            font-size: 20px;
-        }
-    }
-}

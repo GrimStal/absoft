@@ -44,7 +44,24 @@
         success: function (data) {
             var html = '';
             menuTemplate = _.template(data);
-            html += menuTemplate({menus: ["home", "services", "website design", "portfolio", "get a quote", "blog", "testimonials", "contact"]});
+            html += menuTemplate({
+                menus: ["home",
+                    {
+                        name: "services",
+                        link: "./website-design",
+                        children: [
+                            "website design",
+                            "logo design",
+                            "branding"
+                        ]
+                    },
+                    "website design",
+                    "portfolio",
+                    "get a quote",
+                    "blog",
+                    "testimonials",
+                    "contact"]
+            });
             $(document.body).append(html);
         }
     })

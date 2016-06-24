@@ -5,11 +5,11 @@
 var fs = require("fs");
 var formidable = require("formidable");
 
-function _getResponse(request, response, type) {
-    return fs.readFile("public/" + request.url, function (error, data) {
-        if (error) {
+function _getResponse(response, request, type) {
+    return fs.readFile("public/" + request.url, function (err, data) {    
+        if (err) {
             response.writeHead(500, {"Content-Type": "text/plain"});
-            response.write(error);
+            response.write("Error opening file: " + request.url);
             response.end();
         } else {
             response.writeHead(200, {"Content-Type": type});
@@ -24,9 +24,7 @@ function home(response, request) {
 
     fs.readFile("public/index.html", function (error, data) {
         if (error) {
-            response.writeHead(500, {"Content-Type": "text/plain"});
-            response.write(error);
-            response.end();
+            unknown(response, request);
         } else {
             response.writeHead(200, {"Content-Type": "text/html"});
             response.write(data);
@@ -37,16 +35,16 @@ function home(response, request) {
 
 function unknown(response, request) {
     if (request.url.indexOf(".css") !== -1) {
-        _getResponse(request, response, "text/css");
+        _getResponse(response, request, "text/css");
     } else if (request.url.indexOf(".js") !== -1) {
-        _getResponse(request, response, "text/javascript");
+        _getResponse(response, request, "text/javascript");
     } else if (request.url.indexOf(".html") !== -1) {
-        _getResponse(request, response, "text/html");
+        _getResponse(response, request, "text/html");
     } else if (request.url.indexOf(".png") !== -1 || request.url.indexOf(".gif") !== -1
             || request.url.indexOf(".ico") !== -1) {
-        _getResponse(request, response, "image");
+        _getResponse(response, request, "image");
     } else if (request.url.indexOf(".mp4") !== -1) {
-        _getResponse(request, response, "video");
+        _getResponse(response, request, "video");
     } else {
         console.log("Unknown handler:");
         fs.readFile("public/nf.html", function (error, data) {
