@@ -1,32 +1,68 @@
 <!DOCTYPE html>
+<!--
+AB-Soft test project
+@author Borshchov Dimitriy <grimstal@bigmir.net> 
+-->
 <html>
     <head>
         <title>MediaNovak - Photography Websites & Logo Design</title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        
-        <link rel="shortcut icon" href="content/sources/favicon.ico" type="image/x-icon">
 
-        <link rel="stylesheet" href="thirdParty/normalize.css" type="text/css">
+        <link rel="shortcut icon" href="content/sources/favicon.ico" type="image/x-icon">
+        
+        <!--Fonts-->
+        <link rel="stylesheet" id="lato-css" href="https://fonts.googleapis.com/css?family=Lato%3A300%2C400%2C700%2C900%2C+700italic&amp;ver=4.5.3" type="text/css" media="all">
+        <link href="//db.onlinewebfonts.com/c/bc6cd2c3303e7770ccbe363e06cf9aea?family=Bodoni+Std" rel="stylesheet" type="text/css">
+        
+        <!--Third party css-->
+        <link href="thirdParty/normalize.css" type="text/css" rel="stylesheet">
         <link href="css/styles.css" type="text/css" rel="stylesheet">
         <link href="bootstrap/css/bootstrap.min.css" rel="stylesheet">
         <link href="jasny-bootstrap/css/jasny-bootstrap.min.css" rel="stylesheet">
+        
+        <!--Current css-->
         <link href="css/navs.css" type="text/css" rel="stylesheet">
         <link href="css/navbar.css" type="text/css" rel="stylesheet">
+        <link href="css/videowrap.css" type="text/css" rel="stylesheet">
         <link href="css/main.css" type="text/css" rel="stylesheet">
+        
+        <!--Responsive css-->
         <link href="css/responsive.css" type="text/css" rel="stylesheet">
 
         <script type="text/javascript" src="thirdParty/lodash.js"></script>
         <script type="text/javascript" src="thirdParty/jquery-3.0.0.min.js"></script>
         <script type='text/javascript' src="bootstrap/js/bootstrap.min.js"></script>
         <script type='text/javascript' src="jasny-bootstrap/js/jasny-bootstrap.min.js"></script>
-
     </head>
     <body>       
-        <div class="video-wrap">
-
+        <div class="loader">
+            <div>
+                <img src="content/sources/new-loader.gif"/>
+                <p>Loading</p>
+            </div>
         </div>
-             
+        
+        <div class="video-wrap">
+            <div class="big-video-wrapper">
+                <video id="video-background" autoplay loop preload>
+                    <source src="content/sources/medianovak.mp4" type="video/mp4">
+                </video>
+            </div>
+            <div class="big-video-border"></div>
+            <div class="big-image"></div>
+            <div class="intro-text">
+                <h1>website design & branding</h1>
+                <p>
+                    Looking for a one-size-fits-all website template? We are NOT
+                   your guys. But if you are ready for a website design
+                   expirience, that's totally unique to your business and appeals
+                   to your target audience, then we are the right agency for you.
+                </p>
+                   
+            </div>
+        </div>
+
         <script type='text/javascript' src="main.js"></script>
 
     </body>

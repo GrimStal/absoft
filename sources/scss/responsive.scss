@@ -2,6 +2,14 @@
     .logo-container, header .navigations {
         text-align: center;
     }
+
+    .our-service{
+        div{
+            h1{
+                font-size: 30px;
+            }
+        }
+    }
 }
 
 
@@ -20,23 +28,37 @@
             }
         }
     }
+
+    .video-wrap{
+        .intro-text{
+            top: 55%;
+        }
+    }
+
+    .our-service{
+        div{
+            p{
+                font-size: 14px;
+            }
+        }
+    }
 }
 
 @media (min-width: 1200px){
     .col-lg-10 {
         width: 83.33333333%;
     }
-    
+
     #not-found{
         .nf-container{
             .nf-title{
                 font-size: 40px;
             }
-            
+
             .nf-text{
                 font-size: 25px;
             }
-            
+
             .nf-advice{
                 font-size: 20px;
             }
@@ -59,13 +81,13 @@
                 }
             } 
         }
-        
+
         .navigations{
             ul{
                 &.socials {
                     display: none;
                 }
-                
+
                 &.header-menu-ul{
                     li{
                         a{
@@ -76,11 +98,11 @@
             }
         }
     }
-    
+
     .navbar {
         text-align: center;
         padding: 15px;
-        
+
         a {
             line-height: 51px;
             display: inline-block;
@@ -88,7 +110,7 @@
             padding-left: 15px;
         }
     }
-    
+
     .navbar-toggle {
         float: left;
         margin-right: 0;
@@ -96,32 +118,32 @@
         top: 15px;
         left: 15px;
     }
-    
+
     .video-wrap{
         .intro-text{
             top: 55%;
             width: 90%;
-            
+
             h1{
                 font-size: 45px;
-                
+
                 &:before{
                     display: none;
                 }
             }
         }
     }
-    
+
     #not-found{
         .nf-container{
             .nf-title{
                 font-size: 30px;
             }
-            
+
             .nf-text{
                 font-size: 17px;
             }
-            
+
             .nf-advice{
                 font-size: 17px;
             }
@@ -129,6 +151,16 @@
     }
 }
 
+@media only screen and (max-width: 900px){
+    .video-wrap{
+        .intro-text{
+
+            h1{
+                font-size: 55px;
+            }
+        }
+    }
+}
 
 @media only screen and (max-width: 767px){
     .hidden-xs {
@@ -145,36 +177,35 @@
             }
         }
     }
-    
+
     .navbar-offcanvas, .navmenu {
         width: 200px;
     }
-    
+
     #not-found{
         .nf-container{
             .nf-title{
                 font-size: 25px;
             }
-            
+
             .nf-text{
                 font-size: 12px;
             }
-            
+
             .nf-advice{
                 font-size: 12px;
             }
         }
     }
-    
+
     .video-wrap{
         .big-video-border{
             display: none;    
         }
-        
+
         .intro-text{
-            top: 50%;
-            width: 90%;
-            
+            top: 65%;
+
             h1{
                 font-size: 35px;
             }
@@ -186,11 +217,11 @@
     .navbar {
         padding: 10px;
     }
-    
+
     .navbar-toggle {
         top: 10px;
     }
-    
+
     li{
         &.menu-item-has-children{
             ul {
@@ -203,7 +234,7 @@
             }
         }
     }
-    
+
     .nav{
         li{
             a {

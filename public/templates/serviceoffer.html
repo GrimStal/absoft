@@ -1,0 +1,26 @@
+<!--what we offer-->
+<div class="container medium what-we-offer">
+<% _.forEach(services, function(service){ %>
+    <% if (services.length == 2) { %>
+    <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6 our-service">
+    <% } else if (services.length == 3) { %>
+    <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4 our-service">
+    <% } else if (services.lenght == 4){ %>
+    <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3 our-service">
+    <% } else { %>
+    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 our-service">
+    <% } %>
+        <div>
+            <div class="border-one"></div>
+            <div class="border-two"></div>
+            <h1 class="title-text">
+                <a href=<%- service.link %>><%- service.name %></a>
+            </h1>
+            <p>
+                <%- service.description %>
+            </p>
+            <a href=<%- service.link %> class="n-button-small">view more</a>
+        </div>
+    </div>
+<% }) %>
+</div>
