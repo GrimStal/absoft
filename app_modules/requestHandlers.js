@@ -23,7 +23,7 @@ function _getVideoFile(response, request, type) {
     var path = './public/' + request.url;
     var stat = fs.statSync(path);
     var total = stat.size;
-    
+
     if (request.headers['range']) {
         var range = request.headers.range;
         var parts = range.replace(/bytes=/, "").split("-");
@@ -69,6 +69,20 @@ function unknown(response, request) {
     } else if (request.url.indexOf(".png") !== -1 || request.url.indexOf(".gif") !== -1
             || request.url.indexOf(".ico") !== -1 || request.url.indexOf(".jpg") !== -1) {
         _getResponse(response, request, "image");
+    } else if (request.url.indexOf(".oft") !== -1) {
+        _getResponse(response, request, "application/font-otf");
+    } else if (request.url.indexOf(".ttf") !== -1) {
+        _getResponse(response, request, "application/font-ttf");
+    } else if (request.url.indexOf(".woff") !== -1) {
+        if (request.url.indexOf(".woff2") !== -1) {
+            _getResponse(response, request, "font/woff2");
+        } else {
+            _getResponse(response, request, "font/woff");
+        }
+    } else if (request.url.indexOf(".eot") !== -1) {
+        _getResponse(response, request, "application/vnd.ms-fontobject");
+    } else if (request.url.indexOf(".svg") !== -1) {
+        _getResponse(response, request, "image/svg+xml");
     } else if (request.url.indexOf(".mp4") !== -1) {
         _getVideoFile(response, request, "video/mp4");
     } else {

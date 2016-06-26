@@ -1,0 +1,76 @@
+<!--Portfolio section-->
+<section id="portfolio">
+    <!--portfolio-->
+    <div class="container-fluid">
+        <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2"></div>
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-8 section-intro">
+            <h4>check out our portfolio</h4>
+            <p>
+                We work closely with our clients to determine objectives and design sites that look and feel right to your target audience and are easy for you to manage and maintain. Browse the examples below to see some of our recent work.
+            </p>    
+        </div>
+        <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2"></div>
+    </div>
+    <!--item container-->
+    <div class="home-portfolio clearfix">
+        <div class="container-fluid">
+            <% _.forEach(rows, function(row){ %>
+            <div class="row">
+                <% _.forEach(row.elements, function(element){ %>
+                <div class="<%- element.proportions %>">
+                    <div class="row">
+                        <% _.forEach(element.els, function(elem){ %>
+                        <div class="<%- elem.classes %>">
+                            <div class="<%- elem.type %>">
+                                <% if (elem.type === "holder txt") { %>
+                                    <div class="white-bg"></div>
+                                    <img src=<%= 'content/sources/' + elem.img[0] %> alt="" class="hide-image-small">
+                                    <img src=<%= "content/sources/" + elem.img[1] %> alt="" class="show-image-small">
+                                    <div>
+                                        <h5><%- elem.title %></h5>
+                                        <p class="hide-text-m"><%- elem.longText %></p>
+                                        <p class="show-text-m hide-text-s"><%- elem.shortTextM %></p>
+                                        <p class="show-text-s"><%- elem.shortTextS %></p>
+                                        <a href=<%- elem.link %> class="new-button-portfolio">Open Portfolio</a>
+                                    </div>
+                                <% } else { %>
+                                    <div>
+                                        <img width="1200" height="650" src=<%= "content/sources/" + elem.img[0] %> class="<%- elem.imgClass %>" alt=<%- elem.title %> sizes="<%- elem.sizes %>">
+                                        <div class="hover-sec">
+                                            <a href=<%- elem.link %> class="hover-permalink"></a>
+                                            <div>
+                                                <h4><a href=<%- elem.link %>><%- elem.title %></a></h4>
+                                                <p class="hide-for-medium"><%- elem.shortTextM %></p>
+                                                <p class="show-for-medium"><%- elem.shortTextS %></p>
+                                                <ul>
+                                                    <li>
+                                                        <a href=<%- elem.outerLinks[0] %> >
+                                                            <i class="fa fa-search"></i>
+                                                        </a>
+                                                     </li>
+                                                     <li>
+                                                        <a href=<%- elem.outerLinks[1] %> target="_blank">
+                                                            <i class="fa fa-facebook"></i>
+                                                        </a>
+                                                     </li>
+                                                     <li>
+                                                        <a href=<%- elem.outerLinks[2] %> target="_blank">
+                                                            <i class="fa fa-twitter"></i>
+                                                        </a>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                <% } %>
+                            </div>                        
+                        </div>
+                        <% }) %>
+                    </div>               
+                </div>
+                <% }) %>
+            </div>
+            <% }) %>
+        </div>
+    </div>
+</section>
