@@ -2,79 +2,74 @@
  * AB-Soft test project
  * @author Borshchov Dimitriy <grimstal@bigmir.net> 
  */
-(function () {
-    "use strict";
+"use strict";
 
-    var menuTemplate;
-    var mobileTemplate;
+var mobileMenu = $.Deferred();
+var headerMenu = $.Deferred();
 
-    var mobileMenu = $.Deferred();
-    var headerMenu = $.Deferred();
+var menuObj = {
+    menus: ["home",
+        {
+            name: "services",
+            link: "./website-design",
+            children: [
+                "website design",
+                "logo design",
+                "branding"
+            ]
+        },
+        "website design",
+        "portfolio",
+        "get a quote",
+        "blog",
+        "testimonials",
+        "contact"]
+};
 
-    mobileMenu = $.ajax({
-        url: "./templates/mobileNavmenu.html",
+/** Returns template into DOM
+ * 
+ * @param {string} link
+ * @param {object} templateData
+ * @param {object} def
+ * @param {function} cb
+ * @returns {jqXHR}
+ */
+function _createTemplate(link, templateData, def, cb) {
+    var html = '';
+    var template;
+
+    if (!link || !templateData || !def) {
+        return false;
+    }
+
+    return $.ajax({
+        url: link,
         method: "GET",
         async: true,
         success: function (data) {
-            var html = '';
-            mobileTemplate = _.template(data);
-            html += mobileTemplate({
-                menus: ["home",
-                    {
-                        name: "services",
-                        link: "./website-design",
-                        children: [
-                            "website design",
-                            "logo design",
-                            "branding"
-                        ]
-                    },
-                    "website design",
-                    "portfolio",
-                    "get a quote",
-                    "blog",
-                    "testimonials",
-                    "contact"]
-            });
+            template = _.template(data);
+            html += template(templateData);
             $(document.body).append(html);
+            if (cb && typeof cb === 'function')
+                cb();
+            def.resolve();
         }
     });
+}
 
-    headerMenu = $.ajax({
-        url: "./templates/headerMenu.html",
-        method: "GET",
-        async: true,
-        success: function (data) {
-            var html = '';
-            menuTemplate = _.template(data);
-            html += menuTemplate({
-                menus: ["home",
-                    {
-                        name: "services",
-                        link: "./website-design",
-                        children: [
-                            "website design",
-                            "logo design",
-                            "branding"
-                        ]
-                    },
-                    "website design",
-                    "portfolio",
-                    "get a quote",
-                    "blog",
-                    "testimonials",
-                    "contact"]
-            });
-            $(document.body).append(html);
-        }
-    });
-    
-    $(document).scroll(function(e){
-        var top = $(document).scrollTop();
-        if (top > 0){
-            $("header").addClass('sticky');
-        } else {
-            $("header").removeClass('sticky');
-        }
-    });
-})();
+_createTemplate("./templates/mobileNavmenu.html", menuObj, mobileMenu);
+
+mobileMenu.then(
+        function () {
+            _createTemplate("./templates/headerMenu.html", menuObj, headerMenu);
+        });
+
+$(document).scroll(function (e) {
+    var top = $(document).scrollTop();
+    if (top > 0) {
+        $("header").addClass('sticky');
+    } else {
+        $("header").removeClass('sticky');
+    }
+});
+

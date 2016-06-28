@@ -1,106 +1,33 @@
 <!--Testimonials-->
-<secion id="testimonials" class="hidden-xs  parallax-window">
+<section id="testimonials" class="hidden-xs parallax-window" data-parallax="scroll" data-image-src="content/sources/testimonials1.jpg">
     <div class="overlay"></div>
     <div id="testimonials-container" class="container">
-        <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1">
-
-        </div>
+        <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1"></div>
         <div class="col-xs-12 col-sm-12 col-md-12 col-lg-10">
             <h4>Testimonials</h4>
-
             <!-- Testimonials -->
             <div id="carousel-example-generic" class="carousel slide" data-ride="carousel">
-
                 <div class="border-section">
                     <div class="swirl"></div>
                 </div>
-
                 <!-- Wrapper for slides -->
                 <div class="carousel-inner">
-
+                    <% _.forEach(testimonials, function(item){%>
                     <!-- Slide -->
                     <div class="item">
                         <div class="testimonial-content jpibfi_container">
-                            <input class="jpibfi" type="hidden"><p>I had been following Media Novak’s work for a while now and was always impressed with their logo work. The logo designs they came up with based on my wishes for what I wanted it to look like were above and beyond what I had imagined. The process itself was smooth and so easy. I gave input and they took it on board and applied it to the next design. I would highly recommend them any day!</p>
+                            <input class="jpibfi" type="hidden">
+                            <p><%- item.testimonial %></p>
                             <div class="client">
                                 <span>
-                                    <img width="120" height="120" src="https://medianovak.com/wp-content/uploads/2014/10/chantal-testimonial-120x120.jpg" class="attachment-testimonial size-testimonial wp-post-image" alt="chantal-testimonial" srcset="https://medianovak.com/wp-content/uploads/2014/10/chantal-testimonial-120x120.jpg 120w, https://medianovak.com/wp-content/uploads/2014/10/chantal-testimonial-50x50.jpg 50w, https://medianovak.com/wp-content/uploads/2014/10/chantal-testimonial.jpg 250w" sizes="(max-width: 120px) 100vw, 120px">                                       </span>
-                                <h6>
-                                    Chantal Lachance-Gibson Photography                                       </h6>
+                                    <img width="120" height="120" src=<%- item.link %> class="attachment-testimonial size-testimonial wp-post-image" alt=<%- item.alt%> sizes="(max-width: 120px) 100vw, 120px">
+                                </span>
+                                <h6> <%- item.name %> </h6>
                             </div>
                         </div>
                     </div>
-
-                    <!-- Slide -->
-                    <div class="item">
-                        <div class="testimonial-content jpibfi_container">
-                            <input class="jpibfi" type="hidden"><p>I cannot begin to say enough about Mark &amp; the team at Media Novak. Their customer service has been TOP NOTCH! They have gone way beyond my expectations and dreams and have put together a website for me that I am so proud of… I actually can’t believe that it’s mine! If you are looking for a new website or new branding then look no further… contact these guys today!</p>
-                            <div class="client">
-                                <span>
-                                    <img width="120" height="120" src="https://medianovak.com/wp-content/uploads/2014/05/myrick-testimonial-120x120.jpg" class="attachment-testimonial size-testimonial wp-post-image" alt="myrick-testimonial" srcset="https://medianovak.com/wp-content/uploads/2014/05/myrick-testimonial-120x120.jpg 120w, https://medianovak.com/wp-content/uploads/2014/05/myrick-testimonial-50x50.jpg 50w, https://medianovak.com/wp-content/uploads/2014/05/myrick-testimonial.jpg 250w" sizes="(max-width: 120px) 100vw, 120px">                                        </span>
-                                <h6>
-                                    Myrick Cowart – Photographer                                        </h6>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Slide -->
-                    <div class="item">
-                        <div class="testimonial-content jpibfi_container">
-                            <input class="jpibfi" type="hidden"><p>Thank you thank you thank you! I really appreciate all of your help and your quick replies and editing, and well, everything. I will DEFINITELY be referring your team! I love my new logo and I love that it is completely my own and completely encompasses my brand. I really appreciate all of the time and effort your team has put into this project. Thank you again and again!<br>
-                            </p>
-                            <div class="client">
-                                <span>
-                                    <img width="120" height="120" src="https://medianovak.com/wp-content/uploads/2014/06/bethany-petersen-testimonial-120x120.jpg" class="attachment-testimonial size-testimonial wp-post-image" alt="bethany-petersen-testimonial" srcset="https://medianovak.com/wp-content/uploads/2014/06/bethany-petersen-testimonial-120x120.jpg 120w, https://medianovak.com/wp-content/uploads/2014/06/bethany-petersen-testimonial-50x50.jpg 50w, https://medianovak.com/wp-content/uploads/2014/06/bethany-petersen-testimonial.jpg 250w" sizes="(max-width: 120px) 100vw, 120px">                                        </span>
-                                <h6>
-                                    Bethany Petersen – Photographer                                        </h6>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Slide -->
-                    <div class="item active">
-                        <div class="testimonial-content jpibfi_container">
-                            <input class="jpibfi" type="hidden"><p>I decided to hire Media Novak after seeing a friends logo that I really liked. I sent them my ideas but I actually preferred one of their original concepts over my own ideas! They really understood the look and feel I was trying to achieve and I am delighted with my new logo! I found the process to be really enjoyable and smooth and emails were answered very quickly… a big thumbs up from me!</p>
-                            <div class="client">
-                                <span>
-                                    <img width="120" height="120" src="https://medianovak.com/wp-content/uploads/2014/07/karen-mcgowran-photographer1-120x120.jpg" class="attachment-testimonial size-testimonial wp-post-image" alt="karen-mcgowran-photographer" srcset="https://medianovak.com/wp-content/uploads/2014/07/karen-mcgowran-photographer1-120x120.jpg 120w, https://medianovak.com/wp-content/uploads/2014/07/karen-mcgowran-photographer1-50x50.jpg 50w, https://medianovak.com/wp-content/uploads/2014/07/karen-mcgowran-photographer1.jpg 250w" sizes="(max-width: 120px) 100vw, 120px">                                        </span>
-                                <h6>
-                                    Karen McGowran – Photographer                                        </h6>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Slide -->
-                    <div class="item">
-                        <div class="testimonial-content jpibfi_container">
-                            <input class="jpibfi" type="hidden"><p>Media Novak were helpful and listened to me as the client… never once tried to push their likes onto me… but they do offer good advice. I think what has mattered most to me was once we went live, they were very much still around to iron out little problems that only became noticeable to myself with the daily running of a website and a blog! I would highly recommend them to other businesses!<br>
-                            </p>
-                            <div class="client">
-                                <span>
-                                    <img width="120" height="120" src="https://medianovak.com/wp-content/uploads/2014/05/jo-ann-testimonial-120x120.jpg" class="attachment-testimonial size-testimonial wp-post-image" alt="jo-ann-testimonial" srcset="https://medianovak.com/wp-content/uploads/2014/05/jo-ann-testimonial-120x120.jpg 120w, https://medianovak.com/wp-content/uploads/2014/05/jo-ann-testimonial-50x50.jpg 50w, https://medianovak.com/wp-content/uploads/2014/05/jo-ann-testimonial.jpg 250w" sizes="(max-width: 120px) 100vw, 120px">                                        </span>
-                                <h6>
-                                    Jo-Ann Stokes – Photographer                                        </h6>
-                            </div>
-                        </div>
-                    </div>
-
-
-                    <!-- Slide -->
-                    <div class="item">
-                        <div class="testimonial-content jpibfi_container">
-                            <input class="jpibfi" type="hidden"><p>Media Novak designed a beautiful website for me and I’m very satisfied with it. They listened to what I wanted and tailored the site to fit me and I really appreciate that. Their prices are reasonable and the quality is fantastic. I would highly recommend this company.<br>
-                            </p>
-                            <div class="client">
-                                <span>
-                                    <img width="120" height="120" src="https://medianovak.com/wp-content/uploads/2014/05/renee-testimonial-120x120.jpg" class="attachment-testimonial size-testimonial wp-post-image" alt="renee-testimonial" srcset="https://medianovak.com/wp-content/uploads/2014/05/renee-testimonial-120x120.jpg 120w, https://medianovak.com/wp-content/uploads/2014/05/renee-testimonial-50x50.jpg 50w, https://medianovak.com/wp-content/uploads/2014/05/renee-testimonial.jpg 250w" sizes="(max-width: 120px) 100vw, 120px">                                        </span>
-                                <h6>
-                                    Renee Zona – Photographer                                        </h6>
-                            </div>
-                        </div>
-                    </div>
-
-
+                    <% }) %>
+                    
                 </div>
 
                 <!-- Controls -->
@@ -112,8 +39,6 @@
                 </a>
             </div>
         </div>
-        <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1">
-
-        </div>
+        <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1"></div>
     </div>
-</secion>
+</section>

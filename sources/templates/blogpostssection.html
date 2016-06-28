@@ -12,123 +12,53 @@
         </div>
     </div>
     <div class="posts-wrapper clearfix">
-                           
-          <div class="featured-post-section">
-              <div class="post-holder">
-                  <div>
-                      <img width="1200" height="823" src="https://medianovak.com/wp-content/uploads/2016/06/top-photography-industry-secrets-1-1200x823.jpg" class="attachment-featured size-featured wp-post-image" alt="Top Photography Industry Secrets | How To Start A Photography Bus...">                      <div class="gradient"></div>
-                      <a href="https://medianovak.com/top-photography-industry-secrets/" class="permalink-section"></a>
-                      <div class="post-content">
-                          <h1>
-                              <a href="https://medianovak.com/top-photography-industry-secrets/">
-                                  Top Photography Industry Secrets | How To Start A Photography Business Without Losing Your Passion (Or Your Mind!)                              </a>
-                          </h1>
-                          <p>Top Photography Industry Secrets | Photography is an industry that has been going through some major changes in the past few years - not only has the equipment become more…</p>
-                          <a href="https://medianovak.com/top-photography-industry-secrets/">Read More</a>
-                      </div>
-                  </div>
-              </div>
-          </div>
-
+        <div class="featured-post-section">
+            <div class="post-holder">
+                <div>
+                    <img width="1200" height="823" src="./content/sources/blogposts/<%- blogs[0].image %>-1-1200x823.jpg" class="attachment-featured size-featured wp-post-image" alt="<%= (blogs[0].aText.length >= 64) ? blogs[0].aText.substr(0,64) + ' ...' : blogs[0].aText %>" >
+                    <div class="gradient"></div>
+                    <a href="<%- blogs[0].link %>" class="permalink-section"></a>
+                    <div class="post-content">
+                        <h1>
+                            <a href="<%- blogs[0].link %>">
+                                <%- blogs[0].aText %>                              
+                            </a>
+                        </h1>
+                        <p><%- blogs[0].fullText%></p>
+                        <a href="<%- blogs[0].link %>">Read More</a>
+                    </div>
+                </div>
+            </div>
+        </div>
         
         <div class="latest-posts-section">
-                           
+        <% _.forEach(blogs, function(blog){ %>
+        <% if (blog !== blogs[0]){ %>
             <div class="post-holder-small post-holder">
                 <div>
-                    <img width="600" height="407" src="https://medianovak.com/wp-content/uploads/2016/06/photography-business-stationery-items-1-600x407.jpg" class="attachment-latest size-latest wp-post-image" alt="Photography Business Stationery Items | Print Isn't Dead! How To ...">                    <div class="gradient"></div>
-                    <a href="https://medianovak.com/photography-business-stationery-items/" class="permalink-section"></a>
+                    <img width="600" height="407" src="./content/sources/blogposts/<%- blog.image %>-1-600x407.jpg" class="attachment-latest size-latest wp-post-image" alt="<%= (blog.aText.length >= 64) ? blog.aText.substr(0,64) + ' ...' : blog.aText %>" >
+                    <div class="gradient"></div>
+                    <a href="<%- blog.link %>" class="permalink-section"></a>
                     <div class="post-content">
                         <h1>
-                            <a href="https://medianovak.com/photography-business-stationery-items/">
-                                Photography Business Stationery Items | Print Isn’t Dead! How To Get More Business From Your Stationery                            </a>
+                            <a href="<%- blog.link %>">
+                                <%- blog.aText%>
+                            </a>
                         </h1>
                         <span>Bussines Ideas</span>
                     </div>
                 </div>
             </div>
+        <% } %>
+        <% }) %>
 
-                           
-            <div class="post-holder-small post-holder">
-                <div>
-                    <img width="600" height="407" src="https://medianovak.com/wp-content/uploads/2016/06/photography-logo-rules-1-600x407.jpg" class="attachment-latest size-latest wp-post-image" alt="Photography Logo Rules | The 5 Most Important Things Photographers ...">                    <div class="gradient"></div>
-                    <a href="https://medianovak.com/photography-logo-rules/" class="permalink-section"></a>
-                    <div class="post-content">
-                        <h1>
-                            <a href="https://medianovak.com/photography-logo-rules/">
-                                Photography Logo Rules | The 5 Most Important Things Photographers Need To Know About Designing A Logo                            </a>
-                        </h1>
-                        <span>Bussines Ideas</span>
-                    </div>
-                </div>
-            </div>
-
-                           
-            <div class="post-holder-small post-holder">
-                <div>
-                    <img width="600" height="407" src="https://medianovak.com/wp-content/uploads/2016/06/creative-photography-marketing-1-600x407.jpg" class="attachment-latest size-latest wp-post-image" alt="Creative Photography Marketing | Sizzling Hot Marketing Tips To Boo...">                    <div class="gradient"></div>
-                    <a href="https://medianovak.com/creative-photography-marketing/" class="permalink-section"></a>
-                    <div class="post-content">
-                        <h1>
-                            <a href="https://medianovak.com/creative-photography-marketing/">
-                                Creative Photography Marketing | Sizzling Hot Marketing Tips To Boost Your Photography Business This Summer                            </a>
-                        </h1>
-                        <span>Bussines Ideas</span>
-                    </div>
-                </div>
-            </div>
-
-                           
-            <div class="post-holder-small post-holder">
-                <div>
-                    <img width="600" height="407" src="https://medianovak.com/wp-content/uploads/2016/06/photography-website-seo-essentials-1-600x407.jpg" class="attachment-latest size-latest wp-post-image" alt="Photography Website SEO Essentials | How To Get Discovered (And ...">                    <div class="gradient"></div>
-                    <a href="https://medianovak.com/photography-website-seo-essentials/" class="permalink-section"></a>
-                    <div class="post-content">
-                        <h1>
-                            <a href="https://medianovak.com/photography-website-seo-essentials/">
-                                Photography Website SEO Essentials | How To Get Discovered (And Hired!) – The Photographer’s Guide To SEO                            </a>
-                        </h1>
-                        <span>Bussines Ideas</span>
-                    </div>
-                </div>
-            </div>
-
-                           
-            <div class="post-holder-small post-holder">
-                <div>
-                    <img width="600" height="407" src="https://medianovak.com/wp-content/uploads/2016/06/photography-branding-questions-1-600x407.jpg" class="attachment-latest size-latest wp-post-image" alt="Photography Branding Questions | Discover The Identity Of Your ...">                    <div class="gradient"></div>
-                    <a href="https://medianovak.com/photography-branding-questions/" class="permalink-section"></a>
-                    <div class="post-content">
-                        <h1>
-                            <a href="https://medianovak.com/photography-branding-questions/">
-                                Photography Branding Questions | Discover The Identity Of Your Photography Business – 5 Questions To Get You Started                            </a>
-                        </h1>
-                        <span>Bussines Ideas</span>
-                    </div>
-                </div>
-            </div>
-
-                           
-            <div class="post-holder-small post-holder">
-                <div>
-                    <img width="600" height="407" src="https://medianovak.com/wp-content/uploads/2016/06/professional-photography-questions-answered-1-600x407.jpg" class="attachment-latest size-latest wp-post-image" alt="Professional Photography Questions Answered | How To Create Photo...">                    <div class="gradient"></div>
-                    <a href="https://medianovak.com/professional-photography-questions-answered/" class="permalink-section"></a>
-                    <div class="post-content">
-                        <h1>
-                            <a href="https://medianovak.com/professional-photography-questions-answered/">
-                                Professional Photography Questions Answered | How To Create Photography Packages That Sell? – And Other Difficult Questions Pro Photographers Face                            </a>
-                        </h1>
-                        <span>Bussines Ideas</span>
-                    </div>
-                </div>
-            </div>
-
-                </div>
+        </div>
 
 
     </div>
     <div class="clearfix">
         <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 portfolio-button">
-            <a href="https://www.medianovak.com/blog/" class="novak-button-large">
+            <a href="/blog" class="novak-button-large">
                 <div class="border"></div>
                 View More
             </a>

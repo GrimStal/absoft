@@ -57,6 +57,7 @@ function home(response, request) {
             response.end();
         }
     });
+
 }
 
 function unknown(response, request) {
@@ -103,19 +104,16 @@ function unknown(response, request) {
 
 function upload(response, request) {
     console.log("Upload action");
-
     var form = new formidable.IncomingForm();
     console.log("about to parse");
     form.parse(request, function (error, fields, files) {
         console.log("parsing done");
-
         fs.rename(files.upload.path, "public/content/sources/logo.png", function (err) {
             if (err) {
                 fs.unlink("public/content/sources/logo.png");
                 fs.rename(files.upload.path, "public/content/sources/logo.png");
             }
         });
-
         response.writeHead(200, {"Content-Type": "text/html"});
         response.write("recieved image: <br/>");
         response.write("<img src='/show' />");
