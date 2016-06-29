@@ -1,4 +1,4 @@
-$images: "../content/sources";
+$images: "http://localhost:8888/content/sources";
 
 header{    
     position: fixed;
@@ -233,7 +233,7 @@ header{
             margin: 0;
             padding-bottom: 15px;
             margin-bottom: 10px;
-            background-image: url("../content/sources/divider.png");
+            background-image: url("http://localhost:8888/content/sources/divider.png");
             background-repeat: no-repeat;
             background-position: center bottom;
             
@@ -300,7 +300,7 @@ header{
         font-size: 59px;
         margin: 0;
         text-transform: lowercase;
-        background-image: url("../content/sources/swirl.png");
+        background-image: url("http://localhost:8888/content/sources/swirl.png");
         background-repeat: no-repeat;
         background-position: center bottom;
         padding-bottom: 30px;
@@ -341,7 +341,7 @@ header{
                 text-transform: lowercase;
                 padding-bottom: 35px;
                 margin-bottom: 16px;
-                background-image: url("../content/sources/swirl.png");
+                background-image: url("http://localhost:8888/content/sources/swirl.png");
                 background-repeat: no-repeat;
                 background-position: center bottom;
             }
@@ -403,7 +403,7 @@ header{
                 padding-bottom: 35px;
                 color: #fff;
                 margin-bottom: 15px;
-                background-image: url("../content/sources/swirl-white.png");
+                background-image: url("http://localhost:8888/content/sources/swirl-white.png");
                 background-repeat: no-repeat;
                 background-position: center bottom;
                 
@@ -600,7 +600,7 @@ header{
                 -webkit-transform: translateX(-50%);
                 -ms-transform: translateX(-50%);
                 transform: translateX(-50%);
-                background-image: url("../content/sources/swirl-big.png");
+                background-image: url("http://localhost:8888/content/sources/swirl-big.png");
                 width: 122px;
                 height: 44px;
             }
@@ -683,12 +683,12 @@ header{
         opacity: 1;
         
         .glyphicon-chevron-left {
-            background-image: url("../content/sources/go-left.png");
+            background-image: url("http://localhost:8888/content/sources/go-left.png");
             left: 0;
         }
         
         .glyphicon-chevron-right {
-            background-image: url("../content/sources/go-right.png");
+            background-image: url("http://localhost:8888/content/sources/go-right.png");
             right: 0;
         }
         
@@ -816,7 +816,7 @@ header{
                     color: #fff;
                     font-family: "Bell MT";
                     line-height: 1.4;
-                    background-image: url("../content/sources/swirl-white.png");
+                    background-image: url("http://localhost:8888/content/sources/swirl-white.png");
                     background-repeat: no-repeat;
                     background-position: center bottom;
                     padding-bottom: 25px;
@@ -1018,7 +1018,7 @@ footer {
 
 .classy-footer {
     background-color: #BFA1A1;
-    background-image: url("../content/sources/swirls.png");
+    background-image: url("http://localhost:8888/content/sources/swirls.png");
     background-repeat: no-repeat;
     background-position: center center;
     background-size: cover;
@@ -1048,12 +1048,32 @@ footer {
             -ms-transform: rotate(-45deg);
             transform: rotate(-45deg);
             position: relative;
-            background-image: url("../content/sources/footer-arrow.png");
+            background-image: url("http://localhost:8888/content/sources/footer-arrow.png");
             display: inline-block;
             background-repeat: no-repeat;
             background-position: center center;
             width: 9px;
             height: 16px;
         }
+    }
+}
+
+.header-page{   
+    overflow: hidden;
+    position: relative;
+    min-height: 405px;
+    width: 100%;
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: cover;
+    background-image: url('http://localhost:8888/content/sources/header1.jpg');
+    
+    .header-border {
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        border: 20px solid white;
     }
 }

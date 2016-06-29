@@ -45,6 +45,20 @@ function _getVideoFile(response, request, type) {
     }
 }
 
+function _getTemplatedPage(response, request, template, js){
+    fs.readFile("public/" + template + ".html", function (error, data) {
+        if (error) {
+            unknown(response, request);
+        } else {
+            response.writeHead(200, {"Content-Type": "text/html"});
+            response.write(data);
+            response.write('<script type="text/javascript" src="/javascript/' + js + '.js"></script>');
+            response.write('</body></html>');
+            response.end();
+        }
+    });
+}
+
 function home(response, request) {
     console.log("Home action");
 
@@ -58,6 +72,24 @@ function home(response, request) {
         }
     });
 
+}
+
+function websiteDesign(response, request) {
+    console.log("Website Design action");
+    
+    _getTemplatedPage(response, request, "services", "website-design");
+}
+
+function logoDesign(response, request) {
+    console.log("Logo Design action");
+    
+    _getTemplatedPage(response, request, "services", "logo-design");
+}
+
+function branding(response, request) {
+    console.log("Branding action");
+    
+    _getTemplatedPage(response, request, "services", "branding");
 }
 
 function unknown(response, request) {
@@ -137,6 +169,9 @@ function show(response, request) {
 }
 
 exports.home = home;
+exports.websiteDesign = websiteDesign;
+exports.logoDesign = logoDesign;
+exports.branding = branding;
 exports.upload = upload;
 exports.show = show;
 exports.unknown = unknown;

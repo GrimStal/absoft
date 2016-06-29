@@ -577,6 +577,48 @@
             }
         }
     }
+    
+    .header-page {
+        min-height: 300px;
+        
+        .header-border{
+            display: none;
+        }
+    }
+    
+    .portfolio-container{
+        .element{
+            &.portfolio-element{
+                .element-content{
+                    .hover-content{
+                        >div{
+                            p{
+                                display: none;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    .posts-wrapper{
+        .post-holder{
+            &.featured{
+                .post-content{
+                    p{
+                        display: none;
+                    }
+                }
+            }
+        }
+    }
+    
+    .video-wrapper{
+        .big-border {
+            display: none;
+        }
+    }
 }
 
 @media only screen and (max-width: 600px){

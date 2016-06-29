@@ -9,7 +9,7 @@ var menuObj = {
     menus: ["home",
         {
             name: "services",
-            link: "./website-design",
+            link: "http://localhost:8888/website-design",
             children: [
                 "website design",
                 "logo design",
@@ -75,10 +75,10 @@ function _createTemplate(link, templateData, def, cb) {
     });
 }
 
-_createTemplate("./templates/mobileNavmenu.html", menuObj, mobileMenu);
+_createTemplate("http://localhost:8888/templates/mobileNavmenu.html", menuObj, mobileMenu);
 mobileMenu.then(
         function () {
-            _createTemplate("./templates/headerMenu.html", menuObj, headerMenu);
+            _createTemplate("http://localhost:8888/templates/headerMenu.html", menuObj, headerMenu);
         });
 $(document).scroll(function (e) {
     var top = $(document).scrollTop();

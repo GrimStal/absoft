@@ -22,21 +22,21 @@ var offerBoxObj = {
     services: [
         {
             name: "website design",
-            link: "./website-design-portfolio",
+            link: "http://localhost:8888/website-design-portfolio",
             description: "Plenty of folks think that web design " +
                     "is all about slapping some words and pictures" +
                     "together and posting them online. No doubt that..."
         },
         {
             name: "logo design",
-            link: "./logo-design-portfolio",
+            link: "http://localhost:8888/logo-design-portfolio",
             description: "MediaNovak has taken what was once a " +
                     "long, expensive process and turned it into an " +
                     "easy, even fun experience. With a little input..."
         },
         {
             name: "branding",
-            link: "./branding",
+            link: "http://localhost:8888/branding",
             description: "A brand isn’t just a pretty logo, engaging " +
                     "website or strategic marketing plan. It is a " +
                     "deliberate, cohesive message. A story. An idea and..."
@@ -59,7 +59,7 @@ var portfolioObj = {
                             longText: "Plenty of folks think that web design is all about slapping some words and pictures together and posting them online. No doubt that sort of attitude has created some of the atrocious and non-working web sites we see...",
                             shortTextM: "Plenty of folks think that web design is all about slapping some words and pictures together and posting them online.",
                             shortTextS: "Plenty of folks think that web design is all about...",
-                            link: "./web-design-portfolio/"
+                            link: "http://localhost:8888/web-design-portfolio/"
                         }
                     ]
                 },
@@ -75,7 +75,7 @@ var portfolioObj = {
                             sizes: "(max-width: 1200px) 100vw, 1200px",
                             shortTextM: "Check out the new logo we designed for Danielle Heinson Photography! “Media Novak has been incredible! I knew I wanted to hire them when I…",
                             shortTextS: "Check out the new logo we designed for Danielle Heinson…",
-                            link: "./danielle-heinson-photography-logo-design/",
+                            link: "http://localhost:8888/danielle-heinson-photography-logo-design/",
                             outerLinks: [
                                 "https://medianovak.com/projects/danielle-heinson-photography-logo-design/",
                                 "https://www.facebook.com/sharer/sharer.php?u=https://medianovak.com/projects/danielle-heinson-photography-logo-design/",
@@ -91,7 +91,7 @@ var portfolioObj = {
                             sizes: "(max-width: 1200px) 100vw, 1200px",
                             shortTextM: " ",
                             shortTextS: " ",
-                            link: "./modern-boudoir-photography-website-design/",
+                            link: "http://localhost:8888/modern-boudoir-photography-website-design/",
                             outerLinks: [
                                 "https://medianovak.com/projects/modern-boudoir-photography-website-design/",
                                 "https://www.facebook.com/sharer/sharer.php?u=https://medianovak.com/projects/modern-boudoir-photography-website-design/",
@@ -116,7 +116,7 @@ var portfolioObj = {
                             sizes: "(max-width: 1200px) 100vw, 1200px",
                             shortTextM: "I am so thankful for MediaNovak!! My experience with them was more than exceptional and the whole process was stress free for me! Everything was delivered in a timely manner and if it wasn’t, it was my fault! What they have created for my business is “hit the nail on the head” what I wanted […]",
                             shortTextS: "I am so thankful for MediaNovak!! My experience with them…",
-                            link: "./kaytee-ruth-photography-website-design/",
+                            link: "http://localhost:8888/kaytee-ruth-photography-website-design/",
                             outerLinks: [
                                 "https://medianovak.com/projects/kaytee-ruth-photography-website-design/",
                                 "https://www.facebook.com/sharer/sharer.php?u=https://medianovak.com/projects/kaytee-ruth-photography-website-design/",
@@ -132,7 +132,7 @@ var portfolioObj = {
                             sizes: "(max-width: 1200px) 100vw, 1200px",
                             shortTextM: "Check out the new logo we created for Melissa Lyn Photography! “So far, I am very impressed with Mark & his design team! I was nervous about hiring someone to create a new logo and website for my business, especially when I didn’t know exactly what I wanted. Mark was very quick to respond to […]",
                             shortTextS: "Check out the new logo we created for Melissa Lyn…",
-                            link: "./melissa-lyn-photography-logo-design/",
+                            link: "http://localhost:8888/melissa-lyn-photography-logo-design/",
                             outerLinks: [
                                 "https://medianovak.com/projects/melissa-lyn-photography-logo-design/",
                                 "https://www.facebook.com/sharer/sharer.php?u=https://medianovak.com/projects/melissa-lyn-photography-logo-design/",
@@ -152,7 +152,7 @@ var portfolioObj = {
                             longText: "MediaNovak has taken what was once a long, expensive process and turned it into an easy, even fun experience. With a little input from you about your company, our professional logo designers will provide you with a great-looking...",
                             shortTextM: "MediaNovak has taken what was once a long, expensive process and turned it into an easy, even fun experience.",
                             shortTextS: "MediaNovak has taken what was once a long, expensive process...",
-                            link: "./logo-design-portfolio/"
+                            link: "http://localhost:8888/logo-design-portfolio/"
                         }
                     ]
                 }
@@ -172,7 +172,7 @@ var testimonialsObj = {testimonials: [
                     "The process itself was smooth and so easy. I gave input " +
                     "and they took it on board and applied it to the next design. " +
                     "I would highly recommend them any day!",
-            link: "content/sources/testimonials/chantal-testimonial.jpg",
+            link: "http://localhost:8888/content/sources/testimonials/chantal-testimonial.jpg",
             alt: "chantal-testimonial"
         },
         {
@@ -182,7 +182,7 @@ var testimonialsObj = {testimonials: [
                     "my expectations and dreams and have put together a website for me that I " +
                     "am so proud of… I actually can’t believe that it’s mine! If you are looking " +
                     "for a new website or new branding then look no further… contact these guys today!",
-            link: "content/sources/testimonials/myrick-testimonial.jpg",
+            link: "http://localhost:8888/content/sources/testimonials/myrick-testimonial.jpg",
             alt: "myrick-testimonial"
         },
         {
@@ -192,7 +192,7 @@ var testimonialsObj = {testimonials: [
                     "referring your team! I love my new logo and I love that it is completely my own and " +
                     "completely encompasses my brand. I really appreciate all of the time and effort your " +
                     "team has put into this project. Thank you again and again!",
-            link: "content/sources/testimonials/bethany-petersen-testimonial.jpg",
+            link: "http://localhost:8888/content/sources/testimonials/bethany-petersen-testimonial.jpg",
             alt: "bethany-petersen-testimonial"
         },
         {
@@ -203,7 +203,7 @@ var testimonialsObj = {testimonials: [
                     "trying to achieve and I am delighted with my new logo! I found the process to " +
                     "be really enjoyable and smooth and emails were answered very quickly… a big " +
                     "thumbs up from me!",
-            link: "content/sources/testimonials/karen-mcgowran-testimonial.jpg",
+            link: "http://localhost:8888/content/sources/testimonials/karen-mcgowran-testimonial.jpg",
             alt: "karen-mcgowran-testimonial"
         },
         {
@@ -214,7 +214,7 @@ var testimonialsObj = {testimonials: [
                     "around to iron out little problems that only became noticeable to myself with the " +
                     "daily running of a website and a blog! I would highly recommend them to other " +
                     "businesses!",
-            link: "content/sources/testimonials/jo-ann-testimonial.jpg",
+            link: "http://localhost:8888/content/sources/testimonials/jo-ann-testimonial.jpg",
             alt: "jo-ann-testimonial"
         },
         {
@@ -223,7 +223,7 @@ var testimonialsObj = {testimonials: [
                     "with it. They listened to what I wanted and tailored the site to fit me and " +
                     "I really appreciate that. Their prices are reasonable and the quality is " +
                     "fantastic. I would highly recommend this company.",
-            link: "content/sources/testimonials/renee-testimonial.jpg",
+            link: "http://localhost:8888/content/sources/testimonials/renee-testimonial.jpg",
             alt: "renee-testimonial"
         }
     ]};
@@ -232,43 +232,43 @@ var blogpostsObj = {
     blogs: [
         {
             image: "photography-business-stationery-items",
-            link: "./photography-business-stationery-items/",
+            link: "http://localhost:8888/photography-business-stationery-items/",
             aText: "Photography Business Stationery Items | Print Isn’t Dead! How To Get More Business From Your Stationery",
             fullText: "Photography Business Stationery Items | Let's take a moment to thank the inventors of the Internet for one of the fiercest inventions of our time! Think about it - whether…"
         },
         {
             image: "photography-logo-rules",
-            link: "./photography-business-stationery-items/",
+            link: "http://localhost:8888/photography-business-stationery-items/",
             aText: "Photography Logo Rules | The 5 Most Important Things Photographers Need To Know About Designing A Logo",
             fullText: ""
         },
         {
             image: "creative-photography-marketing",
-            link: "./creative-photography-marketing/",
+            link: "http://localhost:8888/creative-photography-marketing/",
             aText: "Creative Photography Marketing | Sizzling Hot Marketing Tips To Boost Your Photography Business This Summer",
             fullText: ""
         },
         {
             image: "photography-website-seo-essentials",
-            link: "./photography-website-seo-essentials/",
+            link: "http://localhost:8888/photography-website-seo-essentials/",
             aText: "Photography Website SEO Essentials | How To Get Discovered (And Hired!) – The Photographer’s Guide To SEO",
             fullText: ""
         },
         {
             image: "photography-branding-questions",
-            link: "./photography-branding-questions/",
+            link: "http://localhost:8888/photography-branding-questions/",
             aText: "Photography Branding Questions | Discover The Identity Of Your Photography Business – 5 Questions To Get You Started",
             fullText: ""
         },
         {
             image: "professional-photography-questions-answered",
-            link: "./professional-photography-questions-answered/",
+            link: "http://localhost:8888/professional-photography-questions-answered/",
             aText: "Professional Photography Questions Answered | How To Create Photography Packages That Sell? – And Other Difficult Questions Pro Photographers Face",
             fullText: ""
         },
         {
             image: "business-card-expert-design-advice",
-            link: "./business-card-expert-design-advice/",
+            link: "http://localhost:8888/business-card-expert-design-advice/",
             aText: "Business Card Expert Design Advice | 5 Simple Ways To Add Punch To Your Business Card!",
             fullText: ""
         }
@@ -277,51 +277,51 @@ var blogpostsObj = {
 
 var footerObj = {
     logo: {
-        link: './contact/',
+        link: 'http://localhost:8888/contact/',
         title: 'MediaNovak Homepage',
-        imgLink: 'content/sources/connect-with-us.png',
+        imgLink: 'http://localhost:8888/content/sources/connect-with-us.png',
         imgAlt: 'MediaNovak Logo'
     },
     items: [
         {
             type: "page",
             name: "Home",
-            link: "./"
+            link: "http://localhost:8888/"
         },
         {
             type: "page",
             name: "About us",
-            link: "./about/"
+            link: "http://localhost:8888/about/"
         },
         {
             type: "custom",
             name: "Services",
-            link: "./portfolio/"
+            link: "http://localhost:8888/portfolio/"
         },
         {
             type: "page",
             name: "Website design",
-            link: "./website-design/"
+            link: "http://localhost:8888/website-design/"
         },
         {
             type: "page",
             name: "Portfolio",
-            link: "./portfolio/"
+            link: "http://localhost:8888/portfolio/"
         },
         {
             type: "page",
             name: "Get a quote",
-            link: "./get-a-quote/"
+            link: "http://localhost:8888/get-a-quote/"
         },
         {
             type: "page",
             name: "Blog",
-            link: "./blog/"
+            link: "http://localhost:8888/blog/"
         },
         {
             type: "page",
             name: "Contact",
-            link: "./contact/"
+            link: "http://localhost:8888/contact/"
         }      
     ],
     socials: [
@@ -403,27 +403,27 @@ if (!html5support) {
 
 headerMenu.then(
         function () {
-            _createTemplate("./templates/serviceoffer.html", offerBoxObj, offerBox);
+            _createTemplate("http://localhost:8888/templates/serviceoffer.html", offerBoxObj, offerBox);
         });
 
 offerBox.then(
         function () {
-            _createTemplate("./templates/portfoliosection.html", portfolioObj, portfolioBox);
+            _createTemplate("http://localhost:8888/templates/portfoliosection.html", portfolioObj, portfolioBox);
         });
 
 portfolioBox.then(
         function () {
-            _createTemplate("./templates/testimonialssection.html", testimonialsObj, testimonialsBox);
+            _createTemplate("http://localhost:8888/templates/testimonialssection.html", testimonialsObj, testimonialsBox);
         });
 
 testimonialsBox.then(
         function () {
-            _createTemplate("./templates/blogpostssection.html", blogpostsObj, blogpostsBox);
+            _createTemplate("http://localhost:8888/templates/blogpostssection.html", blogpostsObj, blogpostsBox);
         });
         
 blogpostsBox.then(
         function(){
-            _createTemplate("./templates/footer.html", footerObj, footerBox);
+            _createTemplate("http://localhost:8888/templates/footer.html", footerObj, footerBox);
         });
 
 $.when(videoReady, blogpostsBox, testimonialsBox, portfolioBox, offerBox, headerMenu, mobileMenu).always(
