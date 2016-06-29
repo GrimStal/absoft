@@ -9,49 +9,49 @@ var menuObj = {
     menus: [
         {
             name: "home",
-            link: "http://localhost:8888"
+            link: "/"
         },
         {
             name: "services",
-            link: "http://localhost:8888/website-design",
+            link: "/website-design",
             children: [
                 {
                     name: "website design",
-                    link: "http://localhost:8888/website-design"
+                    link: "/website-design"
                 },
                 {
                     name: "logo design",
-                    link: "http://localhost:8888/logo-design"
+                    link: "/logo-design"
                 },
                 {
                     name: "branding",
-                    link: "http://localhost:8888/branding"
+                    link: "/branding"
                 }
             ]
         },
         {
             name: "website design",
-            link: "http://localhost:8888/website-design"
+            link: "/website-design"
         },
         {
             name: "portfolio",
-            link: "http://localhost:8888/portfolio"
+            link: "/portfolio"
         },
         {
             name: "get a quote",
-            link: "http://localhost:8888/get-a-quote"
+            link: "/get-a-quote"
         },
         {
             name: "blog",
-            link: "http://localhost:8888/blog"
+            link: "/blog"
         },
         {
             name: "testimonials",
-            link: "http://localhost:8888/testimonials"
+            link: "/testimonials"
         },
         {
             name: "contact",
-            link: "http://localhost:8888/contact"
+            link: "/contact"
         }
     ],
     socials: [
@@ -107,11 +107,12 @@ function _createTemplate(link, templateData, def, cb) {
     });
 }
 
-_createTemplate("http://localhost:8888/templates/mobileNavmenu.html", menuObj, mobileMenu);
+_createTemplate("/templates/mobileNavmenu.html", menuObj, mobileMenu);
 mobileMenu.then(
         function () {
-            _createTemplate("http://localhost:8888/templates/headerMenu.html", menuObj, headerMenu);
+            _createTemplate("/templates/headerMenu.html", menuObj, headerMenu);
         });
+        
 $(document).scroll(function (e) {
     var top = $(document).scrollTop();
     if (top > 0) {

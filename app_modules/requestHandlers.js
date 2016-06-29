@@ -52,7 +52,7 @@ function _getTemplatedPage(response, request, template, js){
         } else {
             response.writeHead(200, {"Content-Type": "text/html", "AccessControlAllowOrigin": "*"});
             response.write(data);
-            response.write('<script type="text/javascript" src="http://javascript/' + js + '.js"></script>');
+            response.write('<script type="text/javascript" src="/javascript/' + js + '.js"></script>');
             response.write('</body></html>');
             response.end();
         }

@@ -4,7 +4,7 @@
         <% _.forEach(menus, function(menu){ %>
             <% if(menu.hasOwnProperty("children")) { %>
                 <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children">
-                    <a href=<%= menu.link %>><%=_.capitalize(menu.name)%></a>
+                    <a href="<%-menu.link %>"><%=_.capitalize(menu.name)%></a>
                     <% if(menu.hasOwnProperty("children")){ %>
                         <ul class="sub-menu">
                             <% _.forEach(menu.children, function(child) { %>
@@ -16,7 +16,7 @@
                     <% } %>
             <% } else { %>
                 <li class="menu-item menu-item-type-post_type menu-item-object-page">
-                    <a href=<%= menu.link %>><%=_.capitalize(menu.name)%></a>
+                    <a href="<%-menu.link %>"><%=_.capitalize(menu.name)%></a>
                 </li>
             <% } %>
         <% }) %>
@@ -30,7 +30,7 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
     </button>
-    <a href="http://localhost:8888" title="MediaNovak Homepage">
-        <img src='http://localhost:8888/content/sources/logo.png' height="40" width="243" alt="MediaNovak Logo">
+    <a href="/" title="MediaNovak Homepage">
+        <img src='/content/sources/logo.png' height="40" width="243" alt="MediaNovak Logo">
     </a>
 </div>

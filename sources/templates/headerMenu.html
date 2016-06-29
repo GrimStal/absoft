@@ -3,7 +3,7 @@
     <div class='header-container'>
         <div class='col-xs-12 col-sm-12 col-md-12 col-lg-2 logo-container'>
             <a href='http://localhost:8888' title='MediaNovak Homepage'>
-                <img src='http://localhost:8888/content/sources/logo.png' alt='MediaNovak Logo'>
+                <img src='/content/sources/logo.png' alt='MediaNovak Logo'>
             </a>
         </div>
         <div class='col-xs-12 col-sm-12 col-md-12 col-lg-10 navigations hidden-xs'>
@@ -11,19 +11,19 @@
                 <% _.forEach(menus, function(menu){ %>
                 <% if(menu.hasOwnProperty("children")) { %>
                 <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children">
-                    <a href=<%= menu.link %>><%=_.capitalize(menu.name)%></a>
+                    <a href=<%-menu.link %>><%=_.capitalize(menu.name)%></a>
                     <% if(menu.hasOwnProperty("children") && _.isArray(menu.children)){ %>
                     <ul class="sub-menu">
                         <% _.forEach(menu.children, function(child) { %>
                         <li class="menu-item menu-item-type-post_type menu-item-object-page">
-                            <a href=<%= child.link%>><%-_.capitalize(child.name)%></a>
+                            <a href="<%- child.link%>"><%-_.capitalize(child.name)%></a>
                         </li>
                         <% }) %>
                     </ul>
                     <% } %>
                     <% } else { %>
                 <li class='menu-item menu-item-type-post_type menu-item-object-page'> 
-                    <a href='<%menu.link%>'><%-menu.name%></a>
+                    <a href='<%-menu.link%>'><%-menu.name%></a>
                 </li>
                 <% } %>
                 <% }) %>

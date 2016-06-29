@@ -24,8 +24,8 @@
                             <div class="<%- elem.type %>">
                                 <% if (elem.type === "holder txt") { %>
                                     <div class="white-bg"></div>
-                                    <img src=<%= 'content/sources/' + elem.img[0] %> alt="" class="hide-image-small">
-                                    <img src=<%= "content/sources/" + elem.img[1] %> alt="" class="show-image-small">
+                                    <img src=<%= '/content/sources/' + elem.img[0] %> alt="" class="hide-image-small">
+                                    <img src=<%= "/content/sources/" + elem.img[1] %> alt="" class="show-image-small">
                                     <div>
                                         <h5><%- elem.title %></h5>
                                         <p class="hide-text-m"><%- elem.longText %></p>
@@ -35,7 +35,7 @@
                                     </div>
                                 <% } else { %>
                                     <div>
-                                        <img width="1200" height="650" src=<%= "content/sources/" + elem.img[0] %> class="<%- elem.imgClass %>" alt=<%- elem.title %> sizes="<%- elem.sizes %>">
+                                        <img width="1200" height="650" src=<%= "/content/sources/" + elem.img[0] %> class="<%- elem.imgClass %>" alt=<%- elem.title %> sizes="<%- elem.sizes %>">
                                         <div class="hover-sec">
                                             <a href=<%- elem.link %> class="hover-permalink"></a>
                                             <div>
