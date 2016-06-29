@@ -3,10 +3,8 @@
  * @author Borshchov Dimitriy <grimstal@bigmir.net> 
  */
 "use strict";
-
 var mobileMenu = $.Deferred();
 var headerMenu = $.Deferred();
-
 var menuObj = {
     menus: ["home",
         {
@@ -23,9 +21,30 @@ var menuObj = {
         "get a quote",
         "blog",
         "testimonials",
-        "contact"]
+        "contact"],
+    socials: [
+        {
+            name: "Facebook",
+            link: "https://www.facebook.com/MediaNovak",
+            class: "fa-facebook"
+        },
+        {
+            name: "Twitter",
+            link: "https://twitter.com/medianovak",
+            class: "fa-twitter"
+        },
+        {
+            name: "Instagram",
+            link: "https://www.instagram.com/media_novak/",
+            class: "fa-instagram"
+        },
+        {
+            name: "Behance",
+            link: "https://www.behance.net/MediaNovak",
+            class: "fa-behance"
+        }
+    ]
 };
-
 /** Returns template into DOM
  * 
  * @param {string} link
@@ -37,7 +56,6 @@ var menuObj = {
 function _createTemplate(link, templateData, def, cb) {
     var html = '';
     var template;
-
     if (!link || !templateData || !def) {
         return false;
     }
@@ -58,12 +76,10 @@ function _createTemplate(link, templateData, def, cb) {
 }
 
 _createTemplate("./templates/mobileNavmenu.html", menuObj, mobileMenu);
-
 mobileMenu.then(
         function () {
             _createTemplate("./templates/headerMenu.html", menuObj, headerMenu);
         });
-
 $(document).scroll(function (e) {
     var top = $(document).scrollTop();
     if (top > 0) {

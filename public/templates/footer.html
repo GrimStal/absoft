@@ -9,62 +9,33 @@
             </a>
 
             <ul id="menu-footer-menu" class="footer-menu hidden-xs">
-                <li id="menu-item-17345" class="menu-item menu-item-type-post_type menu-item-object-page current-menu-item page_item page-item-17298 current_page_item menu-item-17345">
-                    <a href="https://medianovak.com/">
-                        Home
+                <% _.forEach(items, function(item){ %>
+                <% if(item.type === "custom") { %>
+                <li class="menu-item menu-item-type-custom menu-item-object-custom">
+                    <a href="<%- item.link %>" >
+                        <%- item.name %>
                     </a>
                 </li>
-                <li id="menu-item-17346" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-17346"><a href="https://medianovak.com/about/">About Us</a></li>
-                <li id="menu-item-17480" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-17480"><a href="http://medianovak.com/portfolio/">Services</a></li>
-                <li id="menu-item-17351" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-17351"><a href="https://medianovak.com/website-design/">Website Design</a></li>
-                <li id="menu-item-17349" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-17349"><a href="https://medianovak.com/portfolio/">Portfolio</a></li>
-                <li id="menu-item-17350" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-17350"><a href="https://medianovak.com/quote/">Get a Quote</a></li>
-                <li id="menu-item-17347" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-17347"><a href="https://medianovak.com/blog/">Blog</a></li>
-                <li id="menu-item-17348" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-17348"><a href="https://medianovak.com/contact/">Contact</a></li>
+                <% } else { %>
+                <li class="menu-item menu-item-type-post_type menu-item-object-page">
+                    <a href="<%- item.link %>">
+                        <%- item.name %>
+                    </a>
+                </li>
+                <% } %>
+                <% }) %>
             </ul>
             <ul class="footer-socials">
+                <% _.forEach(socials, function(social){ %>
                 <li>
-                    <a href="https://www.facebook.com/MediaNovak" target="_blank" title="Follow us on Facebook">
-                        <i class="fa fa-facebook"></i>
+                    <a href="<%- social.link %>" target="_blank" title="Follow us on <%- social.name%>">
+                        <i class="fa <%- social.class %>"></i>
                     </a>
                 </li>
-                <li>
-                    <a href="https://twitter.com/medianovak" target="_blank" title="Follow us on Twitter">
-                        <i class="fa fa-twitter"></i>
-                    </a>
-                </li>
-                <li>
-                    <a href="https://plus.google.com/u/0/+MarkStokesMediaNovak/posts" target="_blank" title="Follow us on Google+">
-                        <i class="fa fa-google-plus"></i>
-                    </a>
-                </li>
-                <li>
-                    <a href="http://www.pinterest.com/medianovak" target="_blank" title="Follow us on Pinterest">
-                        <i class="fa fa-pinterest"></i>
-                    </a>
-                </li>
-                <li>
-                    <a href="http://www.linkedin.com/profile/view?id=196919203" target="_blank" title="Follow us on LinkedIn">
-                        <i class="fa fa-linkedin"></i>
-                    </a>
-                </li>
-                <li>
-                    <a href="https://www.behance.net/MediaNovak" target="_blank" title="Follow us on Behance">
-                        <i class="fa fa-behance"></i>
-                    </a>
-                </li>
-                <li>
-                    <a href="https://dribbble.com/MediaNovak" target="_blank" title="Follow us on Dribbble">
-                        <i class="fa fa-dribbble"></i>
-                    </a>
-                </li>
-                <li>
-                    <a href="https://www.youtube.com/user/MediaNovakCom" target="_blank" title="Follow us on Youtube">
-                        <i class="fa fa-youtube"></i>
-                    </a>
-                </li>
+                <% }) %>
             </ul>
-            <p><a href="http://vimeo.com/87753824" target="_blank">
+            <p>
+                <a href="http://vimeo.com/87753824" target="_blank">
                     Romantic Spring Video Created By Adam Rubin
                 </a>
             </p>

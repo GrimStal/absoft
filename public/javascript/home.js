@@ -281,7 +281,92 @@ var footerObj = {
         title: 'MediaNovak Homepage',
         imgLink: 'content/sources/connect-with-us.png',
         imgAlt: 'MediaNovak Logo'
-    }};
+    },
+    items: [
+        {
+            type: "page",
+            name: "Home",
+            link: "./"
+        },
+        {
+            type: "page",
+            name: "About us",
+            link: "./about/"
+        },
+        {
+            type: "custom",
+            name: "Services",
+            link: "./portfolio/"
+        },
+        {
+            type: "page",
+            name: "Website design",
+            link: "./website-design/"
+        },
+        {
+            type: "page",
+            name: "Portfolio",
+            link: "./portfolio/"
+        },
+        {
+            type: "page",
+            name: "Get a quote",
+            link: "./get-a-quote/"
+        },
+        {
+            type: "page",
+            name: "Blog",
+            link: "./blog/"
+        },
+        {
+            type: "page",
+            name: "Contact",
+            link: "./contact/"
+        }      
+    ],
+    socials: [
+        {
+            name: "Facebook",
+            link: "https://www.facebook.com/MediaNovak",
+            class: "fa-facebook"
+        },
+        {
+            name: "Twitter",
+            link: "https://twitter.com/medianovak",
+            class: "fa-twitter"
+        },
+        {
+            name: "Google+",
+            link: "https://plus.google.com/u/0/+MarkStokesMediaNovak/posts",
+            class: "fa-google-plus"
+        },
+        {
+            name: "Pinterest",
+            link: "http://www.pinterest.com/medianovak",
+            class: "fa-pinterest"
+        },
+        {
+            name: "LinkedIn",
+            link: "http://www.linkedin.com/profile/view?id=196919203",
+            class: "fa-linkedin"
+        },
+        {
+            name: "Behance",
+            link: "https://www.behance.net/MediaNovak",
+            class: "fa-behance"
+        },
+        {
+            name: "Dribbble",
+            link: "https://dribbble.com/MediaNovak",
+            class: "fa-dribbble"
+        },
+        {
+            name: "YouTube",
+            link: "https://www.youtube.com/user/MediaNovakCom",
+            class: "fa-youtube"
+        }
+    ]
+};
 
 function parallaxInit() {
 
@@ -302,12 +387,6 @@ function parallaxInit() {
 function fixParallax() {
     $(window).trigger("scroll").trigger("resize");
 }
-
-
-videoReady.always(
-        function () {
-            $(".loader").remove();
-        });
 
 if (!html5support) {
     videoReady.resolve();
@@ -334,12 +413,12 @@ offerBox.then(
 
 portfolioBox.then(
         function () {
-            _createTemplate("./templates/testimonialssection.html", testimonialsObj, testimonialsBox, parallaxInit);
+            _createTemplate("./templates/testimonialssection.html", testimonialsObj, testimonialsBox);
         });
 
 testimonialsBox.then(
         function () {
-            _createTemplate("./templates/blogpostssection.html", blogpostsObj, blogpostsBox, fixParallax);
+            _createTemplate("./templates/blogpostssection.html", blogpostsObj, blogpostsBox);
         });
         
 blogpostsBox.then(
@@ -347,76 +426,10 @@ blogpostsBox.then(
             _createTemplate("./templates/footer.html", footerObj, footerBox);
         });
 
-
-//headerMenu.then(
-//        function () {
-//            $.ajax({
-//                url: "./templates/serviceoffer.html",
-//                method: "GET",
-//                async: true,
-//                success: function (data) {
-//                    var html = '';
-//                    offerTemplate = _.template(data);
-//                    html += offerTemplate(offerBoxObj);
-//                    $(document.body).append(html);
-//                    offerBox.resolve();
-//                }
-//            })
-//        });
-//
-//offerBox.then(
-//        function () {
-//            $.ajax({
-//                url: "./templates/portfoliosection.html",
-//                method: "GET",
-//                async: true,
-//                success: function (data) {
-//                    var html = '';
-//                    portfolioTemplate = _.template(data);
-//                    html += portfolioTemplate(portfolioObj);
-//                    $(document.body).append(html);
-//                    portfolioBox.resolve();
-//                }
-//            });
-//        });
-//
-//portfolioBox.then(
-//        function () {
-//            $.ajax({
-//                url: "./templates/testimonialssection.html",
-//                method: "GET",
-//                async: true,
-//                success: function (data) {
-//                    var html = '';
-//                    testimonialTemplate = _.template(data);
-//                    html += testimonialTemplate(testimonialsObj);
-//                    $(document.body).append(html);
-//                    $('.parallax-window').parallax();
-//                    $("#carousel-example-generic .carousel-inner > .item:first").addClass("active");
-//                    $("#carousel-example-generic").on({
-//                        'slid.bs.carousel': function (e) {
-//                            $(".parallax-mirror").height($("#testimonials .overlay").height());
-//                        }
-//                    });
-//                    testimonialsBox.resolve();
-//                }
-//            });
-//        });
-//
-//testimonialsBox.then(
-//        function () {
-//            var html = '';
-//            var template;
-//            $.ajax({
-//                url: "./templates/blogpostssection.html",
-//                method: "GET",
-//                async: true,
-//                success: function (data) {
-//                    template = _.template(data);
-//                    html += template(blogpostsObj);
-//                    $(document.body).append(html);
-//                    blogpostsBox.resolve();
-//                }
-//            });
-//        });
+$.when(videoReady, blogpostsBox, testimonialsBox, portfolioBox, offerBox, headerMenu, mobileMenu).always(
+        function () {
+            parallaxInit();
+            fixParallax();
+            $(".loader").remove();
+        });
 

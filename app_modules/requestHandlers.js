@@ -48,7 +48,7 @@ function _getVideoFile(response, request, type) {
 function home(response, request) {
     console.log("Home action");
 
-    fs.readFile("public/index.html", function (error, data) {
+    fs.readFile("public/home.html", function (error, data) {
         if (error) {
             unknown(response, request);
         } else {
