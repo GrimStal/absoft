@@ -6,22 +6,54 @@
 var mobileMenu = $.Deferred();
 var headerMenu = $.Deferred();
 var menuObj = {
-    menus: ["home",
+    menus: [
+        {
+            name: "home",
+            link: "http://localhost:8888"
+        },
         {
             name: "services",
             link: "http://localhost:8888/website-design",
             children: [
-                "website design",
-                "logo design",
-                "branding"
+                {
+                    name: "website design",
+                    link: "http://localhost:8888/website-design"
+                },
+                {
+                    name: "logo design",
+                    link: "http://localhost:8888/logo-design"
+                },
+                {
+                    name: "branding",
+                    link: "http://localhost:8888/branding"
+                }
             ]
         },
-        "website design",
-        "portfolio",
-        "get a quote",
-        "blog",
-        "testimonials",
-        "contact"],
+        {
+            name: "website design",
+            link: "http://localhost:8888/website-design"
+        },
+        {
+            name: "portfolio",
+            link: "http://localhost:8888/portfolio"
+        },
+        {
+            name: "get a quote",
+            link: "http://localhost:8888/get-a-quote"
+        },
+        {
+            name: "blog",
+            link: "http://localhost:8888/blog"
+        },
+        {
+            name: "testimonials",
+            link: "http://localhost:8888/testimonials"
+        },
+        {
+            name: "contact",
+            link: "http://localhost:8888/contact"
+        }
+    ],
     socials: [
         {
             name: "Facebook",

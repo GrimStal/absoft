@@ -5,10 +5,6 @@
 
 "use strict";
 
-//var offerTemplate;
-//var portfolioTemplate;
-//var testimonialTemplate;
-//var blogpostsTemplate;
 var html5support = !!document.createElement('video').canPlayType;
 
 var videoReady = $.Deferred();

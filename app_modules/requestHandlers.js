@@ -8,11 +8,11 @@ var formidable = require("formidable");
 function _getResponse(response, request, type) {
     return fs.readFile("public/" + request.url, function (err, data) {
         if (err) {
-            response.writeHead(500, {"Content-Type": "text/plain"});
+            response.writeHead(500, {"Content-Type": "text/plain", "AccessControlAllowOrigin": "*"});
             response.write("Error opening file: " + request.url);
             response.end();
         } else {
-            response.writeHead(200, {"Content-Type": type});
+            response.writeHead(200, {"Content-Type": type, "AccessControlAllowOrigin": "*"});
             response.write(data);
             response.end();
         }
@@ -36,11 +36,11 @@ function _getVideoFile(response, request, type) {
         console.log('RANGE: ' + start + ' - ' + end + ' = ' + chunksize);
 
         var file = fs.createReadStream(path, {start: start, end: end});
-        response.writeHead(206, {'Content-Range': 'bytes ' + start + '-' + end + '/' + total, 'Accept-Ranges': 'bytes', 'Content-Length': chunksize, 'Content-Type': 'video/mp4'});
+        response.writeHead(206, {'Content-Range': 'bytes ' + start + '-' + end + '/' + total, 'Accept-Ranges': 'bytes', 'Content-Length': chunksize, 'Content-Type': 'video/mp4', "AccessControlAllowOrigin": "*"});
         file.pipe(response);
     } else {
         console.log('ALL: ' + total);
-        response.writeHead(200, {'Content-Length': total, 'Content-Type': type});
+        response.writeHead(200, {'Content-Length': total, 'Content-Type': type, "AccessControlAllowOrigin": "*"});
         fs.createReadStream(path).pipe(response);
     }
 }
@@ -50,9 +50,9 @@ function _getTemplatedPage(response, request, template, js){
         if (error) {
             unknown(response, request);
         } else {
-            response.writeHead(200, {"Content-Type": "text/html"});
+            response.writeHead(200, {"Content-Type": "text/html", "AccessControlAllowOrigin": "*"});
             response.write(data);
-            response.write('<script type="text/javascript" src="/javascript/' + js + '.js"></script>');
+            response.write('<script type="text/javascript" src="http://javascript/' + js + '.js"></script>');
             response.write('</body></html>');
             response.end();
         }
@@ -66,7 +66,7 @@ function home(response, request) {
         if (error) {
             unknown(response, request);
         } else {
-            response.writeHead(200, {"Content-Type": "text/html"});
+            response.writeHead(200, {"Content-Type": "text/html", "AccessControlAllowOrigin": "*"});
             response.write(data);
             response.end();
         }
@@ -122,11 +122,11 @@ function unknown(response, request) {
         console.log("Unknown handler:");
         fs.readFile("public/nf.html", function (error, data) {
             if (error) {
-                response.writeHead(500, {"Content-Type": "text/plain"});
+                response.writeHead(500, {"Content-Type": "text/plain", "AccessControlAllowOrigin": "*"});
                 response.write(error);
                 response.end();
             } else {
-                response.writeHead(404, {"Content-Type": "text/html"});
+                response.writeHead(404, {"Content-Type": "text/html", "AccessControlAllowOrigin": "*"});
                 response.write(data);
                 response.end();
             }
@@ -146,7 +146,7 @@ function upload(response, request) {
                 fs.rename(files.upload.path, "public/content/sources/logo.png");
             }
         });
-        response.writeHead(200, {"Content-Type": "text/html"});
+        response.writeHead(200, {"Content-Type": "text/html", "AccessControlAllowOrigin": "*"});
         response.write("recieved image: <br/>");
         response.write("<img src='/show' />");
         response.end();
@@ -157,11 +157,11 @@ function show(response, request) {
     console.log("Show action");
     fs.readFile("public/content/sources/logo.png", "binary", function (error, file) {
         if (error) {
-            response.writeHead(500, {"Content-Type": "text/plain"});
+            response.writeHead(500, {"Content-Type": "text/plain", "AccessControlAllowOrigin": "*"});
             response.write(error + "\n");
             response.end();
         } else {
-            response.writeHead(200, {"Content-Type": "image/png"});
+            response.writeHead(200, {"Content-Type": "image/png", "AccessControlAllowOrigin": "*"});
             response.write(file, "binary");
             response.end();
         }
