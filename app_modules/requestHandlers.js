@@ -73,6 +73,21 @@ function home(response, request) {
     });
 
 }
+function portfolio(response, request) {
+    console.log("Portfolio action");
+
+    fs.readFile("public/portfolio.html", function (error, data) {
+        if (error) {
+            unknown(response, request);
+        } else {
+            response.writeHead(200, {"Content-Type": "text/html", "AccessControlAllowOrigin": "*"});
+            response.write(data);
+            response.end();
+        }
+    });
+
+}
+
 
 function websiteDesign(response, request) {
     console.log("Website Design action");
@@ -173,5 +188,6 @@ exports.websiteDesign = websiteDesign;
 exports.logoDesign = logoDesign;
 exports.branding = branding;
 exports.upload = upload;
+exports.portfolio = portfolio;
 exports.show = show;
 exports.unknown = unknown;

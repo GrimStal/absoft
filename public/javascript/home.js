@@ -12,7 +12,8 @@ var offerBox = $.Deferred();
 var portfolioBox = $.Deferred();
 var testimonialsBox = $.Deferred();
 var blogpostsBox = $.Deferred();
-var footerBox = $.Deferred();
+var homeFooterBox = $.Deferred();
+var footer = $.Deferred();
 
 var offerBoxObj = {
     services: [
@@ -271,7 +272,7 @@ var blogpostsObj = {
     ]
 };
 
-var footerObj = {
+var homeFooterObj = {
     logo: {
         link: '/contact/',
         title: 'MediaNovak Homepage',
@@ -318,7 +319,7 @@ var footerObj = {
             type: "page",
             name: "Contact",
             link: "/contact/"
-        }      
+        }
     ],
     socials: [
         {
@@ -416,13 +417,18 @@ testimonialsBox.then(
         function () {
             _createTemplate("/templates/blogpostssection.html", blogpostsObj, blogpostsBox);
         });
-        
+
 blogpostsBox.then(
-        function(){
-            _createTemplate("/templates/footer.html", footerObj, footerBox);
+        function () {
+            _createTemplate("/templates/homefooter.html", homeFooterObj, homeFooterBox);
         });
 
-$.when(videoReady, blogpostsBox, testimonialsBox, portfolioBox, offerBox, headerMenu, mobileMenu).always(
+homeFooterBox.then(
+        function () {
+            _createTemplate("/templates/footer.html", {}, footer);
+        });
+
+$.when(videoReady, footer).always(
         function () {
             parallaxInit();
             fixParallax();

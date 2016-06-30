@@ -1,0 +1,47 @@
+<footer>
+    <div class="container">
+        <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
+
+        </div>
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+            <a href="<%- logo.link %>" title="<%- logo.title %>" class="footer-logo">
+                <img src="<%- logo.imgLink %>" alt="<%- logo.imgAlt%>" >
+            </a>
+
+            <ul id="menu-footer-menu" class="footer-menu hidden-xs">
+                <% _.forEach(items, function(item){ %>
+                <% if(item.type === "custom") { %>
+                <li class="menu-item menu-item-type-custom menu-item-object-custom">
+                    <a href="<%- item.link %>" >
+                        <%- item.name %>
+                    </a>
+                </li>
+                <% } else { %>
+                <li class="menu-item menu-item-type-post_type menu-item-object-page">
+                    <a href="<%- item.link %>">
+                        <%- item.name %>
+                    </a>
+                </li>
+                <% } %>
+                <% }) %>
+            </ul>
+            <ul class="footer-socials">
+                <% _.forEach(socials, function(social){ %>
+                <li>
+                    <a href="<%- social.link %>" target="_blank" title="Follow us on <%- social.name%>">
+                        <i class="fa <%- social.class %>"></i>
+                    </a>
+                </li>
+                <% }) %>
+            </ul>
+            <p>
+                <a href="http://vimeo.com/87753824" target="_blank">
+                    Romantic Spring Video Created By Adam Rubin
+                </a>
+            </p>
+        </div>
+        <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
+
+        </div>
+    </div>
+</footer>
