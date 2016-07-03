@@ -11,8 +11,10 @@
   "author": "Borshev",
   "contributors": [],
   "dependencies": {
+    "deferred": "^0.7.5",
     "formidable": "^1.0.17",
-    "lodash": "^4.13.1"
+    "lodash": "^4.13.1",
+    "mongodb": "^2.1.18"
   },
   "description": "0.0.1",
   "main": "main.js",
