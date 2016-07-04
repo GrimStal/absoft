@@ -6,81 +6,12 @@ var fs = require("fs");
 var formidable = require("formidable");
 var _ = require('lodash');
 var deferred = require('deferred');
-var mongoClient = require('mongodb').MongoClient;
-var host = 'localhost';
-var port = '27017';
-var login = "medianovak";
-var password = "1zaBEtcVmv";
-var dataBase = "medianovak";
-var connectStr = "mongodb://" + login + ":" + password + "@" + host + ":" + port + "/" + dataBase;
+var db = require("./db")
 
-function _getMenuData() {
-    var result = deferred();
-    mongoClient.connect(connectStr, function (err, db) {
-        if (!err) {
-            var menu = db.collection('menu');
-            menu.find(null, {fields: {_id: 0, order: 0}, sort: {order: 1}}).toArray(function (err, docs) {
-                if (!err) {
-                    result.resolve(docs);
-                } else {
-                    result.reject(err);
-                }
-                db.close();
-            });
-        } else {
-            result.reject(err);
-        }
-    });
-    return result.promise;
-}
-
-function _getHeadSocialsData() {
-    var result = deferred();
-    mongoClient.connect(connectStr, function (err, db) {
-        if (!err) {
-            var menu = db.collection('socials');
-            menu.find({$or: [{'name': "Facebook"}, {name: "Twitter"}, {name: "Instagram"}, {name: "Behance"}]},
-                    {fields: {_id: 0}, sort: ["Facebook", "Twitter", "Instagram", "Behance"]})
-                    .toArray(function (err, docs) {
-                        if (!err) {
-                            result.resolve(docs);
-                        } else {
-                            result.reject(err);
-                        }
-                        db.close();
-                    });
-        } else {
-            result.reject(err);
-        }
-    });
-    return result.promise;
-}
-
-function _getSocialsData() {
-    var result = deferred();
-    mongoClient.connect(connectStr, function (err, db) {
-        if (!err) {
-            var menu = db.collection('socials');
-            menu.find({},
-                    {fields: {_id: 0}, sort: {_id: 1}})
-                    .toArray(function (err, docs) {
-                        if (!err) {
-                            result.resolve(docs);
-                        } else {
-                            result.reject(err);
-                        }
-                        db.close();
-                    });
-        } else {
-            result.reject(err);
-        }
-    });
-    return result.promise;
-}
 
 function _getMenuTemplate() {
-    var menuObj = _getMenuData();
-    var socialsObj = _getHeadSocialsData();
+    var menuObj = db.getMenu();
+    var socialsObj = db.getHeadSocials();
     var mTemplate;
     var hTemplate;
     var mobileMenu = deferred();
@@ -263,31 +194,6 @@ function _getVideoFile(response, request, type) {
 
 function _getServicePage(response, request, aboutObj, js) {
     var html = "";
-//    var head = deferred();
-//    var mobileMenu = deferred();
-//    var headerMenu = deferred();
-//    var menu = _getMenu();
-//    var socials = _getHeadSocials();
-//
-//    deferred(menu, socials)(
-//            function (objects) {
-//
-//            },
-//            function (error) {
-//                console.log(error);
-//                unknown(response, request);
-//            });
-//
-//    deferred(menu, head, mobileMenu, headerMenu)(
-//            function (results) {
-//                _.forEach(results, function (result) {
-//                    html += result;
-//                });
-//            },
-//            function (errors) {
-//                console.log(errors);
-//                unknown(response, request);
-//            });
 
     fs.readFile("public/templates/head.html", function (error, data) {
         if (error) {
@@ -343,33 +249,7 @@ function _getServicePage(response, request, aboutObj, js) {
 
 function home(response, request) {
     console.log("Home action");
-    
-    var offerBoxObj = {
-        services: [
-            {
-                name: "website design",
-                link: "/website-design-portfolio",
-                description: "Plenty of folks think that web design " +
-                        "is all about slapping some words and pictures" +
-                        "together and posting them online. No doubt that..."
-            },
-            {
-                name: "logo design",
-                link: "/logo-design-portfolio",
-                description: "MediaNovak has taken what was once a " +
-                        "long, expensive process and turned it into an " +
-                        "easy, even fun experience. With a little input..."
-            },
-            {
-                name: "branding",
-                link: "/branding",
-                description: "A brand isn’t just a pretty logo, engaging " +
-                        "website or strategic marketing plan. It is a " +
-                        "deliberate, cohesive message. A story. An idea and..."
-            }
-        ]
-    };
-    
+
     var portfolioObj = {
         rows: [
             {
@@ -396,9 +276,7 @@ function home(response, request) {
                                 type: "holder portfolio",
                                 classes: "col-xs-6 col-sm-6 col-md-6 col-lg-6 elem half-elem border-right-large border-bottom-medium border-bottom-small border-right-medium",
                                 img: ["danielle-heinson-photography-logo-design-concept-1-1200x650.jpg"],
-                                imgClass: "attachment-portfolio-large size-portfolio-large wp-post-image",
                                 title: "Danielle Heinson Photography Logo Design",
-                                sizes: "(max-width: 1200px) 100vw, 1200px",
                                 shortTextM: "Check out the new logo we designed for Danielle Heinson Photography! “Media Novak has been incredible! I knew I wanted to hire them when I…",
                                 shortTextS: "Check out the new logo we designed for Danielle Heinson…",
                                 link: "/danielle-heinson-photography-logo-design/",
@@ -412,9 +290,7 @@ function home(response, request) {
                                 type: "holder portfolio",
                                 classes: "col-xs-6 col-sm-6 col-md-6 col-lg-6 elem half-elem border-bottom-medium border-bottom-small",
                                 img: ["modern-boudoir-photography-website-design-media-novak-4-1200x650.jpg"],
-                                imgClass: "attachment-portfolio-large size-portfolio-large wp-post-image",
                                 title: "Modern Boudoir Photography Gets a Brand New Website",
-                                sizes: "(max-width: 1200px) 100vw, 1200px",
                                 shortTextM: " ",
                                 shortTextS: " ",
                                 link: "/modern-boudoir-photography-website-design/",
@@ -437,9 +313,7 @@ function home(response, request) {
                                 type: "holder portfolio",
                                 classes: "col-xs-6 col-sm-6 col-md-6 col-lg-6 elem third-elem border-top-large border-right-large border-right-medium border-bottom-small",
                                 img: ["kaytee-ruth-photography-website-design-11-1200x650.jpg"],
-                                imgClass: "attachment-portfolio-large size-portfolio-large wp-post-image",
                                 title: "Kaytee Ruth Photography Website Design",
-                                sizes: "(max-width: 1200px) 100vw, 1200px",
                                 shortTextM: "I am so thankful for MediaNovak!! My experience with them was more than exceptional and the whole process was stress free for me! Everything was delivered in a timely manner and if it wasn’t, it was my fault! What they have created for my business is “hit the nail on the head” what I wanted […]",
                                 shortTextS: "I am so thankful for MediaNovak!! My experience with them…",
                                 link: "/kaytee-ruth-photography-website-design/",
@@ -453,9 +327,7 @@ function home(response, request) {
                                 type: "holder portfolio",
                                 classes: "col-xs-6 col-sm-6 col-md-6 col-lg-6 elem third-elem border-top-large border-right-large border-right-medium border-bottom-small",
                                 img: ["melissa-lyn-photography-logo-design-media-novak-1-1200x650.jpg"],
-                                imgClass: "attachment-portfolio-large size-portfolio-large wp-post-image",
                                 title: "Melissa Lyn Photography Logo Design by Media Novak",
-                                sizes: "(max-width: 1200px) 100vw, 1200px",
                                 shortTextM: "Check out the new logo we created for Melissa Lyn Photography! “So far, I am very impressed with Mark & his design team! I was nervous about hiring someone to create a new logo and website for my business, especially when I didn’t know exactly what I wanted. Mark was very quick to respond to […]",
                                 shortTextS: "Check out the new logo we created for Melissa Lyn…",
                                 link: "/melissa-lyn-photography-logo-design/",
@@ -486,133 +358,22 @@ function home(response, request) {
             }
         ]
     };
-    
-    var testimonialsObj = {
-        testimonials: [
-            {
-                name: "Chantal Lachance-Gibson Photography",
-                testimonial: "I had been following Media Novak’s " +
-                        "work for a while now and was always impressed " +
-                        "with their logo work. The logo designs they came " +
-                        "up with based on my wishes for what I wanted it to " +
-                        "look like were above and beyond what I had imagined. " +
-                        "The process itself was smooth and so easy. I gave input " +
-                        "and they took it on board and applied it to the next design. " +
-                        "I would highly recommend them any day!",
-                link: "/content/sources/testimonials/chantal-testimonial.jpg",
-                alt: "chantal-testimonial"
-            },
-            {
-                name: "Myrick Cowart – Photographer",
-                testimonial: "I cannot begin to say enough about Mark & the team at Media Novak. " +
-                        "Their customer service has been TOP NOTCH! They have gone way beyond " +
-                        "my expectations and dreams and have put together a website for me that I " +
-                        "am so proud of… I actually can’t believe that it’s mine! If you are looking " +
-                        "for a new website or new branding then look no further… contact these guys today!",
-                link: "/content/sources/testimonials/myrick-testimonial.jpg",
-                alt: "myrick-testimonial"
-            },
-            {
-                name: "Bethany Petersen – Photographer",
-                testimonial: "Thank you thank you thank you! I really appreciate all of your help " +
-                        "and your quick replies and editing, and well, everything. I will DEFINITELY be " +
-                        "referring your team! I love my new logo and I love that it is completely my own and " +
-                        "completely encompasses my brand. I really appreciate all of the time and effort your " +
-                        "team has put into this project. Thank you again and again!",
-                link: "/content/sources/testimonials/bethany-petersen-testimonial.jpg",
-                alt: "bethany-petersen-testimonial"
-            },
-            {
-                name: "Karen McGowran – Photographer",
-                testimonial: "I decided to hire Media Novak after seeing a friends logo that I really " +
-                        "liked. I sent them my ideas but I actually preferred one of their original " +
-                        "concepts over my own ideas! They really understood the look and feel I was " +
-                        "trying to achieve and I am delighted with my new logo! I found the process to " +
-                        "be really enjoyable and smooth and emails were answered very quickly… a big " +
-                        "thumbs up from me!",
-                link: "/content/sources/testimonials/karen-mcgowran-testimonial.jpg",
-                alt: "karen-mcgowran-testimonial"
-            },
-            {
-                name: "Jo-Ann Stokes – Photographer",
-                testimonial: "Media Novak were helpful and listened to me as the client… never once " +
-                        "tried to push their likes onto me… but they do offer good advice. I think " +
-                        "what has mattered most to me was once we went live, they were very much still " +
-                        "around to iron out little problems that only became noticeable to myself with the " +
-                        "daily running of a website and a blog! I would highly recommend them to other " +
-                        "businesses!",
-                link: "/content/sources/testimonials/jo-ann-testimonial.jpg",
-                alt: "jo-ann-testimonial"
-            },
-            {
-                name: "Renee Zona – Photographer",
-                testimonial: "Media Novak designed a beautiful website for me and I’m very satisfied " +
-                        "with it. They listened to what I wanted and tailored the site to fit me and " +
-                        "I really appreciate that. Their prices are reasonable and the quality is " +
-                        "fantastic. I would highly recommend this company.",
-                link: "/content/sources/testimonials/renee-testimonial.jpg",
-                alt: "renee-testimonial"
-            }
-        ]};
-
-    var blogpostsObj = {
-        blogs: [
-            {
-                image: "photography-business-stationery-items",
-                link: "/photography-business-stationery-items/",
-                aText: "Photography Business Stationery Items | Print Isn’t Dead! How To Get More Business From Your Stationery",
-                fullText: "Photography Business Stationery Items | Let's take a moment to thank the inventors of the Internet for one of the fiercest inventions of our time! Think about it - whether…"
-            },
-            {
-                image: "photography-logo-rules",
-                link: "/photography-business-stationery-items/",
-                aText: "Photography Logo Rules | The 5 Most Important Things Photographers Need To Know About Designing A Logo",
-                fullText: ""
-            },
-            {
-                image: "creative-photography-marketing",
-                link: "/creative-photography-marketing/",
-                aText: "Creative Photography Marketing | Sizzling Hot Marketing Tips To Boost Your Photography Business This Summer",
-                fullText: ""
-            },
-            {
-                image: "photography-website-seo-essentials",
-                link: "/photography-website-seo-essentials/",
-                aText: "Photography Website SEO Essentials | How To Get Discovered (And Hired!) – The Photographer’s Guide To SEO",
-                fullText: ""
-            },
-            {
-                image: "photography-branding-questions",
-                link: "/photography-branding-questions/",
-                aText: "Photography Branding Questions | Discover The Identity Of Your Photography Business – 5 Questions To Get You Started",
-                fullText: ""
-            },
-            {
-                image: "professional-photography-questions-answered",
-                link: "/professional-photography-questions-answered/",
-                aText: "Professional Photography Questions Answered | How To Create Photography Packages That Sell? – And Other Difficult Questions Pro Photographers Face",
-                fullText: ""
-            },
-            {
-                image: "business-card-expert-design-advice",
-                link: "/business-card-expert-design-advice/",
-                aText: "Business Card Expert Design Advice | 5 Simple Ways To Add Punch To Your Business Card!",
-                fullText: ""
-            }
-        ]
-    };
 
     var head = _getHeadTemplate();
     var menus = _getMenuTemplate();
     var footer = _getFooterTemplate();
     var homevideo = deferred();
     var serviceoffer = deferred();
+    var serviceofferData = db.getServiceOffers();
     var portfoliosection = deferred();
+    var portfolioData = db.getHomePortfolio();
     var testimonialssection = deferred();
+    var testimonialsData = db.getLatestTestimonials();
     var blogpostssection = deferred();
+    var latestBlogposts = db.getLatestBlogposts();
     var homefooter = deferred();
-    var homefooterSocials = _getSocialsData();
-    var homefooterLinks = deferred();
+    var homefooterSocials = db.getSocials();
+    var homefooterLinks = db.getHomeFooter();
 
     fs.readFile("public/templates/homevideo.html", function (error, data) {
         if (error) {
@@ -622,62 +383,208 @@ function home(response, request) {
         }
     });
 
-    fs.readFile("public/templates/serviceoffer.html", function (error, data) {
-        if (error) {
-            serviceoffer.reject(error);
-        } else {
-            var template = _.template(data);
-            serviceoffer.resolve(template(offerBoxObj));
-        }
-    });
-
-    fs.readFile("public/templates/portfoliosection.html", function (error, data) {
-        if (error) {
-            portfoliosection.reject(error);
-        } else {
-            var template = _.template(data);
-            portfoliosection.resolve(template(portfolioObj));
-        }
-    });
-
-    fs.readFile("public/templates/testimonialssection.html", function (error, data) {
-        if (error) {
-            testimonialssection.reject(error);
-        } else {
-            var template = _.template(data);
-            testimonialssection.resolve(template(testimonialsObj));
-        }
-    });
-
-    fs.readFile("public/templates/blogpostssection.html", function (error, data) {
-        if (error) {
-            blogpostssection.reject(error);
-        } else {
-            var template = _.template(data);
-            blogpostssection.resolve(template(blogpostsObj));
-        }
-    });
+    serviceofferData(
+            function (dataObj) {
+                fs.readFile("public/templates/serviceoffer.html", function (error, data) {
+                    if (error) {
+                        serviceoffer.reject(error);
+                    } else {
+                        var template = _.template(data);
+                        serviceoffer.resolve(template({services: dataObj}));
+                    }
+                });
+            },
+            function (error) {
+                serviceoffer.reject(error);
+            });
 
 
-    mongoClient.connect(connectStr, function (err, db) {
-        if (!err) {
-            var menu = db.collection('homefooterlinks');
-            menu.find({},
-                    {fields: {_id: 0}, sort: {_id: 1}})
-                    .toArray(function (err, docs) {
-                        if (!err) {
-                            homefooterLinks.resolve(docs);
-                        } else {
-                            homefooterLinks.reject(err);
+    portfolioData(
+            function (dataObj) {
+
+                function syncObj(rowNum, elemNum, elsNum, sourceObj, targetObj) {
+                    targetObj.rows[rowNum].elements[elemNum].els[elsNum].type += ' ' + sourceObj.type;
+                    targetObj.rows[rowNum].elements[elemNum].els[elsNum].img = sourceObj.img;
+                    targetObj.rows[rowNum].elements[elemNum].els[elsNum].title = sourceObj.title;
+                    targetObj.rows[rowNum].elements[elemNum].els[elsNum].longText = sourceObj.longText;
+                    targetObj.rows[rowNum].elements[elemNum].els[elsNum].shortTextM = sourceObj.shortTextM;
+                    targetObj.rows[rowNum].elements[elemNum].els[elsNum].shortTextS = sourceObj.shortTextS;
+                    targetObj.rows[rowNum].elements[elemNum].els[elsNum].link = sourceObj.link;
+
+                    if (targetObj.rows[rowNum].elements[elemNum].els[elsNum].longText && sourceObj.longText) {
+                        targetObj.rows[rowNum].elements[elemNum].els[elsNum].longText += sourceObj.longText;
+                    }
+
+                    if (targetObj.rows[rowNum].elements[elemNum].els[elsNum].outerLinks && sourceObj.outerLinks) {
+                        targetObj.rows[rowNum].elements[elemNum].els[elsNum].outerLinks = sourceObj.outerLinks;
+                    }
+                    ;
+                }
+
+                var txts = [];
+                var portfolios = [];
+                var portObj = {
+                    rows: [
+                        {
+                            elements: [
+                                {
+                                    proportions: "col-xs-12 col-sm-12 col-md-4 col-lg-3",
+                                    els: [
+                                        {
+                                            type: "holder",
+                                            classes: "col-xs-12 col-sm-12 col-md-12 col-lg-12 elem text-holder-elem border-right-large border-bottom-medium border-bottom-small",
+                                            img: [],
+                                            title: "",
+                                            longText: "",
+                                            shortTextM: "",
+                                            shortTextS: "",
+                                            link: ""
+                                        }
+                                    ]
+                                },
+                                {
+                                    proportions: "col-xs-12 col-sm-12 col-md-8 col-lg-9",
+                                    els: [
+                                        {
+                                            type: "holder",
+                                            classes: "col-xs-6 col-sm-6 col-md-6 col-lg-6 elem half-elem border-right-large border-bottom-medium border-bottom-small border-right-medium",
+                                            img: [],
+                                            title: "",
+                                            shortTextM: "",
+                                            shortTextS: "",
+                                            link: "",
+                                            outerLinks: []
+                                        },
+                                        {
+                                            type: "holder",
+                                            classes: "col-xs-6 col-sm-6 col-md-6 col-lg-6 elem half-elem border-bottom-medium border-bottom-small",
+                                            img: [],
+                                            title: "",
+                                            shortTextM: "",
+                                            shortTextS: "",
+                                            link: "",
+                                            outerLinks: []
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            elements: [
+                                {
+                                    proportions: "col-xs-12 col-sm-12 col-md-8 col-lg-9",
+                                    els: [
+                                        {
+                                            type: "holder",
+                                            classes: "col-xs-6 col-sm-6 col-md-6 col-lg-6 elem third-elem border-top-large border-right-large border-right-medium border-bottom-small",
+                                            img: [],
+                                            title: "",
+                                            shortTextM: "",
+                                            shortTextS: "",
+                                            link: "",
+                                            outerLinks: []
+                                        },
+                                        {
+                                            type: "holder",
+                                            classes: "col-xs-6 col-sm-6 col-md-6 col-lg-6 elem third-elem border-top-large border-right-large border-right-medium border-bottom-small",
+                                            img: [],
+                                            title: "",
+                                            shortTextM: "",
+                                            shortTextS: "",
+                                            link: "",
+                                            outerLinks: []
+                                        }
+                                    ]
+                                },
+                                {
+                                    proportions: "col-xs-12 col-sm-12 col-md-4 col-lg-3",
+                                    els: [
+                                        {
+                                            type: "holder",
+                                            classes: "col-xs-12 col-sm-12 col-md-12 col-lg-12 elem text-holder-elem border-top-large border-top-medium",
+                                            img: [],
+                                            title: "",
+                                            longText: "",
+                                            shortTextM: "",
+                                            shortTextS: "",
+                                            link: ""
+                                        }
+                                    ]
+                                }
+                            ]
                         }
-                        db.close();
-                    });
-        } else {
-            homefooterLinks.reject(err);
-        }
-    });
+                    ]};
 
-    deferred(homefooterSocials, homefooterLinks.promise)(
+                _.forEach(dataObj, function (item) {
+                    switch (item.type) {
+                        case 'txt':
+                            txts.push(item);
+                            break;
+                        case 'portfolio':
+                            portfolios.push(item);
+                            break;
+                        default:
+                            break;
+                    }
+                });
+
+                if (txts.length !== 2 || portfolios.length !== 4) {
+                    return portfoliosection.reject("Wrong number or portfolios");
+                }
+
+                syncObj(0, 0, 0, txts[0], portObj);
+                syncObj(1, 1, 0, txts[1], portObj);
+                syncObj(0, 1, 0, portfolios[0], portObj);
+                syncObj(0, 1, 1, portfolios[1], portObj);
+                syncObj(1, 0, 0, portfolios[2], portObj);
+                syncObj(1, 0, 1, portfolios[3], portObj);
+
+                fs.readFile("public/templates/portfoliosection.html", function (error, data) {
+                    if (error) {
+                        portfoliosection.reject(error);
+                    } else {
+                        var template = _.template(data);
+                        portfoliosection.resolve(template(portObj));
+                    }
+                });
+            },
+            function (error) {
+                portfoliosection.reject(error);
+            });
+
+    testimonialsData(
+            function (dataObj) {
+                fs.readFile("public/templates/testimonialssection.html", function (error, data) {
+                    if (error) {
+                        testimonialssection.reject(error);
+                    } else {
+                        var template = _.template(data);
+                        testimonialssection.resolve(template({testimonials: dataObj}));
+                    }
+                });
+            },
+            function (error) {
+                testimonialssection.reject(error);
+            });
+
+
+    latestBlogposts(
+            function (dataObj) {
+                fs.readFile("public/templates/blogpostssection.html", function (error, data) {
+                    if (error) {
+                        blogpostssection.reject(error);
+                    } else {
+                        var template = _.template(data);
+                        blogpostssection.resolve(template({blogs: dataObj}));
+                    }
+                });
+            },
+            function (error) {
+                blogpostssection.reject(error);
+            });
+
+
+    deferred(homefooterSocials, homefooterLinks)(
             function (dataObj) {
                 fs.readFile("public/templates/homefooter.html", function (error, data) {
                     if (error) {
@@ -734,12 +641,13 @@ function portfolio(response, request) {
 function websiteDesign(response, request) {
     console.log("Website Design action");
     var aboutObj = {
+        name: "website design",
         titleTop: "WEBSITE DESIGN",
         titleBottom: "& DEVELOPMENT",
         items:
                 [
                     {
-                        img: "online-marketing-explained-1",
+                        img: "online-marketing-explained-1"
                     },
                     {
                         img: "critical-logo-design-tips-1"
@@ -779,6 +687,7 @@ function websiteDesign(response, request) {
 function logoDesign(response, request) {
     console.log("Logo Design action");
     var aboutObj = {
+        name: "logo design",
         titleTop: "LOGO DESIGN",
         titleBottom: "& COLLATERAL",
         items:
@@ -823,6 +732,7 @@ function logoDesign(response, request) {
 function branding(response, request) {
     console.log("Branding action");
     var aboutObj = {
+        name: "branding",
         titleTop: "BRANDING",
         titleBottom: "& STATIONARY",
         items:

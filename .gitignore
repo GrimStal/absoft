@@ -1,2 +1,3 @@
 /node_modules/
 /.git-rewrite/t/node_modules/
+/public/
