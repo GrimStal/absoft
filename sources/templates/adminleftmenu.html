@@ -1,0 +1,37 @@
+<!--admin left menu-->
+<div class="row">
+<div class="left-menu col-md-3 col-lg-2 visible-md-inline-block visible-lg-inline-block">
+    <div>
+        <ul>
+            <% _.forEach(menus, function(menu){ %>
+            <% if (menu.children) { %>
+            <li> 
+                <div class='has-children' data-toggle="collapse" data-target="#<%-(menu.name.replace(/\s/g,'-'))%>">
+                    <p>
+                        <%-menu.name.toUpperCase()%>
+                    </p>
+                    <span class='glyphicon glyphicon-menu-down badge'> </span>
+                </div>
+
+                <ul id="<%-menu.name.replace(/\s/g,'-')%>"  class="collapse">
+                    <% _.forEach(menu.children, function(child){ %>
+                    <li>
+                        <a href="<%-child.link%>" title="<%-child.name%>">
+                            <%-child.name.toUpperCase()%>
+                        </a> 
+                    </li>
+                    <% }) %>
+                </ul>
+
+            </li>
+            <% } else { %>
+            <li> 
+                <a href="<%-menu.link%>" title="<%-menu.name%>">
+                    <%-menu.name.toUpperCase()%>
+                </a> 
+            </li>
+            <% } %>
+            <% }) %>
+        </ul>
+    </div>
+</div>

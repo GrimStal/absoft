@@ -31,7 +31,7 @@ gulp.task('styles', function () {
 });
 
 gulp.task('content', function () {
-    return gulp.src(["sources/**/*.*", "!sources/scss/**/*.*"], {since: gulp.lastRun('content')})
+    return gulp.src(["sources/**/*.*", "!sources/scss/**/*.*", "!sources/templates/**/*.*"], {since: gulp.lastRun('content')})
             .pipe(plumber({
                 errorHandler: notify.onError(function (err) {
                     return {

@@ -11,12 +11,46 @@ var password = "1zaBEtcVmv";
 var dataBase = "medianovak";
 var connectStr = "mongodb://" + login + ":" + password + "@" + host + ":" + port + "/" + dataBase;
 
+/** Param 'options' is object of options, like 'sort', fields, 'etc'
+ * 
+ * @param {string} collection
+ * @param {object} select
+ * @param {object} options
+ * @returns {unresolved}
+ */
 function _findTemplate(collection, select, options) {
     var result = deferred();
     mongoClient.connect(connectStr, function (err, db) {
         if (!err) {
-            var menu = db.collection(collection);
-            menu.find(select, options).toArray(function (err, docs) {
+            var table = db.collection(collection);
+            table.find(select, options).toArray(function (err, docs) {
+                if (!err) {
+                    result.resolve(docs);
+                } else {
+                    result.reject(err);
+                }
+                db.close();
+            });
+        } else {
+            result.reject(err);
+        }
+    });
+    return result.promise;
+}
+
+/** Param 'fields' contains only fields name to return or not 
+ * 
+ * @param {string} collection
+ * @param {object} select
+ * @param {object} fields
+ * @returns {unresolved}
+ */
+function _findOneTemplate(collection, select, fields) {
+    var result = deferred();
+    mongoClient.connect(connectStr, function (err, db) {
+        if (!err) {
+            var table = db.collection(collection);
+            table.findOne(select, fields, function (err, docs) {
                 if (!err) {
                     result.resolve(docs);
                 } else {
@@ -71,11 +105,29 @@ function getHomePortfolio() {
 }
 
 function getLatestTestimonials() {
-    return _findTemplate('testimonials', {accepted: true}, {fields: {_id:0, accepted: 0}, sort: {_id: -1}, limit: 6});
+    return _findTemplate('testimonials', {accepted: true}, {fields: {_id:0, accepted: 0, changed:0, added:0}, sort: {added: -1, _id: -1}, limit: 6});
 }
 
 function getLatestBlogposts() {
-    return _findTemplate('blogposts', {}, {fields: {_id:0}, sort: {_id: -1}, limit: 7});
+    return _findTemplate('blogposts', {}, {fields: {_id:0, added:0, changed:0}, sort: {added: -1, _id: -1}, limit: 7});
+}
+
+/** Name
+ * 
+ * @param {string} name
+ * @returns {unresolved}
+ */
+function getAbout(name) {
+    if (!name){
+        var result = deferred();
+        result.reject('Name of element is not set');
+        return result.promise;
+    }
+    return _findOneTemplate('about', {name: name}, {name:0, _id:0});
+}
+
+function getAdminMenu() {
+    return _findTemplate('adminmenu', {}, {fields: {_id: 0, order: 0}, sort: {order: 1}});
 }
 
 exports.getMenu = getMenu;
@@ -86,3 +138,5 @@ exports.getServiceOffers = getServiceOffers;
 exports.getHomePortfolio = getHomePortfolio;
 exports.getLatestTestimonials = getLatestTestimonials;
 exports.getLatestBlogposts = getLatestBlogposts;
+exports.getAbout = getAbout;
+exports.getAdminMenu = getAdminMenu;

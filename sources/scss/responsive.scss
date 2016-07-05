@@ -31,9 +31,12 @@
 }
 
 @media (min-width: 768px){
-    .container.medium {
-        width: 750px;
+    .container{
+        &.medium {
+            width: 750px;
+        }
     }
+    
 }
 
 @media only screen and (min-width: 992px){
@@ -393,6 +396,10 @@
     .show-image-small {
         display: block;
     }
+    
+    .left-menu{
+        margin-top: 130px;
+    }
 }
 
 @media only screen and (max-width: 1200px){
@@ -711,6 +718,14 @@
     .top-fix {
         min-height: 120px;
     }
+    
+    .top-fix {
+        min-height: 120px;
+    }
+    
+    .left-menu{
+        margin-top: 80px;
+    }
 }
 
 @media only screen and (max-width: 700px){
@@ -844,6 +859,87 @@
     .video-wrapper{
         .big-border {
             display: none;
+        }
+    }
+    
+    #about {
+        top: -55px;
+    }
+    
+    .row {
+        .top-about-section {
+            .col-xs-12 {
+                margin-bottom: 10px;
+            }
+        }
+    }
+    
+    #quote {
+        .quote-wrapper{
+            > div{
+                h1 {
+                    font-size: 18px;
+                }
+            }
+        }
+    }
+    
+    .middle-holder{
+        > div{
+            h1 {
+                font-size: 18px;
+            }
+        }
+    }
+    
+    .bottom-about-section{      
+        .about-content{
+            > div {
+                padding: 20px;
+                
+                h3 {
+                    font-size: 16px;
+                }
+            }
+        }
+    }
+    
+    #filter-menu{
+        .filter-section {
+            width: auto;
+            float: none;
+        }
+        
+        form{
+            .input-group {
+                display: none;
+            }
+        }
+    }
+    
+    .filter-section{
+        > button {
+            padding: 10px;
+            display: block;
+            width: 100%;
+            text-transform: uppercase;
+            font-family: latin_modern_roman10_italic;
+            font-size: 24px;
+            text-align: center;
+            background-color: transparent;
+            border: 1px solid #d9d9d9;
+            letter-spacing: 1px;
+            outline: 0;
+        }
+    }
+    
+    #filters {
+        display: none;
+        
+        button {
+            width: 100%;
+            padding: 10px;
+            border: none;
         }
     }
     
