@@ -1,4 +1,9 @@
-$images: "http://localhost:8888/content/sources";
+@mixin truncate(){
+    max-width: 250px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
 
 header{    
     position: fixed;
@@ -1484,6 +1489,7 @@ footer {
 
 .left-menu{
     margin-top: 80px;
+    padding-right: 0;
     height: 100%;
     background-color: #CCB0B0;
     
@@ -1563,20 +1569,29 @@ footer {
 .page-container{
     margin-top: 80px;
     
-    .tables-test{
-        height: 200px;
-        background-color: green;
+    .table{
+        font-size: 14px;
+        
+        #testimonial{
+            @include truncate();
+        }
     }
-}
-
-.page-container{
-    h4{
-        font-size: 35px;
+    
+    .page-intro{
+        > h4{
+            font-size: 35px;
+            text-transform: capitalize;
+        }
+        
+        > p{
+            text-transform: capitalize;
+        }
     }
     
     .progress-table{
         margin-top: 20px;
     }
+    
     .status-count{
         padding: 3px;
     }

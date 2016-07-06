@@ -194,6 +194,25 @@ function getWaitingBlogpostsCount(){
     return _countTemplate('blogposts', {postDate: {$gt: new Date()}});
 }
 
+function getTable(name, limit, skip){
+    var options = {};
+    
+    if (limit) options.limit = limit;
+    if (skip) options.skip = skip;
+    
+    switch(name){
+        case "testimonials":
+            options["sort"] = {accepted: 1, added: -1};
+            break;
+        default:
+            var result = deferred();
+            result.reject("Base not available");
+            return result.promise(); 
+    }
+    
+    return _findTemplate(name, {}, options);
+}
+
 exports.getMenu = getMenu;
 exports.getHeadSocials = getHeadSocials;
 exports.getSocials = getSocials;
@@ -215,3 +234,4 @@ exports.getUncheckedTestimonialsCount = getUncheckedTestimonialsCount;
 exports.getBlogpostsCount = getBlogpostsCount;
 exports.getPostedBlogpostsCount = getPostedBlogpostsCount;
 exports.getWaitingBlogpostsCount = getWaitingBlogpostsCount;
+exports.getTable = getTable;

@@ -3,6 +3,7 @@
  * @author Borshchov Dimitriy <grimstal@bigmir.net> 
  */
 var fs = require("fs");
+var url = require('url');
 var formidable = require("formidable");
 var _ = require('lodash');
 var deferred = require('deferred');
@@ -256,6 +257,54 @@ function _checkAdminEvents() {
     );
 
     return result.promise;
+}
+
+function _getAdminTableTemplate(response, request, table, limit, skip, count) {
+    var head = _getHeadTemplate();
+    var menus = _getAdminMenuTemplate();
+    var footer = _getFooterTemplate();
+    var body = deferred();
+    var data = db.getTable(table, limit, skip);
+    var pageCount = Math.ceil(count / limit);
+    var currentPage = (skip / limit) + 1;
+    
+    data(
+            function (dataObj) {
+                fs.readFile("sources/templates/admintables.html", function (error, data) {
+                    if (error) {
+                        body.reject(error);
+                    } else {
+                        var template = _.template(data);
+                        body.resolve(template({
+                            table: dataObj,
+                            tableName: table,
+                            tableDescription: table + " table",
+                            pageCount: pageCount,
+                            currentPage: currentPage,
+                            skip: skip,
+                            limit: limit
+                        }));
+                    }
+                });
+            },
+            function (error) {
+                body.reject(error);
+            });
+
+    deferred(head, menus, body.promise, footer)(
+            function (data) {
+                response.writeHead(200, {"Content-Type": "text/html", "AccessControlAllowOrigin": "*"});
+                _.forEach(data, function (content) {
+                    response.write(content);
+                });
+                response.write('<script type="text/javascript" src="/javascript/adminmenu.js"></script>');
+                response.write('</body></html>');
+                response.end();
+            },
+            function (error) {
+                console.log(error);
+                unknown(response, request);
+            });
 }
 
 function home(response, request) {
@@ -537,7 +586,8 @@ function portfolio(response, request) {
             });
 }
 
-function unknown(response, request) {
+function unknown(response, request, pathname) {
+    pathname = pathname || url.parse(request.url).pathname;
     if (request.url.indexOf(".css") !== -1) {
         _getResponse(response, request, "text/css");
     } else if (request.url.indexOf(".js") !== -1) {
@@ -564,7 +614,8 @@ function unknown(response, request) {
     } else if (request.url.indexOf(".mp4") !== -1) {
         _getVideoFile(response, request, "video/mp4");
     } else {
-        console.log("Unknown handler:");
+        pathname = 
+        console.log("Unknown handler: " + pathname);
 
         var head = _getHeadTemplate();
         var body = deferred();
@@ -632,6 +683,35 @@ function adminpage(response, request) {
             });
 }
 
+function adminTestimonials(response, request, query) {
+    var limit = 10;
+    var skip;
+    var pageCount = db.getTestimonialsCount();
+    var acceptable = deferred();
+
+    if (query.lim) {
+        limit = Number(query.lim);
+    }
+
+    if (query.skip) {
+        skip = Number(query.skip);
+    }
+    
+    if (limit && skip && (skip % limit !== 0)){
+        console.log("Not correct limit/skip options");
+        unknown(response, request);
+    }
+
+    pageCount(
+            function (count) {
+                _getAdminTableTemplate(response, request, 'testimonials', limit, skip, count);
+            },
+            function (error) {
+                console.log(error);
+                unknown(response, request);
+            });
+}
+
 function checkUpdates(response, request) {
     var result = _checkAdminEvents();
 
@@ -692,3 +772,4 @@ exports.show = show;
 exports.unknown = unknown;
 exports.adminpage = adminpage;
 exports.checkUpdates = checkUpdates;
+exports.adminTestimonials = adminTestimonials;

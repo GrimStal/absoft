@@ -4,13 +4,13 @@
  */
 var http = require('http');
 var url = require('url');
+var querystring = require('querystring');
 
 function start(route, handle) {
     function onRequest(request, response) {
         var pathname = url.parse(request.url).pathname;
-
-        console.log(new Date().toTimeString() + " | Request for " + pathname + " recieved");
-        route(handle, pathname, response, request);
+        var query = querystring.parse(url.parse(request.url).query);
+        route(handle, pathname, query, response, request);
 
     }
 

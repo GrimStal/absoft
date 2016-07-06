@@ -2,13 +2,13 @@
  * AB-Soft test project
  * @author Borshchov Dimitriy <grimstal@bigmir.net> 
  */
-function route(handle, pathname, response, request) {
+function route(handle, pathname, query, response, request) {
     var pathname = pathname;
 
     if (typeof handle[pathname] === "function") {
-        return handle[pathname](response, request);
+        return handle[pathname](response, request, query);
     } else {
-        return handle["/unknown"](response, request);
+        return handle["/unknown"](response, request, pathname);
     }
 
 }
