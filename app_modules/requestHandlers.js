@@ -215,6 +215,49 @@ function _getServicePage(response, request, aboutObj) {
             });
 }
 
+
+function _checkAdminEvents() {
+    var totalContacts = db.getContactsCount();
+    var processedContacts = db.getProcessedContactsCount();
+    var failedContacts = db.getFailedContactsCount();
+    var inprocessContacts = db.getInprocessContactsCount();
+    var unprocessedContacts = db.getUnprocessedContactsCount();
+    var totalTestimonials = db.getTestimonialsCount();
+    var acceptedTestimonials = db.getAcceptedTestimonialsCount();
+    var uncheckedTestimonials = db.getUncheckedTestimonialsCount();
+    var totalBlogposts = db.getBlogpostsCount();
+    var postedBlogposts = db.getPostedBlogpostsCount();
+    var waitingBlogposts = db.getWaitingBlogpostsCount();
+
+    var result = deferred();
+
+    deferred(totalContacts, processedContacts, failedContacts,
+            inprocessContacts, unprocessedContacts, totalTestimonials,
+            acceptedTestimonials, uncheckedTestimonials, totalBlogposts,
+            postedBlogposts, waitingBlogposts)(
+            function (dataObj) {
+                result.resolve({
+                    totalContacts: dataObj[0],
+                    processedContacts: dataObj[1],
+                    failedContacts: dataObj[2],
+                    inprocessContacts: dataObj[3],
+                    unprocessedContacts: dataObj[4],
+                    totalTestimonials: dataObj[5],
+                    acceptedTestimonials: dataObj[6],
+                    uncheckedTestimonials: dataObj[7],
+                    totalBlogposts: dataObj[8],
+                    postedBlogposts: dataObj[9],
+                    waitingBlogposts: dataObj[10]
+                });
+            },
+            function (error) {
+                result.reject(error);
+            }
+    );
+
+    return result.promise;
+}
+
 function home(response, request) {
     console.log("Home action");
 
@@ -556,41 +599,15 @@ function adminpage(response, request) {
     var menus = _getAdminMenuTemplate();
     var footer = _getFooterTemplate();
     var body = deferred();
-    var totalContacts = db.getContactsCount();
-    var processedContacts = db.getProcessedContactsCount();
-    var failedContacts = db.getFailedContactsCount();
-    var inprocessContacts = db.getInprocessContactsCount();
-    var unprocessedContacts = db.getUnprocessedContactsCount();
-    var totalTestimonials = db.getTestimonialsCount();
-    var acceptedTestimonials = db.getAcceptedTestimonialsCount();
-    var uncheckedTestimonials = db.getUncheckedTestimonialsCount();
-    var totalBlogposts = db.getBlogpostsCount();
-    var postedBlogposts = db.getPostedBlogpostsCount();
-    var waitingBlogposts = db.getWaitingBlogpostsCount();
-
-    deferred(totalContacts, processedContacts, failedContacts,
-            inprocessContacts, unprocessedContacts, totalTestimonials,
-            acceptedTestimonials, uncheckedTestimonials, totalBlogposts,
-            postedBlogposts, waitingBlogposts)(
+    var updates = _checkAdminEvents();
+    updates(
             function (dataObj) {
                 fs.readFile("sources/templates/adminpage.html", function (error, data) {
                     if (error) {
                         body.reject(error);
                     } else {
                         var template = _.template(data);
-                        body.resolve(template({
-                            totalContacts: dataObj[0],
-                            processedContacts: dataObj[1],
-                            failedContacts: dataObj[2],
-                            inprocessContacts: dataObj[3],
-                            unprocessedContacts: dataObj[4],
-                            totalTestimonials: dataObj[5],
-                            acceptedTestimonials: dataObj[6],
-                            uncheckedTestimonials: dataObj[7],
-                            totalBlogposts: dataObj[8],
-                            postedBlogposts: dataObj[9],
-                            waitingBlogposts: dataObj[10]
-                        }));
+                        body.resolve(template(dataObj));
                     }
                 });
             },
@@ -605,12 +622,29 @@ function adminpage(response, request) {
                     response.write(content);
                 });
                 response.write('<script type="text/javascript" src="/javascript/adminmenu.js"></script>');
+                response.write('<script type="text/javascript" src="/javascript/adminhome.js"></script>');
                 response.write('</body></html>');
                 response.end();
             },
             function (error) {
                 console.log(error);
                 unknown(response, request);
+            });
+}
+
+function checkUpdates(response, request) {
+    var result = _checkAdminEvents();
+
+    result(
+            function (data) {
+                response.writeHead(200, {"Content-Type": "application/json", "AccessControlAllowOrigin": "*"});
+                response.write(JSON.stringify(data));
+                response.end();
+            },
+            function (error) {
+                response.writeHead(404, {"Content-Type": "text/html", "AccessControlAllowOrigin": "*"});
+                response.write(error);
+                response.end();
             });
 }
 
@@ -657,3 +691,4 @@ exports.portfolio = portfolio;
 exports.show = show;
 exports.unknown = unknown;
 exports.adminpage = adminpage;
+exports.checkUpdates = checkUpdates;

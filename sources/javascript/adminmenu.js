@@ -4,6 +4,28 @@
  */
 
 "use strict";
+function viewChangesTable(obj) {
+    $('#contacts-row .total').text(obj.contactsTotal);
+    $('#contacts-row .ready').text(obj.processedContacts);
+    $('#contacts-row .failed').text(obj.failedContacts);
+    $('#contacts-row .inprocess').text(obj.inprocessContacts);
+    $('#contacts-row .unprocessed').text(obj.unprocessedContacts);
+    $('#testimonials-row .total').text(obj.testimonialsTotal);
+    $('#testimonials-row .ready').text(obj.acceptedTestimonials);
+    $('#testimonials-row .unchecked').text(obj.uncheckedTestimonials);
+    $('#blogposts-row .total').text(obj.blogpostsTotal);
+    $('#blogposts-row .ready').text(obj.postedBlogposts);
+    $('#blogposts-row .waiting').text(obj.waitingBlogposts);
+}
+
+function viewChanges(obj) {
+    var contacts = (obj.unprocessedContacts === 0 ? "" : obj.unprocessedContacts);
+    var testimonials = (obj.uncheckedTestimonials === 0 ? "" : obj.uncheckedTestimonials);
+    var blogposts = (obj.waitingBlogposts === 0 ? "" : obj.waitingBlogposts);
+    $('#to-contact-left-menu .badge').text(contacts);
+    $('#testimonials-left-menu .badge').text(testimonials);
+    $('#blogposts-left-menu .badge').text(blogposts);
+}
 
 $('.has-children').on({
     'click': function (event) {
@@ -18,3 +40,4 @@ $('.has-children').on({
         }
     }
 });
+

@@ -20,6 +20,7 @@ handle["/portfolio"] = requestHandlers.portfolio;
 handle["/portfolio/"] = requestHandlers.portfolio;
 handle["/adminpage"] = requestHandlers.adminpage;
 handle["/adminpage/"] = requestHandlers.adminpage;
+handle["/adminpage/checkupdates"] = requestHandlers.checkUpdates;
 handle["/unknown"] = requestHandlers.unknown;
 handle["/unknown/"] = requestHandlers.unknown;
 handle["upload"] = requestHandlers.upload;

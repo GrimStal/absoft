@@ -1511,6 +1511,12 @@ footer {
                     -webkit-transition: all 0.3s;
                     transition: all 0.3s;
                     
+                    .badge{
+                        float: right;
+                        background-color: #9a6363;
+                        top: -1px;
+                    }
+                    
                     &:hover{
                         background-color: #BFA1A1;
                     }
@@ -1560,5 +1566,18 @@ footer {
     .tables-test{
         height: 200px;
         background-color: green;
+    }
+}
+
+.page-container{
+    h4{
+        font-size: 35px;
+    }
+    
+    .progress-table{
+        margin-top: 20px;
+    }
+    .status-count{
+        padding: 3px;
     }
 }

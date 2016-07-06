@@ -26,8 +26,9 @@
             </li>
             <% } else { %>
             <li> 
-                <a href="<%-menu.link%>" title="<%-menu.name%>">
+                <a id="<%-menu.name.replace(/\s/g,'-')%>-left-menu" href="<%-menu.link%>" title="<%-menu.name%>">
                     <%-menu.name.toUpperCase()%>
+                    <span class="badge"></span>
                 </a> 
             </li>
             <% } %>
