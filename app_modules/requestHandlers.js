@@ -556,14 +556,47 @@ function adminpage(response, request) {
     var menus = _getAdminMenuTemplate();
     var footer = _getFooterTemplate();
     var body = deferred();
+    var totalContacts = db.getContactsCount();
+    var processedContacts = db.getProcessedContactsCount();
+    var failedContacts = db.getFailedContactsCount();
+    var inprocessContacts = db.getInprocessContactsCount();
+    var unprocessedContacts = db.getUnprocessedContactsCount();
+    var totalTestimonials = db.getTestimonialsCount();
+    var acceptedTestimonials = db.getAcceptedTestimonialsCount();
+    var uncheckedTestimonials = db.getUncheckedTestimonialsCount();
+    var totalBlogposts = db.getBlogpostsCount();
+    var postedBlogposts = db.getPostedBlogpostsCount();
+    var waitingBlogposts = db.getWaitingBlogpostsCount();
 
-    fs.readFile("sources/templates/adminpage.html", function (error, data) {
-        if (error) {
-            body.reject(error);
-        } else {
-            body.resolve(data);
-        }
-    });
+    deferred(totalContacts, processedContacts, failedContacts,
+            inprocessContacts, unprocessedContacts, totalTestimonials,
+            acceptedTestimonials, uncheckedTestimonials, totalBlogposts,
+            postedBlogposts, waitingBlogposts)(
+            function (dataObj) {
+                fs.readFile("sources/templates/adminpage.html", function (error, data) {
+                    if (error) {
+                        body.reject(error);
+                    } else {
+                        var template = _.template(data);
+                        body.resolve(template({
+                            totalContacts: dataObj[0],
+                            processedContacts: dataObj[1],
+                            failedContacts: dataObj[2],
+                            inprocessContacts: dataObj[3],
+                            unprocessedContacts: dataObj[4],
+                            totalTestimonials: dataObj[5],
+                            acceptedTestimonials: dataObj[6],
+                            uncheckedTestimonials: dataObj[7],
+                            totalBlogposts: dataObj[8],
+                            postedBlogposts: dataObj[9],
+                            waitingBlogposts: dataObj[10]
+                        }));
+                    }
+                });
+            },
+            function (error) {
+                body.reject(error);
+            });
 
     deferred(head, menus, body.promise, footer)(
             function (data) {

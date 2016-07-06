@@ -65,6 +65,26 @@ function _findOneTemplate(collection, select, fields) {
     return result.promise;
 }
 
+function _countTemplate(collection, select){
+    var result = deferred();
+    mongoClient.connect(connectStr, function (err, db) {
+        if (!err) {
+            var table = db.collection(collection);
+            table.find(select).count(function (err, docs) {
+                if (!err) {
+                    result.resolve(docs);
+                } else {
+                    result.reject(err);
+                }
+                db.close();
+            });
+        } else {
+            result.reject(err);
+        }
+    });
+    return result.promise;
+}
+
 function getMenu() {
     return _findTemplate('menu', {}, {fields: {_id: 0, order: 0}, sort: {order: 1}});
 }
@@ -105,14 +125,14 @@ function getHomePortfolio() {
 }
 
 function getLatestTestimonials() {
-    return _findTemplate('testimonials', {accepted: true}, {fields: {_id:0, accepted: 0, changed:0, added:0}, sort: {added: -1, _id: -1}, limit: 6});
+    return _findTemplate('testimonials', {accepted: 1}, {fields: {_id:0, accepted: 0, changed:0, added:0, responsible:0, checked:0}, sort: {checked: 1, added: -1}, limit: 6});
 }
 
 function getLatestBlogposts() {
-    return _findTemplate('blogposts', {}, {fields: {_id:0, added:0, changed:0}, sort: {added: -1, _id: -1}, limit: 7});
+    return _findTemplate('blogposts', {postDate: {$lte: new Date()}}, {fields: {_id:0, added:0, changed:0, postDate:0, author:0}, sort: {added: -1, postDate: -1}, limit: 7});
 }
 
-/** Name
+/** Name is processing offer name
  * 
  * @param {string} name
  * @returns {unresolved}
@@ -130,6 +150,50 @@ function getAdminMenu() {
     return _findTemplate('adminmenu', {}, {fields: {_id: 0, order: 0}, sort: {order: 1}});
 }
 
+function getContactsCount(){
+    return _countTemplate('contacts', {});
+}
+
+function getProcessedContactsCount(){
+    return _countTemplate('contacts', {processed: true, processStatus: 'Done'});
+}
+
+function getFailedContactsCount(){
+    return _countTemplate('contacts', {processed: true, processStatus: 'Fail'});
+}
+
+function getUnprocessedContactsCount(){
+    return _countTemplate('contacts', {processed: false, processStatus: 'Not started'});
+}
+
+function getInprocessContactsCount(){
+    return _countTemplate('contacts', {processed: false, processStatus: 'In process'});
+}
+
+function getTestimonialsCount(){
+    return _countTemplate('testimonials', {});
+}
+
+function getAcceptedTestimonialsCount(){
+    return _countTemplate('testimonials', {accepted: 1});
+}
+
+function getUncheckedTestimonialsCount(){
+    return _countTemplate('testimonials', {accepted: 0});
+}
+
+function getBlogpostsCount(){
+    return _countTemplate('blogposts', {});
+}
+
+function getPostedBlogpostsCount(){
+    return _countTemplate('blogposts', {postDate: {$lte: new Date()}});
+}
+
+function getWaitingBlogpostsCount(){
+    return _countTemplate('blogposts', {postDate: {$gt: new Date()}});
+}
+
 exports.getMenu = getMenu;
 exports.getHeadSocials = getHeadSocials;
 exports.getSocials = getSocials;
@@ -140,3 +204,14 @@ exports.getLatestTestimonials = getLatestTestimonials;
 exports.getLatestBlogposts = getLatestBlogposts;
 exports.getAbout = getAbout;
 exports.getAdminMenu = getAdminMenu;
+exports.getContactsCount = getContactsCount;
+exports.getProcessedContactsCount = getProcessedContactsCount;
+exports.getFailedContactsCount = getFailedContactsCount;
+exports.getInprocessContactsCount = getInprocessContactsCount;
+exports.getUnprocessedContactsCount = getUnprocessedContactsCount;
+exports.getTestimonialsCount = getTestimonialsCount;
+exports.getAcceptedTestimonialsCount = getAcceptedTestimonialsCount;
+exports.getUncheckedTestimonialsCount = getUncheckedTestimonialsCount;
+exports.getBlogpostsCount = getBlogpostsCount;
+exports.getPostedBlogpostsCount = getPostedBlogpostsCount;
+exports.getWaitingBlogpostsCount = getWaitingBlogpostsCount;
