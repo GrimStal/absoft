@@ -209,6 +209,9 @@ function getTable(name, limit, skip) {
         case "contacts":
             options["sort"] = {processed: -1, processStatus: 1, requestDate: -1};
             break;
+        case "blogposts":
+            options["sort"] = {postDate: -1, changed: -1, added: -1};
+            break;
         default:
             var result = deferred();
             result.reject("Base not available");

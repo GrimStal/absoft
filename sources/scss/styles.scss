@@ -1572,13 +1572,13 @@ footer {
     .table{
         font-size: 14px;
 
-        .testimonial, .link{
+        .testimonial, .link, .fullText, .aText, .image{
             p{
                 @include truncate();
             }
         }
 
-        .link{
+        .link, .aText, .image{
             max-width: 150px;
         }
 

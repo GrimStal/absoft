@@ -259,6 +259,18 @@ function _checkAdminEvents() {
     return result.promise;
 }
 
+function _getAdminTable(response, request, query, pathname, table, count){
+    var limit = Number(query.lim) || 10;
+    var skip = Number(query.skip) || 0;
+
+    if (limit && skip && (skip % limit !== 0)) {
+        console.log("Not correct limit/skip options");
+        unknown(response, request, pathname);
+    } else {   
+        _getAdminTableTemplate(response, request, table, limit, skip, count, pathname);
+    }
+}
+
 function _getAdminTableTemplate(response, request, table, limit, skip, count, pathname) {
     var head = _getHeadTemplate();
     var menus = _getAdminMenuTemplate();
@@ -686,42 +698,41 @@ function adminpage(response, request) {
 }
 
 function adminTestimonials(response, request, query, pathname) {
-    var limit = Number(query.lim) || 10;;
-    var skip = Number(query.skip) || 0;;
     var pageCount = db.getTestimonialsCount();
-
-    if (limit && skip && (skip % limit !== 0)) {
-        console.log("Not correct limit/skip options");
-        unknown(response, request);
-    }
-
+    
     pageCount(
             function (count) {
-                _getAdminTableTemplate(response, request, 'testimonials', limit, skip, count, pathname);
+                _getAdminTable(response, request, query, pathname, 'testimonials', count);
             },
             function (error) {
                 console.log(error);
-                unknown(response, request);
+                unknown(response, request, pathname);
             });
 }
 
 function adminContacts(response, request, query, pathname) {
-    var limit = Number(query.lim) || 10;;
-    var skip = Number(query.skip) || 0;;
     var pageCount = db.getContactsCount();
-
-    if (limit && skip && (skip % limit !== 0)) {
-        console.log("Not correct limit/skip options");
-        unknown(response, request);
-    }
-
+    
     pageCount(
             function (count) {
-                _getAdminTableTemplate(response, request, 'contacts', limit, skip, count, pathname);
+                _getAdminTable(response, request, query, pathname, 'contacts', count);
             },
             function (error) {
                 console.log(error);
-                unknown(response, request);
+                unknown(response, request, pathname);
+            });
+}
+
+function adminBlogposts(response, request, query, pathname) {
+    var pageCount = db.getBlogpostsCount();
+    
+    pageCount(
+            function (count) {
+                _getAdminTable(response, request, query, pathname, 'blogposts', count);
+            },
+            function (error) {
+                console.log(error);
+                unknown(response, request, pathname);
             });
 }
 
@@ -787,3 +798,4 @@ exports.adminpage = adminpage;
 exports.checkUpdates = checkUpdates;
 exports.adminTestimonials = adminTestimonials;
 exports.adminContacts = adminContacts;
+exports.adminBlogposts = adminBlogposts;
