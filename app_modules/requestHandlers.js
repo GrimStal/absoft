@@ -259,7 +259,7 @@ function _checkAdminEvents() {
     return result.promise;
 }
 
-function _getAdminTableTemplate(response, request, table, limit, skip, count) {
+function _getAdminTableTemplate(response, request, table, limit, skip, count, pathname) {
     var head = _getHeadTemplate();
     var menus = _getAdminMenuTemplate();
     var footer = _getFooterTemplate();
@@ -267,7 +267,7 @@ function _getAdminTableTemplate(response, request, table, limit, skip, count) {
     var data = db.getTable(table, limit, skip);
     var pageCount = Math.ceil(count / limit);
     var currentPage = (skip / limit) + 1;
-    
+
     data(
             function (dataObj) {
                 fs.readFile("sources/templates/admintables.html", function (error, data) {
@@ -282,7 +282,8 @@ function _getAdminTableTemplate(response, request, table, limit, skip, count) {
                             pageCount: pageCount,
                             currentPage: currentPage,
                             skip: skip,
-                            limit: limit
+                            limit: limit,
+                            pathname: pathname
                         }));
                     }
                 });
@@ -298,6 +299,7 @@ function _getAdminTableTemplate(response, request, table, limit, skip, count) {
                     response.write(content);
                 });
                 response.write('<script type="text/javascript" src="/javascript/adminmenu.js"></script>');
+                response.write('<script type="text/javascript" src="/javascript/admintables.js"></script>');
                 response.write('</body></html>');
                 response.end();
             },
@@ -614,8 +616,8 @@ function unknown(response, request, pathname) {
     } else if (request.url.indexOf(".mp4") !== -1) {
         _getVideoFile(response, request, "video/mp4");
     } else {
-        pathname = 
-        console.log("Unknown handler: " + pathname);
+        pathname =
+                console.log("Unknown handler: " + pathname);
 
         var head = _getHeadTemplate();
         var body = deferred();
@@ -683,28 +685,39 @@ function adminpage(response, request) {
             });
 }
 
-function adminTestimonials(response, request, query) {
-    var limit = 10;
-    var skip;
+function adminTestimonials(response, request, query, pathname) {
+    var limit = Number(query.lim) || 10;;
+    var skip = Number(query.skip) || 0;;
     var pageCount = db.getTestimonialsCount();
-    var acceptable = deferred();
 
-    if (query.lim) {
-        limit = Number(query.lim);
-    }
-
-    if (query.skip) {
-        skip = Number(query.skip);
-    }
-    
-    if (limit && skip && (skip % limit !== 0)){
+    if (limit && skip && (skip % limit !== 0)) {
         console.log("Not correct limit/skip options");
         unknown(response, request);
     }
 
     pageCount(
             function (count) {
-                _getAdminTableTemplate(response, request, 'testimonials', limit, skip, count);
+                _getAdminTableTemplate(response, request, 'testimonials', limit, skip, count, pathname);
+            },
+            function (error) {
+                console.log(error);
+                unknown(response, request);
+            });
+}
+
+function adminContacts(response, request, query, pathname) {
+    var limit = Number(query.lim) || 10;;
+    var skip = Number(query.skip) || 0;;
+    var pageCount = db.getContactsCount();
+
+    if (limit && skip && (skip % limit !== 0)) {
+        console.log("Not correct limit/skip options");
+        unknown(response, request);
+    }
+
+    pageCount(
+            function (count) {
+                _getAdminTableTemplate(response, request, 'contacts', limit, skip, count, pathname);
             },
             function (error) {
                 console.log(error);
@@ -773,3 +786,4 @@ exports.unknown = unknown;
 exports.adminpage = adminpage;
 exports.checkUpdates = checkUpdates;
 exports.adminTestimonials = adminTestimonials;
+exports.adminContacts = adminContacts;

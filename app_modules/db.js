@@ -65,7 +65,7 @@ function _findOneTemplate(collection, select, fields) {
     return result.promise;
 }
 
-function _countTemplate(collection, select){
+function _countTemplate(collection, select) {
     var result = deferred();
     mongoClient.connect(connectStr, function (err, db) {
         if (!err) {
@@ -108,7 +108,7 @@ function getHomeFooter() {
 }
 
 function getServiceOffers() {
-    return _findTemplate('offers', {}, {fields: {_id:0}, sort: {_id: 1}});
+    return _findTemplate('offers', {}, {fields: {_id: 0}, sort: {_id: 1}});
 }
 
 function getHomePortfolio() {
@@ -121,15 +121,15 @@ function getHomePortfolio() {
             {title: /Kaytee Ruth Photography Website Design/},
             {title: /Melissa Lyn Photography Logo Design by Media Novak/}
         ]
-    }, {fields: {_id:0}, sort: {type:-1}});
+    }, {fields: {_id: 0}, sort: {type: -1}});
 }
 
 function getLatestTestimonials() {
-    return _findTemplate('testimonials', {accepted: 1}, {fields: {_id:0, accepted: 0, changed:0, added:0, responsible:0, checked:0}, sort: {checked: 1, added: -1}, limit: 6});
+    return _findTemplate('testimonials', {accepted: 1}, {fields: {_id: 0, accepted: 0, changed: 0, added: 0, responsible: 0, checked: 0}, sort: {checked: 1, added: -1}, limit: 6});
 }
 
 function getLatestBlogposts() {
-    return _findTemplate('blogposts', {postDate: {$lte: new Date()}}, {fields: {_id:0, added:0, changed:0, postDate:0, author:0}, sort: {added: -1, postDate: -1}, limit: 7});
+    return _findTemplate('blogposts', {postDate: {$lte: new Date()}}, {fields: {_id: 0, added: 0, changed: 0, postDate: 0, author: 0}, sort: {added: -1, postDate: -1}, limit: 7});
 }
 
 /** Name is processing offer name
@@ -138,78 +138,83 @@ function getLatestBlogposts() {
  * @returns {unresolved}
  */
 function getAbout(name) {
-    if (!name){
+    if (!name) {
         var result = deferred();
         result.reject('Name of element is not set');
         return result.promise;
     }
-    return _findOneTemplate('about', {name: name}, {name:0, _id:0});
+    return _findOneTemplate('about', {name: name}, {name: 0, _id: 0});
 }
 
 function getAdminMenu() {
     return _findTemplate('adminmenu', {}, {fields: {_id: 0, order: 0}, sort: {order: 1}});
 }
 
-function getContactsCount(){
+function getContactsCount() {
     return _countTemplate('contacts', {});
 }
 
-function getProcessedContactsCount(){
+function getProcessedContactsCount() {
     return _countTemplate('contacts', {processed: true, processStatus: 'Done'});
 }
 
-function getFailedContactsCount(){
+function getFailedContactsCount() {
     return _countTemplate('contacts', {processed: true, processStatus: 'Fail'});
 }
 
-function getUnprocessedContactsCount(){
+function getUnprocessedContactsCount() {
     return _countTemplate('contacts', {processed: false, processStatus: 'Not started'});
 }
 
-function getInprocessContactsCount(){
+function getInprocessContactsCount() {
     return _countTemplate('contacts', {processed: false, processStatus: 'In process'});
 }
 
-function getTestimonialsCount(){
+function getTestimonialsCount() {
     return _countTemplate('testimonials', {});
 }
 
-function getAcceptedTestimonialsCount(){
+function getAcceptedTestimonialsCount() {
     return _countTemplate('testimonials', {accepted: 1});
 }
 
-function getUncheckedTestimonialsCount(){
+function getUncheckedTestimonialsCount() {
     return _countTemplate('testimonials', {accepted: 0});
 }
 
-function getBlogpostsCount(){
+function getBlogpostsCount() {
     return _countTemplate('blogposts', {});
 }
 
-function getPostedBlogpostsCount(){
+function getPostedBlogpostsCount() {
     return _countTemplate('blogposts', {postDate: {$lte: new Date()}});
 }
 
-function getWaitingBlogpostsCount(){
+function getWaitingBlogpostsCount() {
     return _countTemplate('blogposts', {postDate: {$gt: new Date()}});
 }
 
-function getTable(name, limit, skip){
+function getTable(name, limit, skip) {
     var options = {};
-    
-    if (limit) options.limit = limit;
-    if (skip) options.skip = skip;
-    
-    switch(name){
+
+    if (limit)
+        options.limit = limit;
+    if (skip)
+        options.skip = skip;
+
+    switch (name) {
         case "testimonials":
             options["sort"] = {accepted: 1, added: -1};
+            break;
+        case "contacts":
+            options["sort"] = {processed: -1, processStatus: 1, requestDate: -1};
             break;
         default:
             var result = deferred();
             result.reject("Base not available");
-            return result.promise(); 
+            return result.promise();
     }
-    
+
     return _findTemplate(name, {}, options);
 }
 

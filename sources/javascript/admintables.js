@@ -20,13 +20,18 @@ function getChanges() {
     });
 }
 
-var page = $(".pagination .active a").text();
-
-if (page && page == 1){
-    $(".pagination ul li:first-child").addClass("disabled");
-} else if (page && page == $(".pagination ul li:nth-last-child(2) a").text()){
-    $(".pagination ul li:last-child").addClass("disabled");
-}
-
 getChanges();
 setInterval(getChanges, 5000);
+
+$.map($('.testimonial p, .link p'),function(elem){
+    $(elem).attr('data-toggle', 'tooltip');
+    $(elem).attr('data-placement', 'bottom');
+    $(elem).attr('data-trigger', 'hover focus click');
+    $(elem).attr('title', $(elem).text());
+});
+
+$.map($('tbody tr:last-child .testimonial p, tbody tr:last-child .link p'),function(elem){
+   $(elem).attr('data-placement', 'top');
+});
+
+$("[data-toggle='tooltip']").tooltip(); 

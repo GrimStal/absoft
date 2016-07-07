@@ -1,3 +1,10 @@
+@mixin truncate(){
+    max-width: 200px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
 .filter-section>button,
 .show-for-medium,
 .show-for-small,
@@ -10,6 +17,7 @@
 .text-show-small {
     display: none;
 }
+
 @media only screen and (min-width: 0) and (max-width: 599px){
     .border-bottom-small {
         border-bottom: 1px solid #736668;
@@ -526,6 +534,25 @@
             }
         }
     }
+    
+    .page-container{
+        .table{
+            font-size: 12px;
+            
+            th{
+                @include truncate();
+                max-width: 40px;
+            }
+            
+            .link, .testimonial{
+                max-width: 120px;
+            }
+            
+            .added, .changed, .checked{
+                max-width: 70px;
+            }
+        }
+    }
 }
 
 @media only screen and (max-width: 1025px){
@@ -570,6 +597,25 @@
     #filters {
         float: left;
         width: 100%;
+    }
+    
+    .page-container{
+        .table{
+            font-size: 12px;
+            
+            th{
+                @include truncate();
+                max-width: 30px;
+            }
+            
+            .link, .testimonial{
+                max-width: 100px;
+            }
+            
+            .added, .changed, .checked{
+                max-width: 65px;
+            }
+        }
     }
 }
 
@@ -694,9 +740,29 @@
     }
     
 }
+
 @media only screen and (max-width: 990px){
     .middle-holder, .quote-holder {
         margin-bottom: 10px;
+    }
+    
+    .page-container{
+        .table{
+            font-size: 12px;
+            
+            th{
+                @include truncate();
+                max-width: 60px;
+            }
+            
+            .link, .testimonial{
+                max-width: 150px;
+            }
+            
+            .added, .changed, .checked{
+                max-width: 80px;
+            }
+        }
     }
 }
 
@@ -749,6 +815,25 @@
     
     .left-menu, .page-container{
         margin-top: 80px;
+    }
+    
+    .page-container{
+        .table{
+            font-size: 11px;
+            
+            th{
+                @include truncate();
+                max-width: 40px;
+            }
+            
+            .link, .testimonial{
+                max-width: 120px;
+            }
+            
+            .added, .changed, .checked{
+                max-width: 70px;
+            }
+        }
     }
 }
 
@@ -1047,6 +1132,25 @@
             border: none;
         }
     }
+    
+    .page-container{
+        .table{
+            font-size: 10px;
+            
+            th{
+                @include truncate();
+                max-width: 35px;
+            }
+            
+            .link, .testimonial{
+                max-width: 100px;
+            }
+            
+            .added, .changed, .checked{
+                max-width: 60px;
+            }
+        }
+    }
 }
 
 @media only screen and (max-width: 600px){
@@ -1164,6 +1268,29 @@
     
     #filter-menu {
         margin-top: 0;
+    }
+    
+    .page-container{
+        .table{
+            font-size: 10px;
+            
+            th{
+                @include truncate();
+                max-width: 30px;
+            }
+            
+            .link, .testimonial{
+                max-width: 100px;
+            }
+            
+            .added, .changed, .checked{
+                max-width: 60px;
+            }
+            
+            .alt{
+                display: none;
+            }
+        }
     }
 }
 
