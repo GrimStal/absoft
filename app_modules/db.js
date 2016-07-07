@@ -194,6 +194,14 @@ function getWaitingBlogpostsCount() {
     return _countTemplate('blogposts', {postDate: {$gt: new Date()}});
 }
 
+function getServicesCount() {
+    return _countTemplate('services', {});
+}
+
+function getOffersCount() {
+    return _countTemplate('offers', {});
+}
+
 function getTable(name, limit, skip) {
     var options = {};
 
@@ -211,6 +219,10 @@ function getTable(name, limit, skip) {
             break;
         case "blogposts":
             options["sort"] = {postDate: -1, changed: -1, added: -1};
+            break;
+        case "about":
+            break;
+        case "offers":
             break;
         default:
             var result = deferred();
@@ -242,4 +254,6 @@ exports.getUncheckedTestimonialsCount = getUncheckedTestimonialsCount;
 exports.getBlogpostsCount = getBlogpostsCount;
 exports.getPostedBlogpostsCount = getPostedBlogpostsCount;
 exports.getWaitingBlogpostsCount = getWaitingBlogpostsCount;
+exports.getServicesCount = getServicesCount;
+exports.getOffersCount = getOffersCount;
 exports.getTable = getTable;

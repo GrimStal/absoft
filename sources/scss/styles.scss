@@ -1572,7 +1572,7 @@ footer {
     .table{
         font-size: 14px;
 
-        .testimonial, .link, .fullText, .aText, .image{
+        .testimonial, .link, .fullText, .aText, .image, .text1, .text2, .textBig, .items{
             p{
                 @include truncate();
             }

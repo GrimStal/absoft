@@ -736,6 +736,32 @@ function adminBlogposts(response, request, query, pathname) {
             });
 }
 
+function adminServices(response, request, query, pathname) {
+    var pageCount = db.getServicesCount();
+    
+    pageCount(
+            function (count) {
+                _getAdminTable(response, request, query, pathname, 'about', count);
+            },
+            function (error) {
+                console.log(error);
+                unknown(response, request, pathname);
+            });
+}
+
+function adminOffers(response, request, query, pathname) {
+    var pageCount = db.getServicesCount();
+    
+    pageCount(
+            function (count) {
+                _getAdminTable(response, request, query, pathname, 'offers', count);
+            },
+            function (error) {
+                console.log(error);
+                unknown(response, request, pathname);
+            });
+}
+
 function checkUpdates(response, request) {
     var result = _checkAdminEvents();
 
@@ -799,3 +825,5 @@ exports.checkUpdates = checkUpdates;
 exports.adminTestimonials = adminTestimonials;
 exports.adminContacts = adminContacts;
 exports.adminBlogposts = adminBlogposts;
+exports.adminServices = adminServices;
+exports.adminOffers = adminOffers;

@@ -44,7 +44,13 @@
                                     <td class="text-center <%-key%>"><p><%-col%></p></td>
                                     <% } %>                                    
                                 <% } else if (typeof col === 'Object' && col !== null){ %>
-                                    <td class="text-center <%-key%>"><%=JSON.stringify(col)%></td>
+                                    <% if (Array.isArray(col)) {%>
+                                        <% _.forEach(col, function(child) {%>
+                                        <% }) %>
+                                        <td class="text-center <%-key%>"><%=JSON.stringify(col)%></td>
+                                    <% } else { %}
+                                        <td class="text-center <%-key%>"><%=JSON.stringify(col)%></td>
+                                    <% } %>
                                 <% } else { %>
                                     <td class="text-center <%-key%>"></td>
                                 <% } %>
