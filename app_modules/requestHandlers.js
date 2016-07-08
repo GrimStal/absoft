@@ -282,6 +282,7 @@ function _getAdminTableTemplate(response, request, table, limit, skip, count, pa
 
     data(
             function (dataObj) {
+                              
                 fs.readFile("sources/templates/admintables.html", function (error, data) {
                     if (error) {
                         body.reject(error);

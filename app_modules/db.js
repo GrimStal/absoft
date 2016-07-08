@@ -38,6 +38,53 @@ function _findTemplate(collection, select, options) {
     return result.promise;
 }
 
+function _aggregateTemplate(collection, aggrCollection, localField, foreignField, neededValue, options) {
+    var result = deferred();
+
+    mongoClient.connect(connectStr, function (err, db) {
+        if (!err) {
+            var table = db.collection(collection);
+            table.aggregate(
+                    [
+                        {$lookup: {
+                                from: aggrCollection,
+                                localField: localField,
+                                foreignField: foreignField,
+                                as: localField
+                            }},
+                        {$unwind: {path: "$" + localField, preserveNullAndEmptyArrays: true}},
+                        {$skip: options.skip || 0},
+                        {$limit: options.limit},
+                        {$sort: options.sort}
+                    ]
+                    )
+                    .map(function (data) {
+                        if (data[localField] && data[localField][neededValue]) {
+                            data[localField] = data[localField][neededValue];
+                        }                       
+                        if (!data[localField]){
+                            data[localField] = null;
+                        }
+                        return data;
+                    })
+                    .toArray(function (err, docs) {
+                        if (!err) {
+                            result.resolve(docs);
+                        } else {
+                            result.reject(err);
+                        }
+                        db.close();
+
+                    });
+        } else {
+            result.reject(err);
+        }
+    });
+    return result.promise;
+
+
+}
+
 /** Param 'fields' contains only fields name to return or not 
  * 
  * @param {string} collection
@@ -213,12 +260,15 @@ function getTable(name, limit, skip) {
     switch (name) {
         case "testimonials":
             options["sort"] = {accepted: 1, added: -1};
+            return _aggregateTemplate(name, 'users', 'responsible', '_id', 'name', options);
             break;
         case "contacts":
             options["sort"] = {processed: -1, processStatus: 1, requestDate: -1};
+            return _aggregateTemplate(name, 'users', 'responsible', '_id', 'name', options);
             break;
         case "blogposts":
             options["sort"] = {postDate: -1, changed: -1, added: -1};
+            return _aggregateTemplate(name, 'users', 'author', '_id', 'name', options);
             break;
         case "about":
             break;
@@ -232,6 +282,7 @@ function getTable(name, limit, skip) {
 
     return _findTemplate(name, {}, options);
 }
+
 
 exports.getMenu = getMenu;
 exports.getHeadSocials = getHeadSocials;
