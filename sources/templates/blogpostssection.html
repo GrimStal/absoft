@@ -15,7 +15,7 @@
         <div class="featured-post-section">
             <div class="post-holder">
                 <div>
-                    <img width="1200" height="823" src="<%- blogs[0].image %>-1200x823.jpg" class="attachment-featured size-featured wp-post-image" alt="<%= (blogs[0].aText.length >= 64) ? blogs[0].aText.substr(0,64) + ' ...' : blogs[0].aText %>" >
+                    <img width="1200" height="823" src="<%- blogs[0].image %>" class="attachment-featured size-featured wp-post-image" alt="<%= (blogs[0].aText.length >= 64) ? blogs[0].aText.substr(0,64) + ' ...' : blogs[0].aText %>" >
                     <div class="gradient"></div>
                     <a href="<%- blogs[0].link %>" class="permalink-section"></a>
                     <div class="post-content">
@@ -36,7 +36,7 @@
         <% if (blog !== blogs[0]){ %>
             <div class="post-holder-small post-holder">
                 <div>
-                    <img width="600" height="407" src="<%- blog.image %>-600x407.jpg" class="attachment-latest size-latest wp-post-image" alt="<%= (blog.aText.length >= 64) ? blog.aText.substr(0,64) + ' ...' : blog.aText %>" >
+                    <img width="600" height="407" src="<%- blog.imageSmall %>" class="attachment-latest size-latest wp-post-image" alt="<%= (blog.aText.length >= 64) ? blog.aText.substr(0,64) + ' ...' : blog.aText %>" >
                     <div class="gradient"></div>
                     <a href="<%- blog.link %>" class="permalink-section"></a>
                     <div class="post-content">

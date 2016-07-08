@@ -45,10 +45,12 @@
                                     <% } %>                                    
                                 <% } else if (typeof col === 'Object' && col !== null){ %>
                                     <% if (Array.isArray(col)) {%>
+                                        <%var array = "";%>
                                         <% _.forEach(col, function(child) {%>
+                                            <% array += JSON.stringify(child);%>
                                         <% }) %>
-                                        <td class="text-center <%-key%>"><%=JSON.stringify(col)%></td>
-                                    <% } else { %}
+                                        <td class="text-center <%-key%>"><%-array%></td>
+                                    <% } else { %>
                                         <td class="text-center <%-key%>"><%=JSON.stringify(col)%></td>
                                     <% } %>
                                 <% } else { %>
