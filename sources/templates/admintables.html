@@ -35,15 +35,15 @@
                         <% var options = {year: 'numeric', month: '2-digit', day: '2-digit', timezone: 'UTC', hour12: false, hour: 'numeric', minute: 'numeric',  second: 'numeric'}; %>
                         <% _.forEach(row, function(col, key){ %>
                             <% if (key !== '_id') { %>
-                                <% if (typeof col !== 'Object'){ %>
+                                <% if (typeof col !== 'object'){ %>
                                     <% if (_.indexOf(dates, key) !== -1) { %>
                                         <td class="text-center <%-key%>"><%= new Date(col).toLocaleString('en', options)%></td>
                                     <% } else if (_.indexOf(checks, key) !== -1) { %>
                                         <td class="text-center <%-key%>"><% if (col){ %> <i class='glyphicon glyphicon-ok'></i> <% } else { %> <i class='glyphicon glyphicon-time'></i> <%}%> </td>
                                     <% } else { %>
-                                    <td class="text-center <%-key%>"><p><%-col%></p></td>
+                                        <td class="text-center <%-key%>"><p><%-col%></p></td>
                                     <% } %>                                    
-                                <% } else if (typeof col === 'Object' && col !== null){ %>
+                                <% } else if (typeof col === 'object' && col !== null){ %>
                                         <td class="text-center <%-key%>"><%=JSON.stringify(col)%></td>
                                 <% } else { %>
                                     <td class="text-center <%-key%>"></td>
