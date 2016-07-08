@@ -11,10 +11,13 @@
   "author": "Borshev",
   "contributors": [],
   "dependencies": {
+    "connect": "^3.4.1",
     "deferred": "^0.7.5",
+    "express": "^4.14.0",
     "formidable": "^1.0.17",
     "lodash": "^4.13.1",
-    "mongodb": "^2.1.18"
+    "mongodb": "^2.1.18",
+    "node-session": "^1.2.1"
   },
   "description": "0.0.1",
   "main": "main.js",

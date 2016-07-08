@@ -8,6 +8,7 @@ var formidable = require("formidable");
 var _ = require('lodash');
 var deferred = require('deferred');
 var db = require("./db");
+var querystring = require('querystring');
 
 function _getMenuTemplate() {
     var menuObj = db.getMenu();
@@ -259,14 +260,15 @@ function _checkAdminEvents() {
     return result.promise;
 }
 
-function _getAdminTable(response, request, query, pathname, table, count){
-    var limit = Number(query.lim) || 10;
-    var skip = Number(query.skip) || 0;
+function _getAdminTable(response, request, query, pathname, table, count) {
+    var qs = querystring.parse(query);
+    var limit = Number(qs.lim) || 10;
+    var skip = Number(qs.skip) || 0;
 
     if (limit && skip && (skip % limit !== 0)) {
         console.log("Not correct limit/skip options");
         unknown(response, request, pathname);
-    } else {   
+    } else {
         _getAdminTableTemplate(response, request, table, limit, skip, count, pathname);
     }
 }
@@ -282,7 +284,7 @@ function _getAdminTableTemplate(response, request, table, limit, skip, count, pa
 
     data(
             function (dataObj) {
-                              
+
                 fs.readFile("sources/templates/admintables.html", function (error, data) {
                     if (error) {
                         body.reject(error);
@@ -660,6 +662,63 @@ function unknown(response, request, pathname) {
     }
 }
 
+function authorization(response, request) {
+    if (request.session && request.session.get('authorized', 'false')) {
+        response.writeHead(200, {'Location': "/adminpage"});
+        response.end();
+    } else {
+        var head = _getHeadTemplate();
+        var body = deferred();
+
+        fs.readFile("sources/templates/authorization.html", function (error, data) {
+            if (error) {
+                body.reject(error);
+            } else {
+                body.resolve(data);
+            }
+        });
+
+
+        deferred(head, body.promise)(
+                function (data) {
+                    response.writeHead(200, {"Content-Type": "text/html", "AccessControlAllowOrigin": "*"});
+                    _.forEach(data, function (content) {
+                        response.write(content);
+                    });
+                    response.write('</body></html>');
+                    response.end();
+                },
+                function (error) {
+                    console.log(error);
+                    unknown(response, request);
+                });
+    }
+}
+
+function checkLogin(response, request) {
+    function checkData(){
+        
+    }
+    
+    if (request.method === "POST") {
+        var postData = '';
+        request.setEncoding("utf8");
+        request.on('data', function (chunk) {
+            postData += chunk;
+        });
+        request.on('end', function () {
+            console.log(querystring.parse(postData));
+            response.writeHead(303, {Location: "/authorization"});
+            response.end();
+        });
+
+
+    } else {
+        response.writeHead(303, {Location: "/authorization"});
+        response.end();
+    }
+}
+
 function adminpage(response, request) {
     var head = _getHeadTemplate();
     var menus = _getAdminMenuTemplate();
@@ -700,7 +759,7 @@ function adminpage(response, request) {
 
 function adminTestimonials(response, request, query, pathname) {
     var pageCount = db.getTestimonialsCount();
-    
+
     pageCount(
             function (count) {
                 _getAdminTable(response, request, query, pathname, 'testimonials', count);
@@ -713,7 +772,7 @@ function adminTestimonials(response, request, query, pathname) {
 
 function adminContacts(response, request, query, pathname) {
     var pageCount = db.getContactsCount();
-    
+
     pageCount(
             function (count) {
                 _getAdminTable(response, request, query, pathname, 'contacts', count);
@@ -726,7 +785,7 @@ function adminContacts(response, request, query, pathname) {
 
 function adminBlogposts(response, request, query, pathname) {
     var pageCount = db.getBlogpostsCount();
-    
+
     pageCount(
             function (count) {
                 _getAdminTable(response, request, query, pathname, 'blogposts', count);
@@ -739,7 +798,7 @@ function adminBlogposts(response, request, query, pathname) {
 
 function adminServices(response, request, query, pathname) {
     var pageCount = db.getServicesCount();
-    
+
     pageCount(
             function (count) {
                 _getAdminTable(response, request, query, pathname, 'about', count);
@@ -752,7 +811,7 @@ function adminServices(response, request, query, pathname) {
 
 function adminOffers(response, request, query, pathname) {
     var pageCount = db.getServicesCount();
-    
+
     pageCount(
             function (count) {
                 _getAdminTable(response, request, query, pathname, 'offers', count);
@@ -828,3 +887,5 @@ exports.adminContacts = adminContacts;
 exports.adminBlogposts = adminBlogposts;
 exports.adminServices = adminServices;
 exports.adminOffers = adminOffers;
+exports.authorization = authorization;
+exports.checkLogin = checkLogin;

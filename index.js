@@ -32,8 +32,10 @@ handle["/adminpage/services/"] = requestHandlers.adminServices;
 handle["/adminpage/what-we-offer"] = requestHandlers.adminOffers;
 handle["/adminpage/what-we-offer/"] = requestHandlers.adminOffers;
 handle["/unknown"] = requestHandlers.unknown;
+handle["/authorization"] = requestHandlers.authorization;
+handle["/checklogin"] = requestHandlers.checkLogin;
 handle["/unknown/"] = requestHandlers.unknown;
-handle["upload"] = requestHandlers.upload;
+handle["/upload"] = requestHandlers.upload;
 handle["/show"] = requestHandlers.show;
 
 server.start(router.route, handle);
