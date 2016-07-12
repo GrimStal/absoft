@@ -1,0 +1,48 @@
+<div class="page-container col-xs-12 col-sm-12 col-md-9 col-lg-10">
+    <div class="row">
+        <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2"></div>
+        <div class="col-xs-8 col-sm-8 col-md-8 col-lg-8 page-intro">
+            <h4 class="text-center"><%-tablename%></h4>  
+        </div>
+        <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2"></div>
+    </div>
+    <div class="row">
+        <div class="data-table col-xs-12 col-sm-12 col-md-10 col-lg-8 col-md-offset-1 col-lg-offset-2">
+            <div class='editing-block'>
+
+                <form id='editing' role="form" method='post' action='/adminpage/editdata'>
+                    <input type="hidden" id="tablename" name="tablename" value="<%-tablename%>">
+                    <% _.forEach(fields, function(item, key){ %>
+                    <div class="form-group<% if (item.check && !fields._id.value) { %> error<% } %>" id="<%-key%>-form-group" >
+                            <% if (item.type !== "hidden"){%>
+                            <label for="<%-key%>Field"><%-key%></label>
+                            <% } %>
+                            <% if (item.type !== "select" && item.type !== "textarea"){ %>
+                            <input type="<%-item.type%>" id="<%-key%>-field" class="form-control" <% if (!item.value) {%> placeholder="Enter <%-key%>" <% } else { %> value="<%-item.value%>"<% } %> name='<%-key%>' <% if (item.pattern){%> pattern=<%-item.pattern%><% }%><% if (item.maxlength){%> maxlength=<%-item.maxlength%><% }%> <% if (item.required){%> required<%}%> <% if (item.disabled){%> disabled<%}%>>
+                            <% } %>
+                            <% if (item.type === "select"){ %>
+                            <select id="<%-key%>-field" class="form-control" name='<%-key%>' <% if (item.required){%> required<%}%>>
+                            <% _.forEach(item.selects, function(select){ %>
+                            <option value="<%-select._id%>" <% if (String(item.selected) == String(select._id)){%> selected<% } %> ><%-select.name%></option>
+                            <% }) %>
+                            </select>
+                            <% } %>
+                            <% if (item.type === "textarea"){ %>
+                            <textarea id="<%-key%>-field" class="form-control" <% if (item.rows) {%> rows=<%-item.rows%> <% } %> name='<%-key%>'<% if (item.maxlength){%> maxlength=<%-item.maxlength%><% } %> <% if (item.required){%> required<%  }%> <% if (item.disabled){ %> disabled<% } %>><% if (item.value){%><%-item.value%><%}%></textarea>
+                            <% } %>
+                            <% if (item.help) {%>
+                            <p class="help-block"><%-item.help%></p>
+                            <% } %>
+                            <% if (item.check) {%>
+                            <input type="button" id="<%-key%>-check-button" data-check="<%-key%>" value="Check">
+                            <% } %>
+                        </div>
+                    <% }) %>
+                    <button type="submit" id="submit-button" class="btn btn-default btn-md" disabled>Save</button>
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div>
+</div>

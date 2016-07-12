@@ -8,6 +8,7 @@ var formidable = require("formidable");
 var _ = require('lodash');
 var deferred = require('deferred');
 var db = require("./db");
+var md5 = require("./md5");
 var querystring = require('querystring');
 
 function _getMenuTemplate() {
@@ -58,7 +59,7 @@ function _getMenuTemplate() {
     return result.promise;
 }
 
-function _getAdminMenuTemplate() {
+function _getAdminMenuTemplate(username) {
     var menuObj = db.getAdminMenu();
     var mobileMenu = deferred();
     var headerMenu = deferred();
@@ -81,7 +82,7 @@ function _getAdminMenuTemplate() {
                         headerMenu.reject(error);
                     } else {
                         var template = _.template(data);
-                        headerMenu.resolve(template({menus: resp}));
+                        headerMenu.resolve(template({menus: resp, username: username}));
                     }
                 });
 
@@ -166,12 +167,10 @@ function _getVideoFile(response, request, type) {
         var start = parseInt(partialstart, 10);
         var end = partialend ? parseInt(partialend, 10) : total - 1;
         var chunksize = (end - start) + 1;
-        console.log('RANGE: ' + start + ' - ' + end + ' = ' + chunksize);
         var file = fs.createReadStream(path, {start: start, end: end});
         response.writeHead(206, {'Content-Range': 'bytes ' + start + '-' + end + '/' + total, 'Accept-Ranges': 'bytes', 'Content-Length': chunksize, 'Content-Type': 'video/mp4', "AccessControlAllowOrigin": "*"});
         file.pipe(response);
     } else {
-        console.log('ALL: ' + total);
         response.writeHead(200, {'Content-Length': total, 'Content-Type': type, "AccessControlAllowOrigin": "*"});
         fs.createReadStream(path).pipe(response);
     }
@@ -275,16 +274,17 @@ function _getAdminTable(response, request, query, pathname, table, count) {
 
 function _getAdminTableTemplate(response, request, table, limit, skip, count, pathname) {
     var head = _getHeadTemplate();
-    var menus = _getAdminMenuTemplate();
+    var menus = _getAdminMenuTemplate(request.session.login);
     var footer = _getFooterTemplate();
     var body = deferred();
     var data = db.getTable(table, limit, skip);
     var pageCount = Math.ceil(count / limit);
     var currentPage = (skip / limit) + 1;
+    var addable = ["users", "testimonials", "blogposts", "contacts", "socials"];
+    var deleteable = ["users", "testimonials", "blogposts", "socials"];
 
     data(
             function (dataObj) {
-
                 fs.readFile("sources/templates/admintables.html", function (error, data) {
                     if (error) {
                         body.reject(error);
@@ -298,7 +298,9 @@ function _getAdminTableTemplate(response, request, table, limit, skip, count, pa
                             currentPage: currentPage,
                             skip: skip,
                             limit: limit,
-                            pathname: pathname
+                            pathname: pathname,
+                            add: (addable.indexOf(table) === -1) ? false : true,
+                            del: (deleteable.indexOf(table) === -1) ? false : true
                         }));
                     }
                 });
@@ -325,8 +327,6 @@ function _getAdminTableTemplate(response, request, table, limit, skip, count, pa
 }
 
 function home(response, request) {
-    console.log("Home action");
-
     var head = _getHeadTemplate();
     var menus = _getMenuTemplate();
     var footer = _getFooterTemplate();
@@ -358,6 +358,9 @@ function home(response, request) {
                         serviceoffer.reject(error);
                     } else {
                         var template = _.template(data);
+                        _.forEach(dataObj, function (docs) {
+                            docs.description = docs.text1.slice(0, (docs.text1.slice(0, 130).lastIndexOf(" "))) + " ...";
+                        });
                         serviceoffer.resolve(template({services: dataObj}));
                     }
                 });
@@ -509,7 +512,6 @@ function home(response, request) {
 }
 
 function websiteDesign(response, request) {
-    console.log("Website Design action");
 
     var about = db.getAbout('website design');
 
@@ -530,7 +532,6 @@ function websiteDesign(response, request) {
 }
 
 function logoDesign(response, request) {
-    console.log("Logo Design action");
 
     var about = db.getAbout('logo design');
 
@@ -551,7 +552,6 @@ function logoDesign(response, request) {
 }
 
 function branding(response, request) {
-    console.log("Branding action");
 
     var about = db.getAbout('branding');
 
@@ -572,7 +572,6 @@ function branding(response, request) {
 }
 
 function portfolio(response, request) {
-    console.log("Portfolio action");
 
     var head = _getHeadTemplate();
     var menus = _getMenuTemplate();
@@ -663,8 +662,8 @@ function unknown(response, request, pathname) {
 }
 
 function authorization(response, request) {
-    if (request.session && request.session.get('authorized', 'false')) {
-        response.writeHead(200, {'Location': "/adminpage"});
+    if (request.session.authorized) {
+        response.writeHead(303, {'Location': "/adminpage"});
         response.end();
     } else {
         var head = _getHeadTemplate();
@@ -696,32 +695,65 @@ function authorization(response, request) {
 }
 
 function checkLogin(response, request) {
-    function checkData(){
-        
+    function checkData(recievedData) {
+        user = db.checkUser(recievedData.login);
+        user(
+                function (userData) {
+                    if (!userData || userData.password !== md5(md5(recievedData.password))) {
+                        process.reject("Username or password incorrect.");
+                    } else {
+                        request.session.authorized = true;
+                        request.session.login = userData.login;
+                        request.session.id = userData._id;
+                        request.session.name = userData.name;
+                        process.resolve("Authorized");
+                    }
+                },
+                function (error) {
+                    process.reject("Username or password incorrect.");
+                }
+        );
     }
-    
-    if (request.method === "POST") {
-        var postData = '';
+
+    var process = deferred();
+    var user;
+    var postData = "";
+
+    if (request.session.authorized) {
+        process.resolve("Authorized");
+    } else if (request.method !== "POST") {
+        process.reject("Not authorized");
+    } else {
         request.setEncoding("utf8");
         request.on('data', function (chunk) {
             postData += chunk;
         });
         request.on('end', function () {
-            console.log(querystring.parse(postData));
-            response.writeHead(303, {Location: "/authorization"});
-            response.end();
+            postData = querystring.parse(postData);
+            checkData(postData);
         });
-
-
-    } else {
-        response.writeHead(303, {Location: "/authorization"});
-        response.end();
     }
+
+    process.promise(
+            function () {
+                response.writeHead(303, {Location: "/adminpage"});
+                response.end();
+            },
+            function (error) {
+                response.writeHead(303, {Location: "/authorization"});
+                response.end();
+            });
+}
+
+function logout(response, request) {
+    request.session = null;
+    response.writeHead(303, {Location: "/authorization"});
+    response.end();
 }
 
 function adminpage(response, request) {
     var head = _getHeadTemplate();
-    var menus = _getAdminMenuTemplate();
+    var menus = _getAdminMenuTemplate(request.session.login);
     var footer = _getFooterTemplate();
     var body = deferred();
     var updates = _checkAdminEvents();
@@ -822,6 +854,373 @@ function adminOffers(response, request, query, pathname) {
             });
 }
 
+function adminSocials(response, request, query, pathname) {
+    var pageCount = db.getSocialsCount();
+
+    pageCount(
+            function (count) {
+                _getAdminTable(response, request, query, pathname, 'socials', count);
+            },
+            function (error) {
+                console.log(error);
+                unknown(response, request, pathname);
+            });
+}
+
+function adminUsers(response, request, query, pathname) {
+    var pageCount = db.getUsersCount();
+
+    pageCount(
+            function (count) {
+                _getAdminTable(response, request, query, pathname, 'users', count);
+            },
+            function (error) {
+                console.log(error);
+                unknown(response, request, pathname);
+            });
+}
+
+function adminEdit(response, request, query) {
+    var head = _getHeadTemplate();
+    var menus = _getAdminMenuTemplate(request.session.login);
+    var footer = _getFooterTemplate();
+    var body = deferred();
+    var baseData = deferred();
+    var editable = ["users", "testimonials", "blogposts", "contacts", "socials", "about"];
+    var notDisplayed = ["password"];
+    var qs = querystring.parse(query);
+    var tablename;
+    var docID;
+    var dataObject;
+    var dbResult;
+    var usersResult;
+
+    function getInputDate(selectedDate) {
+        var selDate = new Date(selectedDate);
+        var year = selDate.getFullYear();
+        var month = selDate.getMonth() + 1;
+        var date = selDate.getDate();
+        month = String(month).length === 1 ? "0" + month : month;
+        date = String(date).length === 1 ? "0" + date : date;
+
+        return "" + year + "-" + month + "-" + date;
+    }
+
+    function startEditing() {
+        if (docID) {
+            dbResult = db.getForEdit(tablename, docID);
+            dbResult(
+                    function (data) {
+                        if (data) {
+
+                            if (data.hasOwnProperty("postDate") && data.postDate) {
+                                data.postDate = getInputDate(data.postDate);
+                            }
+                            _.forEach(data, function (value, key) {
+                                if (dataObject.hasOwnProperty(key)) {
+                                    if (notDisplayed.indexOf(key) === -1) {
+                                        if (dataObject[key].type !== "select") {
+                                            dataObject[key].value = value;
+                                        } else if (dataObject[key].type === "select") {
+                                            dataObject[key].selected = value;
+                                        }
+                                    } else {
+                                        dataObject[key].required = false;
+                                    }
+
+                                }
+                            }
+                            );
+                        }
+                        baseData.resolve(dataObject);
+                    },
+                    function (error) {
+                        console.log(error);
+                        baseData.resolve(dataObject);
+                    });
+        } else {
+            baseData.resolve(dataObject);
+        }
+    }
+
+    var userObj = {
+        _id: {type: "hidden", value: "", disabled: false},
+        name: {type: "text", value: "", maxlength: 32, pattern: "^[A-Za-z ]{4,}$", disabled: false, help: "Min 4 symbols A-Z", required: true},
+        login: {type: "text", value: "", maxlength: 16, pattern: "[A-Za-z0-9]{8,}", disabled: false, help: "Min 8 symbols A-Z or digits", required: true, check: true},
+        password: {type: "text", value: "", maxlength: 16, pattern: "[A-Za-z0-9]{8,}", disabled: false, help: "Min 8 symbols A-Z or digits", required: true},
+        registered: {type: "hidden", value: "", disabled: false}
+    };
+
+    var testimonialObj = {
+        _id: {type: "hidden", value: "", disabled: false},
+        accepted: {type: "select", selects: [{_id: true, name: "true"}, {_id: false, name: "false"}], selected: false, disabled: false, required: true},
+        added: {type: "hidden", value: "", disabled: false, required: false},
+        alt: {type: "text", value: "", maxlength: 52, pattern: "[A-Za-z0-9\-]+", disabled: false, help: "Alt name for image", required: true},
+        changed: {type: "hidden", value: "", disabled: false, required: false},
+        checked: {type: "hidden", value: "", required: false},
+        image: {type: "text", value: "", maxlength: 128, pattern: "[A-Za-z0-9\-\.\&\/]+", disabled: false, help: "Path to image", required: true},
+        name: {type: "text", value: "", maxlength: 64, pattern: "[A-Za-z0-9 \-\.]+", disabled: false, help: "Path to image", required: true},
+        responsible: {type: "select", selects: [], selected: "", disabled: false, required: false},
+        testimonial: {type: "textarea", value: "", rows: 6, maxlength: 1000, help: "Max 1000 symbols", disabled: false, required: true}
+    };
+
+    var blogpostsObj = {
+        _id: {type: "hidden", value: "", disabled: false},
+        aText: {type: "text", value: "", maxlength: 200, pattern: "[A-Za-z0-9 \-\.\|\&\,\;\?]+", disabled: false, help: "Max 200 symbols", required: true},
+        added: {type: "hidden", value: "", disabled: false, required: false},
+        author: {type: "select", selects: [], selected: "", disabled: false, required: false},
+        changed: {type: "hidden", value: "", disabled: false, required: false},
+        fullText: {type: "textarea", value: "", rows: 6, maxlength: 10000, help: "Max 10000 symbols", disabled: false, required: false},
+        image: {type: "text", value: "", maxlength: 128, pattern: "[A-Za-z0-9 \-\.\&\/]+", disabled: false, help: "Path to image", required: true},
+        imageSmall: {type: "text", value: "", maxlength: 128, pattern: "[A-Za-z0-9\-\.\&\/]+", disabled: false, help: "Path to image", required: true},
+        link: {type: "text", value: "", maxlength: 200, pattern: "[A-Za-z0-9\-\.\&\?\=\/]+", disabled: false, help: "Max 200 symbols", required: true},
+        postDate: {type: "date", value: "", disabled: false, required: true}
+    };
+
+    var contactsObj = {
+        _id: {type: "hidden", value: "", disabled: false},
+        email: {type: "text", value: "", maxlength: 64, disabled: false, help: "Max 64 symbols", required: true},
+        message: {type: "text", value: "", maxlength: 200, pattern: "[A-Za-z0-9 \-\.\&\?\=\/\,\;\!\@\*\"\']+", disabled: false, help: "Max 200 symbols", required: true},
+        name: {type: "text", value: "", maxlength: 32, pattern: "^[A-Za-z ]{4,}$", disabled: false, help: "Min 4 symbols A-Z", required: true},
+        processComment: {type: "textarea", value: "", rows: 6, maxlength: 10000, help: "Max 10000 symbols", disabled: false, required: false},
+        processStatus: {type: "select", selects: [{_id: "Not started", name: "Not started"}, {_id: "In progress", name: "In progress"}, {_id: "Fail", name: "Failed"}, {_id: "Done", name: "Done"}], selected: "Not started", disabled: false, required: true},
+        processed: {type: "select", selects: [{_id: true, name: "true"}, {_id: false, name: "false"}], selected: false, disabled: true, required: true},
+        responsible: {type: "select", selects: [], selected: "", disabled: false, required: false},
+        added: {type: "hidden", value: "", disabled: false, required: false},
+        changed: {type: "hidden", value: "", disabled: false, required: false}
+    };
+
+    var socialsObj = {
+        _id: {type: "hidden", value: "", disabled: false},
+        name: {type: "text", value: "", maxlength: 32, pattern: "^[A-Za-z0-9 \-\!]{2,}$", disabled: false, help: "Min 2 symbols A-Z 0-9", required: true},
+        link: {type: "url", value: "", maxlength: 64, disabled: false, required: true},
+        class: {type: "text", value: "", maxlength: 32, pattern: "^[A-Za-z0-9\-]{5,}$", disabled: false, help: "Min 5 symbols A-Z 0-9", required: true}
+    };
+
+    var aboutObj = {
+        _id: {type: "hidden", value: "", disabled: false},
+        titleTop: {type: "text", value: "", maxlength: 20, pattern: "^[A-Za-z0-9 \-\!\&\?]{4,}$", disabled: false, help: "Min 4 symbols A-Z 0-9", required: true},
+        titleBottom: {type: "text", value: "", maxlength: 20, pattern: "^[A-Za-z0-9 \-\!\&\?]{4,}$", disabled: false, help: "Min 4 symbols A-Z 0-9", required: true},
+        text1: {type: "textarea", value: "", rows: 6, maxlength: 600, help: "Max 600 symbols", disabled: false, required: true},
+        text2: {type: "textarea", value: "", rows: 6, maxlength: 600, help: "Max 600 symbols", disabled: false, required: true},
+        textBig: {type: "textarea", value: "", rows: 6, maxlength: 140, help: "Max 140 symbols", disabled: false, required: true},
+        link: {type: "text", value: "", maxlength: 200, pattern: "[A-Za-z0-9\-\.\&\?\=\/]+", disabled: false, help: "Max 200 symbols", required: true}
+    };
+
+
+    if (qs.tablename) {
+        tablename = qs.tablename;
+    }
+    if (qs.doc) {
+        docID = qs.doc;
+    }
+
+    if (!tablename || editable.indexOf(tablename) === -1) {
+        unknown(response, request);
+    }
+
+    switch (tablename) {
+        case "users":
+            dataObject = userObj;
+            break;
+        case "testimonials":
+            dataObject = testimonialObj;
+            break;
+        case "blogposts":
+            dataObject = blogpostsObj;
+            break;
+        case "contacts":
+            dataObject = contactsObj;
+            break;
+        case "socials":
+            dataObject = socialsObj;
+            break;
+        case "about":
+            dataObject = aboutObj;
+            break;
+    }
+
+    usersResult = db.getUsers();
+    usersResult(
+            function (users) {
+                if (users) {
+                    if (dataObject.hasOwnProperty("responsible")) {
+                        dataObject.responsible.selects = users;
+                    }
+                    if (dataObject.hasOwnProperty("author")) {
+                        dataObject.author.selects = users;
+                    }
+                }
+                startEditing();
+            },
+            function (error) {
+                console.log(error);
+                strtEditing();
+            });
+
+
+    baseData.promise(
+            function (dataObj) {
+                fs.readFile("sources/templates/adminedit.html", function (error, data) {
+                    if (error) {
+                        body.reject(error);
+                    } else {
+                        var template = _.template(data);
+                        body.resolve(template({
+                            tablename: tablename,
+                            fields: dataObj
+                        }));
+                    }
+                });
+            },
+            function (error) {
+                unknown(response, request);
+            });
+
+    deferred(head, menus, body.promise, footer)(
+            function (data) {
+                response.writeHead(200, {"Content-Type": "text/html", "AccessControlAllowOrigin": "*"});
+                _.forEach(data, function (content) {
+                    response.write(content);
+                });
+                response.write('<script type="text/javascript" src="/javascript/adminmenu.js"></script>');
+                response.write('<script type="text/javascript" src="/javascript/adminedit.js"></script>');
+                response.write('</body></html>');
+                response.end();
+            },
+            function (error) {
+                console.log(error);
+                unknown(response, request);
+            });
+}
+
+function adminEditData(response, request, query) {
+    function checkData(recievedData) {
+        var tablename;
+        switch (recievedData.tablename) {
+            case "users":
+                tablename = recievedData.tablename;
+                if (recievedData.password) {
+                    recievedData.password = md5(md5(recievedData.password));
+                }
+                recievedData.registered = (!recievedData.registered) ? new Date() : new Date(recievedData.registered);
+                break;
+            case "contacts":
+                tablename = "to-contact";
+                recievedData.added = (recievedData.added) ? new Date(recievedData.added) : new Date();
+                recievedData.changed = new Date();
+                recievedData.processed = (recievedData.processStatus === "Done" || recievedData.processStatus === "Fail") ? "true" : "false";
+                break;
+            case "testimonials":
+                tablename = recievedData.tablename;
+                recievedData.checked = (recievedData.added) ? new Date() : null;
+                recievedData.added = (recievedData.added) ? new Date(recievedData.added) : new Date();
+                recievedData.changed = new Date();
+                break;
+            case "blogposts":
+                tablename = recievedData.tablename;
+                recievedData.postDate = new Date(recievedData.postDate);
+                recievedData.added = (recievedData.added) ? new Date(recievedData.added) : new Date();
+                recievedData.changed = new Date();
+                break;
+            case "about":
+                tablename = "services";
+                break;
+            default:
+                tablename = recievedData.tablename;
+                break;
+        }
+
+        if (recievedData._id) {
+            db.updateDocument(recievedData)(
+                    function (data) {
+                        process.resolve({tablename: tablename, doc: recievedData._id});
+                    },
+                    function (error) {
+                        process.reject({error: error, tablename: tablename, doc: recievedData._id});
+                    });
+        } else {
+            db.createDocument(recievedData)(
+                    function (data) {
+                        process.resolve({tablename: tablename});
+                    },
+                    function (error) {
+                        process.reject({error: error, tablename: tablename, doc: recievedData._id});
+                    });
+        }
+    }
+
+    var process = deferred();
+    var postData = "";
+
+    if (request.method !== "POST") {
+        process.reject({error: "Incorrect method"});
+    } else {
+        request.setEncoding("utf8");
+        request.on('data', function (chunk) {
+            postData += chunk;
+        });
+        request.on('end', function () {
+            postData = querystring.parse(postData);
+            checkData(postData);
+        });
+    }
+
+    process.promise(
+            function (data) {
+                response.writeHead(303, {Location: "/adminpage/" + data.tablename});
+                response.end();
+            },
+            function (error) {
+                console.log(error.error);
+                response.writeHead(303, {Location: "/adminpage/edit?tablename=" + error.tablename + "&doc=" + error.doc});
+                response.end();
+            });
+}
+
+function adminDeleteData(response, request, query) {
+    var process = deferred();
+    var qs = querystring.parse(query);
+    var tablename = qs.tablename;
+    var doc = qs.doc;
+    var table = "";
+
+    if (!tablename || !doc) {
+        process.reject("Data not set");
+    }
+
+    switch (tablename) {
+        case "contacts":
+            table = "to-contact";
+            break;
+        case "about":
+            table = "services";
+            break;
+        default:
+            table = tablename;
+            break;
+    }
+    
+    db.deleteDocument(tablename, doc)(
+                    function (data) {
+                        process.resolve(data);
+                    },
+                    function (error) {
+                        process.reject(error);
+                    });
+
+    process.promise(
+            function (data) {
+                response.writeHead(303, {Location: "/adminpage/" + table});
+                response.end();
+            },
+            function (error) {
+                console.log(error);
+                response.writeHead(303, {Location: "/adminpage/" + table});
+                response.end();
+            });
+}
+
 function checkUpdates(response, request) {
     var result = _checkAdminEvents();
 
@@ -834,6 +1233,91 @@ function checkUpdates(response, request) {
             function (error) {
                 response.writeHead(404, {"Content-Type": "text/html", "AccessControlAllowOrigin": "*"});
                 response.write(error);
+                response.end();
+            });
+}
+
+//function userExist(response, request) {
+//    var login = '';
+//    var result = deferred();
+//
+//    function checkData(login) {
+//        if (!login) {
+//            result.reject({result: "Username not set"});
+//        } else {
+//            db.userExists(login)(
+//                    function (data) {
+//                        result.resolve(data);
+//                    },
+//                    function (error) {
+//                        result.reject(error);
+//                    });
+//        }
+//    }
+//
+//    request.setEncoding("utf8");
+//    request.on('data', function (chunk) {
+//        login += chunk;
+//    });
+//    request.on('end', function () {
+//        login = querystring.parse(login).login;
+//        checkData(login);
+//    });
+//
+//    result.promise(
+//            function (data) {
+//                response.writeHead(200, {"Content-Type": "application/json", "AccessControlAllowOrigin": "*"});
+//                response.write(JSON.stringify(data));
+//                response.end();
+//            },
+//            function (error) {
+//                response.writeHead(200, {"Content-Type": "application/json", "AccessControlAllowOrigin": "*"});
+//                response.write(JSON.stringify(error));
+//                response.end();
+//            });
+//}
+
+function uniqueExist(response, request) {
+    var data = '';
+    var result = deferred();
+
+    function checkData(data) {
+        var tablename = data.tablename;
+        var dataObj = {};
+        dataObj[data.key] = data.data;
+        dataObj["id"] = data.id;
+
+        if (!data) {
+            result.reject({result: "Data not set"});
+        } else {
+            db.uniqueExists(dataObj, tablename)(
+                    function (data) {
+                        result.resolve(data);
+                    },
+                    function (error) {
+                        result.reject(error);
+                    });
+        }
+    }
+
+    request.setEncoding("utf8");
+    request.on('data', function (chunk) {
+        data += chunk;
+    });
+    request.on('end', function () {
+        data = querystring.parse(data);
+        checkData(data);
+    });
+
+    result.promise(
+            function (data) {
+                response.writeHead(200, {"Content-Type": "application/json", "AccessControlAllowOrigin": "*"});
+                response.write(JSON.stringify(data));
+                response.end();
+            },
+            function (error) {
+                response.writeHead(200, {"Content-Type": "application/json", "AccessControlAllowOrigin": "*"});
+                response.write(JSON.stringify(error));
                 response.end();
             });
 }
@@ -858,7 +1342,6 @@ function upload(response, request) {
 }
 
 function show(response, request) {
-    console.log("Show action");
     fs.readFile("public/content/sources/logo.png", "binary", function (error, file) {
         if (error) {
             response.writeHead(500, {"Content-Type": "text/plain", "AccessControlAllowOrigin": "*"});
@@ -889,3 +1372,11 @@ exports.adminServices = adminServices;
 exports.adminOffers = adminOffers;
 exports.authorization = authorization;
 exports.checkLogin = checkLogin;
+exports.logout = logout;
+exports.adminUsers = adminUsers;
+exports.adminSocials = adminSocials;
+exports.adminEdit = adminEdit;
+exports.adminEditData = adminEditData;
+exports.adminDeleteData = adminDeleteData;
+//exports.userExist = userExist;
+exports.uniqueExist = uniqueExist;

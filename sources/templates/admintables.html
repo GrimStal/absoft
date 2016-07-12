@@ -9,14 +9,16 @@
         </div>
         <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2"></div>
     </div>
+    <% if (add) {%>
     <div class="row">
-        <div class="add-button-holder col-xs-2 col-sm-2 col-md-2 col-lg-2 col-xs-offset-10 col-sm-offset-10 col-md-offset-10 col-lg-offset-10">
-            <button type="button" class="btn btn-sm btn-success"><a href="#" title="Add new string">add<i class="glyphicon glyphicon-plus"></i></a></button>
+        <div class="add-button-holder col-xs-2 col-sm-2 col-md-2 col-lg-2 col-xs-offset-10 col-sm-offset-10 col-md-offset-10 col-lg-offset-10">           
+            <button type="button" class="btn btn-sm btn-success"><a href="/adminpage/edit?tablename=<%-tableName%>" title="Add new string">add<i class="glyphicon glyphicon-plus"></i></a></button>
         </div>
     </div>
+    <% } %>
     <div class="row">
-        <div class="data-table col-xs-12 col-sm-12 col-md-12 col-lg-12">
-            <table class="table table-striped table-hover">
+        <div class="data-table db-<%-tableName%>-table col-xs-12 col-sm-12 col-md-12 col-lg-12">
+            <table class="table table-striped table-hover table-condensed">
                 <thead>
                     <tr>
                         <% _.forEach(Object.keys(table[0]), function(key){ %>
@@ -30,27 +32,46 @@
                 <tbody>
                     <% _.forEach(table, function(row){ %>
                     <tr id='<%-row._id%>'>
-                        <% var dates = ['added', 'changed', 'checked', 'registered', 'requestDate', 'editDate', 'postDate']; %>
                         <% var checks = ['accepted', 'processed'];%>
                         <% var options = {year: 'numeric', month: '2-digit', day: '2-digit', timezone: 'UTC', hour12: false, hour: 'numeric', minute: 'numeric',  second: 'numeric'}; %>
                         <% _.forEach(row, function(col, key){ %>
-                            <% if (key !== '_id') { %>
-                                <% if (typeof col !== 'object'){ %>
-                                    <% if (_.indexOf(dates, key) !== -1) { %>
-                                        <td class="text-center <%-key%>"><%= new Date(col).toLocaleString('en', options)%></td>
-                                    <% } else if (_.indexOf(checks, key) !== -1) { %>
-                                        <td class="text-center <%-key%>"><% if (col){ %> <i class='glyphicon glyphicon-ok'></i> <% } else { %> <i class='glyphicon glyphicon-time'></i> <%}%> </td>
-                                    <% } else { %>
-                                        <td class="text-center <%-key%>"><p><%-col%></p></td>
-                                    <% } %>                                    
-                                <% } else if (typeof col === 'object' && col !== null){ %>
-                                        <td class="text-center <%-key%>"><%=JSON.stringify(col)%></td>
-                                <% } else { %>
-                                    <td class="text-center <%-key%>"></td>
-                                <% } %>
-                            <% } %>
+                        <% if (key !== '_id') { %>
+                        <% if (typeof col !== 'object'){ %>
+                        <% if (_.indexOf(checks, key) !== -1) { %>
+                        <td class="text-center <%-key%>">
+                            <% if (col){ %>
+                            <i class='glyphicon glyphicon-ok'></i> 
+                            <% } else { %> 
+                            <i class='glyphicon glyphicon-time'></i> 
+                            <%}%> 
+                        </td>
+                        <% } else { %>
+                        <td class="text-center <%-key%>"><p><%-col%></p></td>
+                        <% } %>                                    
+                        <% } else if (typeof col === 'object' && col !== null){ %>
+                        <% if (col instanceof Date) { %>                             
+                        <td class="text-center <%-key%>"><%= new Date(col).toLocaleString('en', options)%></td>
+                        <% } else { %>
+                        <td class="text-center <%-key%>"><%=JSON.stringify(col)%></td>
+                        <% } %>
+                        <% } else { %>
+                        <td class="text-center <%-key%>"></td>
+                        <% } %>
+                        <% } %>
                         <% }) %>
-                        <td class='edit'><a title="Edit" class='glyphicon glyphicon-cog'></a></td>
+                        <td class='edit'>
+                            <div>
+                            <a title="Edit" href="/adminpage/edit?tablename=<%-tableName%>&doc=<%-row._id%>">
+                                <i class="glyphicon glyphicon-cog"></i>
+                            </a>
+                            <% if (del) { %>
+                            <ul>
+                                <li><a title="Edit" href="/adminpage/edit?tablename=<%-tableName%>&doc=<%-row._id%>">Edit</a></li>
+                                <li><a title="Delete" href="/adminpage/delete?tablename=<%-tableName%>&doc=<%-row._id%>">Delete</a></li>
+                            </ul>
+                            <% } %>
+                            </div>
+                        </td>
                     </tr>
                     <% }) %>                 
                 </tbody>
@@ -65,48 +86,48 @@
                 <li <% if (currentPage == 1) { %> class="disabled" <%}%>>
                     <a href="<% if (currentPage == 1) { %><% } else { %><%=(pathname + '?lim=' + limit + '&skip=' + (skip-limit))%><%}%>" title="<% if (currentPage-1 > 0) { %> <%-currentPage-1%> <% }%>">&laquo;</a>
                 </li>
-                     
-                    <% if (pageCount < 6) { %>                        
-                        <% while (pages <= pageCount) { %>
-                            <% if (pages !== currentPage) { %>
-                                <li><a href="<%=(pathname + '?lim=' + limit + '&skip=' + (limit*(pages-1)))%>" title="<%-pages%>"><%-pages%></a></li>
-                            <% } else { %>
-                                <li class="active"><a href="" title="<%-pages%>"><%-pages%></a></li>
-                            <% } %>
-                            <% pages++; %>
-                        <% } %>
-                    <% } else { %>
-                        <% if (pages !== currentPage) { %>
-                               <li><a href="<%=(pathname + '?lim=' + limit + '&skip=' + (limit*(pages-1)))%>" title="<%-pages%>"><%-pages%></a></li>
-                        <% } else { %>
-                               <li class="active"><a href="" title="<%-pages%>"><%-pages%></a></li>
-                        <% } %>
-                        <% pages++; %>
-                            
-                        <% while (pages <= pageCount) { %>
-                            <% if (pages == pageCount){ %>
-                                <% if (pages !== currentPage) { %>
-                                    <li><a href="<%=(pathname + '?lim=' + limit + '&skip=' + (limit*(pages-1)))%>" title="<%-pages%>"><%-pages%></a></li>
-                                <% } else { %>
-                                    <li class="active"><a href="" title="<%-pages%>"><%-pages%></a></li>
-                                <% } %>
-                            <% } else if (pages == (currentPage - 1) || pages == (currentPage + 1)){ %>
-                                <li><a href="<%=(pathname + '?lim=' + limit + '&skip=' + (limit*(pages-1)))%>" title="<%-pages%>"><%-pages%></a></li>
-                            <% } else if (pages == (currentPage - 2) || pages == (currentPage + 2)){ %>
-                            <li class="disabled"><a href="" title="...">...</a></li>
-                            <% } else if (pages == currentPage){ %>
-                                <li class="active"><a href="" title="<%-pages%>"><%-pages%></a></li>
-                            <% } %>
-                            <% pages++; %>
-                        <% } %>
-                    <% } %>
-                    
-                    <li <%if (currentPage+1 > pageCount) {%> class="disabled" <%}%>>
-                        <a href="<% if (currentPage == pageCount) { %><% } else { %><%=(pathname + '?lim=' + limit + '&skip=' + (skip+limit))%><%}%>" title="<% if(currentPage == pageCount){%> '' <% } else { %><%= currentPage + 1%> <%}%>">
-                            &raquo;
-                        </a>
-                    </li>
-                   
+
+                <% if (pageCount < 6) { %>                        
+                <% while (pages <= pageCount) { %>
+                <% if (pages !== currentPage) { %>
+                <li><a href="<%=(pathname + '?lim=' + limit + '&skip=' + (limit*(pages-1)))%>" title="<%-pages%>"><%-pages%></a></li>
+                <% } else { %>
+                <li class="active"><a href="" title="<%-pages%>"><%-pages%></a></li>
+                <% } %>
+                <% pages++; %>
+                <% } %>
+                <% } else { %>
+                <% if (pages !== currentPage) { %>
+                <li><a href="<%=(pathname + '?lim=' + limit + '&skip=' + (limit*(pages-1)))%>" title="<%-pages%>"><%-pages%></a></li>
+                <% } else { %>
+                <li class="active"><a href="" title="<%-pages%>"><%-pages%></a></li>
+                <% } %>
+                <% pages++; %>
+
+                <% while (pages <= pageCount) { %>
+                <% if (pages == pageCount){ %>
+                <% if (pages !== currentPage) { %>
+                <li><a href="<%=(pathname + '?lim=' + limit + '&skip=' + (limit*(pages-1)))%>" title="<%-pages%>"><%-pages%></a></li>
+                <% } else { %>
+                <li class="active"><a href="" title="<%-pages%>"><%-pages%></a></li>
+                <% } %>
+                <% } else if (pages == (currentPage - 1) || pages == (currentPage + 1)){ %>
+                <li><a href="<%=(pathname + '?lim=' + limit + '&skip=' + (limit*(pages-1)))%>" title="<%-pages%>"><%-pages%></a></li>
+                <% } else if (pages == (currentPage - 2) || pages == (currentPage + 2)){ %>
+                <li class="disabled"><a href="" title="...">...</a></li>
+                <% } else if (pages == currentPage){ %>
+                <li class="active"><a href="" title="<%-pages%>"><%-pages%></a></li>
+                <% } %>
+                <% pages++; %>
+                <% } %>
+                <% } %>
+
+                <li <%if (currentPage+1 > pageCount) {%> class="disabled" <%}%>>
+                    <a href="<% if (currentPage == pageCount) { %><% } else { %><%=(pathname + '?lim=' + limit + '&skip=' + (skip+limit))%><%}%>" title="<% if(currentPage == pageCount){%> '' <% } else { %><%= currentPage + 1%> <%}%>">
+                        &raquo;
+                    </a>
+                </li>
+
                 <% } %>
             </ul>
         </div>

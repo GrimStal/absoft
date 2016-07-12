@@ -23,7 +23,7 @@ function getChanges() {
 getChanges();
 setInterval(getChanges, 5000);
 
-$.map($('.testimonial p, .link p, .fullText p, .image p, .text1 p, .text2 p, .textBig p, .items p, .description p'),function(elem){
+$.map($('.testimonial p, .link p, .fullText p, .image p, .imageSmall p, .text1 p, .text2 p, .textBig p, .items p, .description p'),function(elem){
     $(elem).attr('data-toggle', 'tooltip');
     $(elem).attr('data-placement', 'bottom');
     $(elem).attr('data-trigger', 'hover focus click');

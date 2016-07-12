@@ -3,13 +3,15 @@
  * @author Borshchov Dimitriy <grimstal@bigmir.net> 
  */
 var deferred = require('deferred');
-var mongoClient = require('mongodb').MongoClient;
+var mongo = require('mongodb');
+var mongoClient = mongo.MongoClient;
 var host = 'localhost';
 var port = '27017';
 var login = "medianovak";
 var password = "1zaBEtcVmv";
 var dataBase = "medianovak";
 var connectStr = "mongodb://" + login + ":" + password + "@" + host + ":" + port + "/" + dataBase;
+var _ = require('lodash');
 
 /** Param 'options' is object of options, like 'sort', fields, 'etc'
  * 
@@ -61,8 +63,8 @@ function _aggregateTemplate(collection, aggrCollection, localField, foreignField
                     .map(function (data) {
                         if (data[localField] && data[localField][neededValue]) {
                             data[localField] = data[localField][neededValue];
-                        }                       
-                        if (!data[localField]){
+                        }
+                        if (!data[localField]) {
                             data[localField] = null;
                         }
                         return data;
@@ -155,7 +157,7 @@ function getHomeFooter() {
 }
 
 function getServiceOffers() {
-    return _findTemplate('offers', {}, {fields: {_id: 0}, sort: {_id: 1}});
+    return _findTemplate('about', {}, {fields: {_id: 0, titleBottom: 0, text2: 0, textBig: 0}, sort: {_id: 1}});
 }
 
 function getHomePortfolio() {
@@ -172,13 +174,21 @@ function getHomePortfolio() {
 }
 
 function getLatestTestimonials() {
-    return _findTemplate('testimonials', {accepted: 1}, {fields: {_id: 0, accepted: 0, changed: 0, added: 0, responsible: 0, checked: 0}, sort: {checked: 1, added: -1}, limit: 6});
+    return _findTemplate('testimonials', {accepted: true}, {fields: {_id: 0, accepted: 0, changed: 0, added: 0, responsible: 0, checked: 0}, sort: {checked: 1, added: -1}, limit: 6});
 }
 
 function getLatestBlogposts() {
     return _findTemplate('blogposts', {postDate: {$lte: new Date()}}, {fields: {_id: 0, added: 0, changed: 0, postDate: 0, author: 0}, sort: {added: -1, postDate: -1}, limit: 7});
 }
 
+function checkUser(name) {
+    if (!name) {
+        var result = deferred();
+        result.reject('Username not set');
+        return result.promise();
+    }
+    return _findOneTemplate('users', {login: name}, {registered: 0});
+}
 /** Name is processing offer name
  * 
  * @param {string} name
@@ -249,6 +259,14 @@ function getOffersCount() {
     return _countTemplate('offers', {});
 }
 
+function getUsersCount() {
+    return _countTemplate('users', {});
+}
+
+function getSocialsCount() {
+    return _countTemplate('users', {});
+}
+
 function getTable(name, limit, skip) {
     var options = {};
 
@@ -263,7 +281,7 @@ function getTable(name, limit, skip) {
             return _aggregateTemplate(name, 'users', 'responsible', '_id', 'name', options);
             break;
         case "contacts":
-            options["sort"] = {processed: -1, processStatus: 1, requestDate: -1};
+            options["sort"] = {processed: -1, processStatus: 1, added: -1};
             return _aggregateTemplate(name, 'users', 'responsible', '_id', 'name', options);
             break;
         case "blogposts":
@@ -274,6 +292,10 @@ function getTable(name, limit, skip) {
             break;
         case "offers":
             break;
+        case "users":
+            break;
+        case "socials":
+            break;
         default:
             var result = deferred();
             result.reject("Base not available");
@@ -283,6 +305,182 @@ function getTable(name, limit, skip) {
     return _findTemplate(name, {}, options);
 }
 
+function getForEdit(tablename, ID) {
+    if (!tablename) {
+        var result = deferred();
+        result.reject("Tablename not set");
+        return result.promise;
+    }
+
+    return _findOneTemplate(tablename, {_id: new mongo.ObjectId(ID)});
+}
+
+function updateDocument(dataObj) {
+    var result = deferred();
+    var toUpdate = {};
+    var strings = ["testimonial", "fullText", "processComment"];
+    var booleans = ["processed", "accepted"];
+
+    if (!dataObj.tablename || !dataObj._id) {
+        result.reject("Incorrect data");
+    }
+
+    _.forEach(dataObj, function (field, key) {
+        if (key !== "tablename" && key !== "_id" && field) {
+            if (strings.indexOf(key) !== -1) {
+                toUpdate[key] = String(field);
+            } else if (booleans.indexOf(key) !== -1) {
+                toUpdate[key] = (field === "true");
+            } else if (key === "responsible" || key === "author") {
+                toUpdate[key] = new mongo.ObjectId(field);
+            } else {
+                toUpdate[key] = field;
+            }
+        }
+    });
+
+    mongoClient.connect(connectStr, function (err, db) {
+        if (!err) {
+            var table = db.collection(dataObj.tablename);
+            table.updateOne({_id: new mongo.ObjectId(dataObj._id)}, {$set: toUpdate}, {upsert: true, multi: false}, function (err, results) {
+                if (!err) {
+                    result.resolve("Updated");
+                } else {
+                    result.reject(err);
+                }
+                db.close();
+            });
+        } else {
+            result.reject(err);
+        }
+    });
+
+    return result.promise;
+}
+
+function createDocument(dataObj) {
+    var result = deferred();
+    var toCreate = {};
+    var strings = ["testimonial", "fullText", "processComment"];
+    var booleans = ["processed", "accepted"];
+
+    if (!dataObj.tablename) {
+        result.reject("Incorrect data");
+    }
+
+    _.forEach(dataObj, function (field, key) {
+        if (key !== "tablename" && key !== "_id") {
+            if (strings.indexOf(key) !== -1) {
+                toCreate[key] = String(field);
+            } else if (booleans.indexOf(key) !== -1) {
+                toCreate[key] = (field === "true");
+            } else if (key === "responsible" || key === "author") {
+                toCreate[key] = new mongo.ObjectId(field);
+            } else {
+                toCreate[key] = field;
+            }
+        }
+    });
+
+    mongoClient.connect(connectStr, function (err, db) {
+        if (!err) {
+            var table = db.collection(dataObj.tablename);
+            table.insertOne(toCreate, function (err, results) {
+                if (!err) {
+                    result.resolve("Inserted");
+                } else {
+                    result.reject(err);
+                }
+                db.close();
+            });
+        } else {
+            result.reject(err);
+        }
+    });
+
+    return result.promise;
+}
+
+function deleteDocument(tablename, id) {
+    var result = deferred();
+    var deleteable = ["users", "testimonials", "blogposts", "socials"];
+    var id;
+
+    if (!tablename || !id || deleteable.indexOf(tablename) === -1) {
+        result.reject("Incorrect data");
+    }
+    
+    id = new mongo.ObjectId(id);
+    
+
+    mongoClient.connect(connectStr, function (err, db) {
+        if (!err) {
+            var table = db.collection(tablename);
+            table.remove({_id: id}, {justOne: true}, function (err, results) {
+                if (!err) {
+                    result.resolve("Element Deleted");
+                } else {
+                    result.reject(err);
+                }
+                db.close();
+            });
+        } else {
+            result.reject(err);
+        }
+    });
+
+    return result.promise;
+}
+
+//function userExists(username) {
+//    var user = _findOneTemplate('users', {login: username}, {_id: 0, name: 0, password: 0, registered: 0});
+//    var result = deferred();
+//
+//    user(
+//            function (data) {
+//                if (!data){
+//                    result.resolve({result: "OK"});
+//                } else {
+//                    result.reject({result: "User exists"});
+//                }
+//            },
+//            function (error) {
+//                result.reject({result: "Problem on connecting:" + error});
+//            }
+//    );
+//    
+//    return result.promise;
+//}
+
+function uniqueExists(data, tablename) {
+    var check;
+    var result = deferred();
+
+    if (data._id) {
+        data._id = {$ne: new mongo.ObjectId(data._id)};
+    }
+
+    check = _findOneTemplate(tablename, data);
+
+    check(
+            function (data) {
+                if (!data) {
+                    result.resolve({result: "OK"});
+                } else {
+                    result.reject({result: "Data exists"});
+                }
+            },
+            function (error) {
+                result.reject({result: "Problem on connecting:" + error});
+            }
+    );
+
+    return result.promise;
+}
+
+function getUsers() {
+    return _findTemplate('users', {}, {fields: {login: 0, password: 0, registered: 0}, sort: {name: 1}});
+}
 
 exports.getMenu = getMenu;
 exports.getHeadSocials = getHeadSocials;
@@ -307,4 +505,14 @@ exports.getPostedBlogpostsCount = getPostedBlogpostsCount;
 exports.getWaitingBlogpostsCount = getWaitingBlogpostsCount;
 exports.getServicesCount = getServicesCount;
 exports.getOffersCount = getOffersCount;
+exports.getUsersCount = getUsersCount;
+exports.getSocialsCount = getSocialsCount;
 exports.getTable = getTable;
+exports.checkUser = checkUser;
+exports.getForEdit = getForEdit;
+exports.createDocument = createDocument;
+exports.updateDocument = updateDocument;
+exports.deleteDocument = deleteDocument;
+//exports.userExists = userExists;
+exports.uniqueExists = uniqueExists;
+exports.getUsers = getUsers;
