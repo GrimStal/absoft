@@ -602,6 +602,88 @@ function portfolio(response, request) {
             });
 }
 
+function contactUs(response, request) {
+    var facebook = db.getSocialLink("Facebook");
+    var twitter = db.getSocialLink("Twitter");
+    var instagram = db.getSocialLink("Instagram");
+    var aboutObj = {
+        titleTop: "lets talk",
+        titleBottom: "contact us now!"
+    };
+
+    deferred(facebook, twitter, instagram)(
+            function (data) {
+                if (data === null) {
+                    console.log("No data found");
+                    unknown(response, request);
+                }
+
+                data.forEach(function (element) {
+                    aboutObj[element.name.toLowerCase()] = element.link;
+                });
+
+                _getServicePage(response, request, aboutObj);
+            },
+            function (error) {
+                console.log(error);
+                unknown(response, request);
+            });
+}
+
+function leavemessage(response, request) {
+    function start(data) {
+        if (!data.name || !data.email || !data.message) {
+            return result.reject("Incorrect data");
+        }
+
+        var dataObj = {
+            tablename: 'contacts',
+            email: data.email,
+            message: data.message,
+            name: data.name,
+            processComment: "",
+            processStatus: "Not started",
+            processed: false,
+            responsible: null,
+            added: new Date(),
+            changed: null
+        };
+        
+        db.createDocument(dataObj)(
+                function (data) {
+                    result.resolve("Your message was sent successfully. Thanks.");
+                },
+                function (error) {
+                    console.log(error);
+                    result.reject("Some troubles with leaving your message. Try again later.");
+                });
+    }
+
+    var postData = "";
+    var result = deferred();
+
+    request.on("data", function (chunk) {
+        postData += chunk;
+    });
+
+    request.on("end", function () {
+        postData = querystring.parse(postData);
+        start(postData);
+    });
+
+    result.promise(
+            function (data) {
+                response.writeHead(200, {"Content-Type": "application/json", "AccessControlAllowOrigin": "*"});
+                response.write(JSON.stringify({succ: true, result: data}));
+                response.end();
+            },
+            function (error) {
+                response.writeHead(200, {"Content-Type": "application/json", "AccessControlAllowOrigin": "*"});
+                response.write(JSON.stringify({succ: false, result: error}));
+                response.end();
+            });
+}
+
 function unknown(response, request, pathname) {
     pathname = pathname || url.parse(request.url).pathname;
     if (request.url.indexOf(".css") !== -1) {
@@ -1200,14 +1282,14 @@ function adminDeleteData(response, request, query) {
             table = tablename;
             break;
     }
-    
+
     db.deleteDocument(tablename, doc)(
-                    function (data) {
-                        process.resolve(data);
-                    },
-                    function (error) {
-                        process.reject(error);
-                    });
+            function (data) {
+                process.resolve(data);
+            },
+            function (error) {
+                process.reject(error);
+            });
 
     process.promise(
             function (data) {
@@ -1380,3 +1462,5 @@ exports.adminEditData = adminEditData;
 exports.adminDeleteData = adminDeleteData;
 //exports.userExist = userExist;
 exports.uniqueExist = uniqueExist;
+exports.contactUs = contactUs;
+exports.leavemessage = leavemessage;

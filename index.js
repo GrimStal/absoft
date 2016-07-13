@@ -23,6 +23,8 @@ handle(uHandle, "/website-design", requestHandlers, "websiteDesign");
 handle(uHandle, "/logo-design", requestHandlers, "logoDesign");
 handle(uHandle, "/branding", requestHandlers, "branding");
 handle(uHandle, "/portfolio", requestHandlers, "portfolio");
+handle(uHandle, "/contact", requestHandlers, "contactUs");
+handle(uHandle, "/contact/leavemessage", requestHandlers, "leavemessage");
 handle(uHandle, "/unknown", requestHandlers, "unknown");
 handle(uHandle, "/authorization", requestHandlers, "authorization");
 handle(uHandle, "/checklogin", requestHandlers, "checkLogin");

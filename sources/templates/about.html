@@ -104,6 +104,7 @@
                         </div>
                     </div>
                 </div>
+                <% if (titleTop != "lets talk"){ %>
                 <div class="row bottom-about-section">
                     <div class="about-content lg-hide-border-left lg-hide-border-top">
                         <div class="jpibfi_container">
@@ -113,6 +114,61 @@
                         </div>
                     </div>
                 </div>
+                <% } else { %>
+                <div class="row bottom-about-section">
+                    <div class="col-xs-12 col-sm-6 col-md-12 col-lg-6 info-section lg-hide-border-left lg-hide-border-top md-hide-border-bottom xs-hide-border-bottom">
+                        <div>
+                            <ul>
+                                <li>
+                                    <p>email: <a href="mailto:medianovak@gmail.com?subject=Mail from Our Site">medianovak@gmail.com</a></p>
+                                    <p>skype:<span>MediaNovak</span></p>
+                                </li>
+
+                                <li>
+                                    <h5>Join Us On Facebook</h5>
+                                    <p><a href="<%-facebook%>" target="_blank"><%-facebook%></a></p>
+                                </li>
+                                <li>
+                                    <h5>Follow Us On Twitter</h5>
+                                    <p><a href="<%-twitter%>" target="_blank"><%-twitter%></a></p>
+                                </li>
+                                <li>
+                                    <h5>Like Us On Instagram</h5>
+                                    <p><a href="<%-instagram%>" target="_blank"><%-instagram%></a></p>
+                                </li>
+
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-xs-12 col-sm-6 col-md-12 col-lg-6 form-section lg-hide-border-top md-show-border-left xs-show-border-left">
+                        <div id="form-holder">
+                            <p>Use the quick Contact Form below to e-mail MediaNovak Head Office, or get in touch via Facebook, Twitter or Instagram if that's your thing :)</p>
+                            <div role="form" class="contact-form-div" id="contact-form-div" lang="en-US">
+                                <div class="screen-reader-response"></div>
+                                <form action="/contact/leavemessage" method="post" class="contact-form" novalidate>
+                                    <p>
+                                        <span class="contact-form-control-wrap name">
+                                            <input type="text" name="name" value="" size="40" class="contact-form-control contact-text" id="name" aria-required="true" aria-invalid="false" placeholder="Name*">
+                                        </span>
+                                        <span class="contact-form-control-wrap email">
+                                            <input type="email" name="email" value="" size="40" class="contact-form-control contact-text contact-email contact-validates-as-required contact-validates-as-email" id="email" aria-required="true" aria-invalid="false" placeholder="Email*">
+                                        </span>
+                                        <span class="contact-form-control-wrap message">
+                                            <textarea name="message" cols="40" rows="10" class="contact-form-control contact-textarea contact-validates-as-required" id="message" aria-required="true" aria-invalid="false" placeholder="Message*"></textarea>
+                                        </span>
+                                        <input type="submit" value="Send Message" class="contact-form-control contact-submit" id="submit">
+                                        <img class="ajax-loader" src="/content/sources/ajax-loader.gif" alt="Sending ...">
+                                        <i class="arrow"></i>
+                                    </p>
+                                    <div class="contact-response-output contact-display-none">
+
+                                    </div>
+                                </form>
+                            </div> 
+                        </div>
+                    </div>
+                </div>
+                <% } %>
             </div>
         </div>
     </div>

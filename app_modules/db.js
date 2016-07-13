@@ -200,7 +200,7 @@ function getAbout(name) {
         result.reject('Name of element is not set');
         return result.promise;
     }
-    return _findOneTemplate('about', {name: name}, {name: 0, _id: 0});
+    return _findOneTemplate('about', {titleTop: name}, {name: 0, _id: 0});
 }
 
 function getAdminMenu() {
@@ -365,7 +365,7 @@ function createDocument(dataObj) {
     var booleans = ["processed", "accepted"];
 
     if (!dataObj.tablename) {
-        result.reject("Incorrect data");
+        result.reject("Please, fill all fields");
     }
 
     _.forEach(dataObj, function (field, key) {
@@ -482,6 +482,15 @@ function getUsers() {
     return _findTemplate('users', {}, {fields: {login: 0, password: 0, registered: 0}, sort: {name: 1}});
 }
 
+function getSocialLink(name) {
+    if (!name) {
+        var result = deferred();
+        result.reject('Name of element is not set');
+        return result.promise;
+    }
+    return _findOneTemplate('socials', {name: name}, {_id: 0, class: 0});
+}
+
 exports.getMenu = getMenu;
 exports.getHeadSocials = getHeadSocials;
 exports.getSocials = getSocials;
@@ -516,3 +525,4 @@ exports.deleteDocument = deleteDocument;
 //exports.userExists = userExists;
 exports.uniqueExists = uniqueExists;
 exports.getUsers = getUsers;
+exports.getSocialLink = getSocialLink;
