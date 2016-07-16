@@ -16,15 +16,24 @@ function viewChangesTable(obj) {
     $('#blogposts-row .total').text(obj.blogpostsTotal);
     $('#blogposts-row .ready').text(obj.postedBlogposts);
     $('#blogposts-row .waiting').text(obj.waitingBlogposts);
+    $('#quotes-row .total').text(obj.quotesTotal);
+    $('#quotes-row .ready').text(obj.processedQuotes);
+    $('#quotes-row .failed').text(obj.failedQuotes);
+    $('#quotes-row .inprocess').text(obj.inprocessQuotes);
+    $('#quotes-row .unprocessed').text(obj.unprocessedQuotes);
 }
 
 function viewChanges(obj) {
+    var toContact = (obj.unprocessedContacts + obj.unprocessedQuotes) === 0 ? "" : (obj.unprocessedContacts + obj.unprocessedQuotes);
     var contacts = (obj.unprocessedContacts === 0 ? "" : obj.unprocessedContacts);
     var testimonials = (obj.uncheckedTestimonials === 0 ? "" : obj.uncheckedTestimonials);
     var blogposts = (obj.waitingBlogposts === 0 ? "" : obj.waitingBlogposts);
-    $('#to-contact-left-menu .badge').text(contacts);
-    $('#testimonials-left-menu .badge').text(testimonials);
-    $('#blogposts-left-menu .badge').text(blogposts);
+    var quotes = (obj.unprocessedQuotes === 0 ? "" : obj.unprocessedQuotes);
+    $('#to-contact-left-menu .nums.badge').text(toContact);
+    $('#contacts-left-menu .nums.badge').text(contacts);
+    $('#testimonials-left-menu .nums.badge').text(testimonials);
+    $('#blogposts-left-menu .nums.badge').text(blogposts);
+    $('#quotes-left-menu .nums.badge').text(quotes);
 }
 
 $('.has-children').on({
@@ -40,4 +49,6 @@ $('.has-children').on({
         }
     }
 });
+
+//setTimeout(function(){$("#alert-mes").hide();}, 5000);
 

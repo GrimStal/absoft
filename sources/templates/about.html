@@ -104,7 +104,7 @@
                         </div>
                     </div>
                 </div>
-                <% if (titleTop != "lets talk"){ %>
+                <% if (!contacts){ %>
                 <div class="row bottom-about-section">
                     <div class="about-content lg-hide-border-left lg-hide-border-top">
                         <div class="jpibfi_container">
@@ -145,13 +145,13 @@
                             <p>Use the quick Contact Form below to e-mail MediaNovak Head Office, or get in touch via Facebook, Twitter or Instagram if that's your thing :)</p>
                             <div role="form" class="contact-form-div" id="contact-form-div" lang="en-US">
                                 <div class="screen-reader-response"></div>
-                                <form action="/contact/leavemessage" method="post" class="contact-form" novalidate>
+                                <form action="#" method="post" class="contact-form" novalidate>
                                     <p>
                                         <span class="contact-form-control-wrap name">
                                             <input type="text" name="name" value="" size="40" class="contact-form-control contact-text" id="name" aria-required="true" aria-invalid="false" placeholder="Name*">
                                         </span>
                                         <span class="contact-form-control-wrap email">
-                                            <input type="email" name="email" value="" size="40" class="contact-form-control contact-text contact-email contact-validates-as-required contact-validates-as-email" id="email" aria-required="true" aria-invalid="false" placeholder="Email*">
+                                            <input type="email" name="email" value="" size="40" class="contact-form-control contact-text contact-email contact-validates-as-required contact-validates-as-email" id="email" aria-required="true" aria-invalid="false" data-regexp="^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$" placeholder="Email*">
                                         </span>
                                         <span class="contact-form-control-wrap message">
                                             <textarea name="message" cols="40" rows="10" class="contact-form-control contact-textarea contact-validates-as-required" id="message" aria-required="true" aria-invalid="false" placeholder="Message*"></textarea>

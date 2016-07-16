@@ -23,22 +23,26 @@ $("#submit").on({
     'click': function () {
         $(".contact-not-valid-tip").remove();
         $("[aria-required='true']").each(function (num, elem) {
+            var regexp;
+            if ($(elem).attr("data-regexp")){
+                regexp = new RegExp($(elem).attr("data-regexp"));
+            }
+            
             if ($(elem).val().length === 0) {
                 $(elem).parent().append('<span role="alert" class="contact-not-valid-tip">Please fill the required field.</span>');
+            } else if (regexp && !regexp.exec($(elem).val())){
+                $(elem).parent().append('<span role="alert" class="contact-not-valid-tip">Data entered with mistakes.</span>');
             }
-            console.log($(elem).parent());
         });
 
         if ($(".contact-not-valid-tip").length === 0) {
             $(".contact-form-div img.ajax-loader").css("visibility", "visible");
             $.ajax({
-                url: $('form').attr('action'),
+                url: "/contact/leavemessage",
                 type: "POST",
                 contentType: 'application/x-www-form-urlencoded',
                 data: {name: $('#name').val(), email: $("#email").val(), message: $("#message").val()},
                 success: function (data) {
-                    console.log("!!!!!!!!!!!");
-                    console.log(data);
                     if (data.succ) {
                         $(".contact-response-output").removeClass("contact-mail-error");
                         $(".contact-response-output").addClass("contact-mail-sent-ok");

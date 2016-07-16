@@ -524,6 +524,31 @@
         }
     }
 
+    #quote {
+        top: -100px;
+
+        .section-quote{
+            &:first-child{
+                p {
+                    text-align: center;
+                }
+            }
+        }
+    }
+
+    .blog-post {
+        margin-bottom: 0;
+        padding-top: 0;
+        padding-bottom: 20px;
+    }
+
+    .stuck {
+        top: 130px;
+    }
+
+    #medianovak_reviews_widget-2{ 
+        margin-top: 190px;
+    }
 }
 
 @media only screen and (max-width: 1160px){
@@ -560,7 +585,7 @@
                 max-width: 40px;
             }
 
-            .link, .testimonial, .image, .imageSmall, .text1, .text2, .textBig, .items{
+            .link, .testimonial, .image, .imageSmall, .text1, .text2, .textBig, .items, .describe, .description{
                 max-width: 120px;
             }
 
@@ -624,7 +649,7 @@
                 max-width: 30px;
             }
 
-            .link, .testimonial, .image, .imageSmall, .text1, .text2, .textBig, .items{
+            .link, .testimonial, .image, .imageSmall, .text1, .text2, .textBig, .items, .describe, .description{
                 max-width: 100px;
             }
 
@@ -632,6 +657,21 @@
                 max-width: 65px;
             }
         }
+    }
+
+    .quote-mobile-holder {
+        display: block;
+        position: relative;
+        top: -20px;
+        margin-bottom: 0;
+
+        .quote-holder {
+            margin-bottom: 0;
+        }
+    }
+
+    .blog-categories {
+        display: none;
     }
 }
 
@@ -776,6 +816,36 @@
         left: 20%;
         width: 60%;
     }
+
+    #quote {
+        top: -100px;
+
+        .quote-wrapper {
+            > div{
+                h1 {
+                    font-size: 24px;
+                }
+
+            }
+        }
+    }
+
+    #blog {
+        top: 0;
+    }
+
+    .blog-posts {
+        padding-left: 15px;
+        padding-right: 15px;
+    }
+
+    .sidebar-section {
+        padding-top: 50px;
+    }
+
+    #secondary {
+        display: none;
+    }
 }
 
 @media only screen and (max-width: 990px){
@@ -792,7 +862,7 @@
                 max-width: 60px;
             }
 
-            .link, .testimonial, .image, .imageSmall, .text1, .text2, .textBig, .items{
+            .link, .testimonial, .image, .imageSmall, .text1, .text2, .textBig, .items, .describe, .description{
                 max-width: 150px;
             }
 
@@ -879,7 +949,7 @@
                 max-width: 40px;
             }
 
-            .link, .testimonial, .image, .imageSmall, .text1, .text2, .textBig, .items{
+            .link, .testimonial, .image, .imageSmall, .text1, .text2, .textBig, .items, .describe, .description{
                 max-width: 120px;
             }
 
@@ -1074,10 +1144,20 @@
     #quote {
         .quote-wrapper{
             > div{
-                h1 {
+                padding: 20px;
+
+                h1, h4 {
                     font-size: 18px;
                 }
             }
+        }
+
+        .section-quote {
+            margin-bottom: 20px;
+        }
+
+        select {
+            width: 100%;
         }
     }
 
@@ -1152,16 +1232,6 @@
         }
     }
 
-    #quote {
-        .quote-wrapper{
-            > div{
-                h1 {
-                    font-size: 18px;
-                }
-            }
-        }
-    }
-
     .middle-holder{
         > div{
             h1 {
@@ -1230,7 +1300,7 @@
                 max-width: 35px;
             }
 
-            .link, .testimonial, .image, .imageSmall, .text1, .text2, .textBig, .items{
+            .link, .testimonial, .image, .imageSmall, .text1, .text2, .textBig, .items, .describe, .description{
                 max-width: 100px;
             }
 
@@ -1257,6 +1327,48 @@
                     }
                 }
             }
+        }
+    }
+
+    container{
+        &.blog{
+            .col-xs-12 {
+                margin-bottom: 0;
+            }
+        }
+    }
+
+    .blog-post {
+        padding-top: 0;
+    }
+}
+
+@media only screen and (max-width: 640px){
+    .review-single-wrapper{
+        > div {
+            > div{
+                padding-left: 0;
+            }
+        }
+    }
+
+    .review-holder{
+        p {
+            padding-left: 0;
+
+            &:before {
+                content: none;
+            }
+        }
+
+        .read-more-review {
+            text-align: center;
+        }
+    }
+
+    .content-section-review{
+        &:before {
+            content: none;
         }
     }
 }
@@ -1387,7 +1499,7 @@
                 max-width: 30px;
             }
 
-            .link, .testimonial, .image, .imageSmall, .text1, .text2, .textBig, .items{
+            .link, .testimonial, .image, .imageSmall, .text1, .text2, .textBig, .items, .describe, .description{
                 max-width: 100px;
             }
 
@@ -1411,6 +1523,36 @@
             margin: 3px;
             padding: 3px;
         }
+    }
+
+    .quote-mobile-holder {
+        position: relative;
+        top: -50px;
+    }
+
+    .blog-post{
+        &:first-child {
+            margin-top: 0;
+        }
+    }
+
+    .clients-review-wrapper{
+        .item {
+            width: 100%;
+        }
+    }
+
+    .pagination-medianovak {
+        padding-left: 0;
+        padding-right: 0;
+
+        a, span{
+            padding: 10px;
+        }
+    }
+
+    .sidebar-section {
+        padding-left: 0;
     }
 }
 
@@ -1461,5 +1603,11 @@
                 }
             }
         }
+    }
+}
+
+@media screen and (max-width: 50em){
+    section {
+        font-size: 80%;
     }
 }

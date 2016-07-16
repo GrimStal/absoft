@@ -251,6 +251,26 @@ function getWaitingBlogpostsCount() {
     return _countTemplate('blogposts', {postDate: {$gt: new Date()}});
 }
 
+function getQuotesCount() {
+    return _countTemplate('quotes', {});
+}
+
+function getProcessedQuotesCount() {
+    return _countTemplate('quotes', {processed: true, processStatus: 'Done'});
+}
+
+function getFailedQuotesCount() {
+    return _countTemplate('quotes', {processed: true, processStatus: 'Fail'});
+}
+
+function getUnprocessedQuotesCount() {
+    return _countTemplate('quotes', {processed: false, processStatus: 'Not started'});
+}
+
+function getInprocessQuotesCount() {
+    return _countTemplate('quotes', {processed: false, processStatus: 'In process'});
+}
+
 function getServicesCount() {
     return _countTemplate('services', {});
 }
@@ -265,6 +285,14 @@ function getUsersCount() {
 
 function getSocialsCount() {
     return _countTemplate('users', {});
+}
+
+function getQuotesCount() {
+    return _countTemplate('quotes', {});
+}
+
+function getSubscribedCount() {
+    return _countTemplate('subscribed', {});
 }
 
 function getTable(name, limit, skip) {
@@ -296,6 +324,13 @@ function getTable(name, limit, skip) {
             break;
         case "socials":
             break;
+        case "quotes":
+            options["sort"] = {processed: -1, processStatus: 1, added: -1};
+            return _aggregateTemplate(name, 'users', 'responsible', '_id', 'name', options);
+            break;
+        case "subscribed":
+            options["sort"] = {changed: -1, added: -1};
+            break;
         default:
             var result = deferred();
             result.reject("Base not available");
@@ -318,8 +353,8 @@ function getForEdit(tablename, ID) {
 function updateDocument(dataObj) {
     var result = deferred();
     var toUpdate = {};
-    var strings = ["testimonial", "fullText", "processComment"];
-    var booleans = ["processed", "accepted"];
+    var strings = ["testimonial", "fullText", "processComment", "description", "website", "company", "country"];
+    var booleans = ["processed", "accepted", "webDesign", "webHosting", "blogDesign", "logoDesign", "completeBranding", "businessCardDesign", "domainName", "stationaryDesign", "eCommerceStore", "active"];
 
     if (!dataObj.tablename || !dataObj._id) {
         result.reject("Incorrect data");
@@ -331,7 +366,7 @@ function updateDocument(dataObj) {
                 toUpdate[key] = String(field);
             } else if (booleans.indexOf(key) !== -1) {
                 toUpdate[key] = (field === "true");
-            } else if (key === "responsible" || key === "author") {
+            } else if ((key === "responsible" || key === "author") && field) {
                 toUpdate[key] = new mongo.ObjectId(field);
             } else {
                 toUpdate[key] = field;
@@ -361,11 +396,11 @@ function updateDocument(dataObj) {
 function createDocument(dataObj) {
     var result = deferred();
     var toCreate = {};
-    var strings = ["testimonial", "fullText", "processComment"];
-    var booleans = ["processed", "accepted"];
+    var strings = ["testimonial", "fullText", "processComment", "description", "website", "company", "country"];
+    var booleans = ["processed", "accepted", "webDesign", "webHosting", "blogDesign", "logoDesign", "completeBranding", "businessCardDesign", "domainName", "stationaryDesign", "eCommerceStore", "active"];
 
     if (!dataObj.tablename) {
-        result.reject("Please, fill all fields");
+        result.reject("Please, fill all required fields");
     }
 
     _.forEach(dataObj, function (field, key) {
@@ -374,7 +409,7 @@ function createDocument(dataObj) {
                 toCreate[key] = String(field);
             } else if (booleans.indexOf(key) !== -1) {
                 toCreate[key] = (field === "true");
-            } else if (key === "responsible" || key === "author") {
+            } else if ((key === "responsible" || key === "author") && field) {
                 toCreate[key] = new mongo.ObjectId(field);
             } else {
                 toCreate[key] = field;
@@ -403,15 +438,15 @@ function createDocument(dataObj) {
 
 function deleteDocument(tablename, id) {
     var result = deferred();
-    var deleteable = ["users", "testimonials", "blogposts", "socials"];
+    var deleteable = ["users", "testimonials", "blogposts", "socials", "contacts", "quotes", "subscribed"];
     var id;
 
     if (!tablename || !id || deleteable.indexOf(tablename) === -1) {
         result.reject("Incorrect data");
     }
-    
+
     id = new mongo.ObjectId(id);
-    
+
 
     mongoClient.connect(connectStr, function (err, db) {
         if (!err) {
@@ -428,6 +463,43 @@ function deleteDocument(tablename, id) {
             result.reject(err);
         }
     });
+
+    return result.promise;
+}
+
+function checkSubscription(dataObj) {
+    var result = deferred();
+    var exists = _findOneTemplate('subscribed', {email: dataObj.email}, {name: 0, added: 0, changed: 0});
+
+    exists(
+            function (data) {
+                if (data && data.active) {
+                    result.resolve("Already subscribed");
+                } else if (data && !data.active) {
+                    data.active = true;
+                    data.changed = new Date();
+                    data.tablename = "subscribed";
+                    updateDocument(data)(
+                            function (data) {
+                                result.resolve("You were subscribed again");
+                            },
+                            function (error) {
+                                result.reject(error);
+                            });
+                } else {
+                    createDocument(dataObj)(
+                            function (data) {
+                                result.resolve("You were subscribed succesfully");
+                            },
+                            function (error) {
+                                result.reject(error);
+                            });
+                }
+            },
+            function (error) {
+                console.log(error);
+                result.reject(error);
+            });
 
     return result.promise;
 }
@@ -491,6 +563,18 @@ function getSocialLink(name) {
     return _findOneTemplate('socials', {name: name}, {_id: 0, class: 0});
 }
 
+function getTestimonials(search, limit, skip, sort){
+    sort = sort || {};
+    search = search || {};
+    if (!limit){
+        var result = deferred();
+        result.reject("Incorrect data");
+        return result.promise;
+    }
+    search.accepted = true;
+    return _findTemplate('testimonials', search, {fields:{_id: 0, added: 0, changed: 0, accepted: 0, responsible: 0, checked: 0}, sort: sort, limit: limit, skip: skip});
+}
+
 exports.getMenu = getMenu;
 exports.getHeadSocials = getHeadSocials;
 exports.getSocials = getSocials;
@@ -512,10 +596,17 @@ exports.getUncheckedTestimonialsCount = getUncheckedTestimonialsCount;
 exports.getBlogpostsCount = getBlogpostsCount;
 exports.getPostedBlogpostsCount = getPostedBlogpostsCount;
 exports.getWaitingBlogpostsCount = getWaitingBlogpostsCount;
+exports.getQuotesCount = getQuotesCount;
+exports.getProcessedQuotesCount = getProcessedQuotesCount;
+exports.getFailedQuotesCount = getFailedQuotesCount;
+exports.getInprocessQuotesCount = getInprocessQuotesCount;
+exports.getUnprocessedQuotesCount = getUnprocessedQuotesCount;
 exports.getServicesCount = getServicesCount;
 exports.getOffersCount = getOffersCount;
 exports.getUsersCount = getUsersCount;
 exports.getSocialsCount = getSocialsCount;
+exports.getQuotesCount = getQuotesCount;
+exports.getSubscribedCount = getSubscribedCount;
 exports.getTable = getTable;
 exports.checkUser = checkUser;
 exports.getForEdit = getForEdit;
@@ -526,3 +617,5 @@ exports.deleteDocument = deleteDocument;
 exports.uniqueExists = uniqueExists;
 exports.getUsers = getUsers;
 exports.getSocialLink = getSocialLink;
+exports.checkSubscription = checkSubscription;
+exports.getTestimonials = getTestimonials;

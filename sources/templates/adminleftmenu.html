@@ -6,18 +6,20 @@
             <% _.forEach(menus, function(menu){ %>
             <% if (menu.children) { %>
             <li> 
-                <div class='has-children' data-toggle="collapse" data-target="#<%-(menu.name.replace(/\s/g,'-'))%>">
+                <div id="<%-(menu.name.replace(/\s/g,'-'))%>-left-menu" class='has-children' data-toggle="collapse" data-target="#<%-(menu.name.replace(/\s/g,'-'))%>-ul">
                     <p>
                         <%-menu.name.toUpperCase()%>
                     </p>
+                    <span class='nums badge'></span>
                     <span class='glyphicon glyphicon-menu-down badge'> </span>
                 </div>
 
-                <ul id="<%-menu.name.replace(/\s/g,'-')%>"  class="collapse">
+                <ul id="<%-menu.name.replace(/\s/g,'-')%>-ul"  class="collapse">
                     <% _.forEach(menu.children, function(child){ %>
                     <li>
-                        <a href="<%-child.link%>" title="<%-child.name%>">
+                        <a href="<%-child.link%>" title="<%-child.name%>" id="<%-child.name%>-left-menu">
                             <%-child.name.toUpperCase()%>
+                            <span class='nums badge'></span>
                         </a> 
                     </li>
                     <% }) %>

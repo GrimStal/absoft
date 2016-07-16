@@ -51,6 +51,17 @@
                         </td>
                         <td><a href="/adminpage/blogposts" title="View">View</a></td>
                     </tr>
+                    <tr id="quotes-row">
+                        <td>Quotes</td>
+                        <td class="bg-info total text-center"><%-totalQuotes%></td>
+                        <td class="bg-success ready text-center"><%-processedQuotes%></td>
+                        <td>
+                            <span class="status">Failed:<span class="status-count failed bg-danger"><%-failedQuotes%></span></span>
+                            <span class="status">In process:<span class="status-count inprocess bg-info"><%-inprocessQuotes%></span></span>
+                            <span class="status">Unprocessed:<span class="status-count unprocessed bg-warning"><%-unprocessedQuotes%></span></span>
+                        </td>
+                        <td><a href="/adminpage/quotes" title="View">View</a></td>
+                    </tr>
                 </tbody>
             </table>
 

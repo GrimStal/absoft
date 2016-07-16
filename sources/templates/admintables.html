@@ -11,7 +11,7 @@
     </div>
     <% if (add) {%>
     <div class="row">
-        <div class="add-button-holder col-xs-2 col-sm-2 col-md-2 col-lg-2 col-xs-offset-10 col-sm-offset-10 col-md-offset-10 col-lg-offset-10">           
+        <div class="add-button-holder col-xs-2 col-sm-2 col-md-2 col-lg-2">           
             <button type="button" class="btn btn-sm btn-success"><a href="/adminpage/edit?tablename=<%-tableName%>" title="Add new string">add<i class="glyphicon glyphicon-plus"></i></a></button>
         </div>
     </div>
@@ -22,7 +22,7 @@
                 <thead>
                     <tr>
                         <% _.forEach(Object.keys(table[0]), function(key){ %>
-                        <% if (key !== "_id"){ %>
+                        <% if (key !== "_id" && key !== "password" && key !== "images"){ %>
                         <th class="text-center <%-key%>"><%=key.charAt(0).toUpperCase() + key.slice(1)%></th>
                         <% } %>
                         <% })%>
@@ -32,15 +32,18 @@
                 <tbody>
                     <% _.forEach(table, function(row){ %>
                     <tr id='<%-row._id%>'>
-                        <% var checks = ['accepted', 'processed'];%>
+                        <% var checks = ['accepted', 'processed', 'webDesign' ,'webHosting', 'blogDesign', 'logoDesign', 'completeBranding', 'businessCardDesign', 'domainName', 'stationaryDesign', 'eCommerceStore'];%>
+                        <% var notNeed = ['webDesign' ,'webHosting', 'blogDesign', 'logoDesign', 'completeBranding', 'businessCardDesign', 'domainName', 'stationaryDesign', 'eCommerceStore'];%>
                         <% var options = {year: 'numeric', month: '2-digit', day: '2-digit', timezone: 'UTC', hour12: false, hour: 'numeric', minute: 'numeric',  second: 'numeric'}; %>
                         <% _.forEach(row, function(col, key){ %>
-                        <% if (key !== '_id') { %>
+                        <% if (key !== '_id' && key !== "password" && key !== "images") { %>
                         <% if (typeof col !== 'object'){ %>
                         <% if (_.indexOf(checks, key) !== -1) { %>
                         <td class="text-center <%-key%>">
                             <% if (col){ %>
-                            <i class='glyphicon glyphicon-ok'></i> 
+                            <i class='glyphicon glyphicon-ok'></i>
+                            <% } else if (!col && _.indexOf(notNeed, key) !== -1){ %>
+                            <i class='glyphicon glyphicon-remove'></i>
                             <% } else { %> 
                             <i class='glyphicon glyphicon-time'></i> 
                             <%}%> 

@@ -1,0 +1,154 @@
+<section id="blog">
+    <div class="container blog" itemscope="" itemtype="http://schema.org/Product">
+        <span style="display:none" itemprop="name">Photography Websites, Logo Design &amp; Branding</span>
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-4 quote-mobile-holder">
+                    <div class="row">
+                        <div class="quote-holder">
+                            <div>
+                                <h2>Get a free quote today!</h2>
+                                <a href="http://www.medianovak.com/quote/">Contact us now!</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <ul class="blog-categories hidden-xs">
+                    <div itemprop="aggregateRating" itemscope="" itemtype="http://schema.org/AggregateRating">
+                        <span itemprop="itemReviewed" style="display:none">
+                            <h1>Photography Websites, Logo Design &amp; Branding</h1>
+                        </span>
+                    </div>
+                    <li>Photography Websites, Logo Design &amp; Branding</li>
+                </ul>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-8 col-lg-8 blog-posts alpha">
+                <div class="blog-post clients-review-wrapper">
+                    <% _.forEach(testimonials, function(testimonial){ %>
+                    <div class="item">
+                        <div class="review-holder" itemprop="review" itemscope="" itemtype="http://schema.org/Review">
+                            <a href="<%-testimonial.link%>">
+                                <img width="100" height="100" src="<%-testimonial.image%>" class="img-circle wp-post-image" alt="<%-testimonial.alt%>">
+                            </a>
+                            <div class="client-meta">
+                                <h3>
+                                    <span itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+                                        <span itemprop="name">
+                                            <a href="<%-testimonial.link%>">
+                                                <%-testimonial.name%>
+                                            </a>
+                                        </span>
+                                    </span>
+                                </h3>
+                                <span itemprop="reviewBody">
+                                    <p><%-testimonial.testimonial%></p>
+                                </span>
+                                <div class="read-more-review text-right">
+                                    <a href="<%-testimonial.link%>" class="novak-button-small">Read More</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <% }) %>
+                    
+                </div>
+                <div class="pagination-medianovak">
+                    
+                <% var pages = 1; %>
+                <% if (pageCount > 1) {%>
+                    <% if (currentPage !== 1) {%>
+                        <a class="prev page-numbers" href="/testimonials?page=<%=currentPage-1%>">« Previous</a>
+                    <% } %>
+
+                    <% if (pageCount < 6) { %>                        
+                        <% while (pages <= pageCount) { %>
+                            <% if (pages !== currentPage) { %>
+                            <a class="page-numbers" href="/testimonials?page=<%=pages%>"><%=pages%></a>
+                            <% } else { %>
+                            <span class="page-numbers current"><%-pages%></span>
+                            <% } %>
+                            <% pages++; %>
+                        <% } %>
+                    <% } else { %>
+                        <% if (pages !== currentPage) { %>
+                        <a class="page-numbers" href="/testimonials?page=<%=pages%>"><%=pages%></a>
+                        <% } else { %>
+                        <span class="page-numbers current"><%-pages%></span>
+                        <% } %>
+                        
+                        <% pages++; %>
+
+                        <% while (pages <= pageCount) { %>
+                            <% if (pages == pageCount){ %>
+                                <% if (pages !== currentPage) { %>
+                                <a class="page-numbers" href="/testimonials?page=<%=pages%>"><%=pages%></a>
+                                <% } else { %>
+                                <span class="page-numbers current"><%-pages%></span>
+                                <% } %>
+                            <% } else if (pages == (currentPage - 1) || pages == (currentPage + 1)){ %>
+                                <a class="page-numbers" href="/testimonials?page=<%=pages%>"><%=pages%></a>
+                            <% } else if (pages == (currentPage - 2) || pages == (currentPage + 2)){ %>
+                                <span class="page-numbers current">...</span>
+                            <% } else if (pages == currentPage){ %>
+                                <span class="page-numbers current"><%-pages%></span>
+                            <% } %>
+                            <% pages++; %>
+                        <% } %>
+                    <% } %>
+                    
+                    <% if (currentPage !== pageCount) {%>
+                        <a class="next page-numbers" href="/testimonials?page=<%=currentPage+1%>">Next »</a>
+                    <% } %>
+                <% } %>
+                </div>
+            </div>
+            <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4 sidebar-section">
+                <div id="secondary" class="widget-area" role="complementary">
+                    <aside id="medianovak_quote_widget-2" class="widget widget_medianovak_quote_widget"><div class="sticky-wrapper" style="height: 0px;"><div class="quote-holder sticky-element">
+                                <div>
+                                    <h2>Get a free quote today!</h2>
+                                    <a href="http://www.medianovak.com/quote/">Contact us now!</a>
+                                </div>
+                            </div></div></aside><aside id="medianovak_reviews_widget-2" class="widget widget_medianovak_reviews_widget"><h1 class="widget-title">Recent Reviews</h1>
+                        <ul>
+                            <% _.forEach(recents, function(recent){%>
+                            <li>
+                                <a href="<%-recent.link%>">
+                                    <p><%-recent.testimonial%></p>
+                                    <h4><%-recent.name%></h4>
+                                </a>
+                            </li>
+                            
+                            <% }) %>                            
+                        </ul>
+
+                    </aside>
+                    <aside id="subscribe_widget_area-2" class="widget widget_subscribe_widget_area">
+                        <h1 class="widget-title">Subscribe to our newsletter!</h1>
+                        <div class="subscribe-widget-area">
+                            <form action="/subscribe" method="POST" accept-charset="utf-8">
+                                <p>
+                                    <label for="name">Name</label><br>
+                                    <input type="text" name="name" id="name">
+                                </p>
+                                <p>
+                                    <label for="email">Email</label><br>
+                                    <input type="email" name="email" id="email" required>
+                                </p>
+                                <input type="hidden" name="list" value="5">
+                                <div class="button-sect">
+                                    <div class="border"></div>
+                                    <input type="submit" name="submit" id="submit" value="Send Message">
+                                </div>
+                            </form>
+                        </div>
+                    </aside>	
+                </div>
+                <!-- #secondary -->
+            </div>
+        </div>
+    </div>
+</section>

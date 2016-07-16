@@ -216,7 +216,6 @@ function _getServicePage(response, request, aboutObj) {
             });
 }
 
-
 function _checkAdminEvents() {
     var totalContacts = db.getContactsCount();
     var processedContacts = db.getProcessedContactsCount();
@@ -229,13 +228,19 @@ function _checkAdminEvents() {
     var totalBlogposts = db.getBlogpostsCount();
     var postedBlogposts = db.getPostedBlogpostsCount();
     var waitingBlogposts = db.getWaitingBlogpostsCount();
+    var totalQuotes = db.getQuotesCount();
+    var processedQuotes = db.getProcessedQuotesCount();
+    var failedQuotes = db.getFailedQuotesCount();
+    var inprocessQuotes = db.getInprocessQuotesCount();
+    var unprocessedQuotes = db.getUnprocessedQuotesCount();
 
     var result = deferred();
 
     deferred(totalContacts, processedContacts, failedContacts,
             inprocessContacts, unprocessedContacts, totalTestimonials,
             acceptedTestimonials, uncheckedTestimonials, totalBlogposts,
-            postedBlogposts, waitingBlogposts)(
+            postedBlogposts, waitingBlogposts, totalQuotes, processedQuotes, failedQuotes,
+            inprocessQuotes, unprocessedQuotes)(
             function (dataObj) {
                 result.resolve({
                     totalContacts: dataObj[0],
@@ -248,7 +253,12 @@ function _checkAdminEvents() {
                     uncheckedTestimonials: dataObj[7],
                     totalBlogposts: dataObj[8],
                     postedBlogposts: dataObj[9],
-                    waitingBlogposts: dataObj[10]
+                    waitingBlogposts: dataObj[10],
+                    totalQuotes: dataObj[11],
+                    processedQuotes: dataObj[12],
+                    failedQuotes: dataObj[13],
+                    inprocessQuotes: dataObj[14],
+                    unprocessedQuotes: dataObj[15]
                 });
             },
             function (error) {
@@ -280,8 +290,8 @@ function _getAdminTableTemplate(response, request, table, limit, skip, count, pa
     var data = db.getTable(table, limit, skip);
     var pageCount = Math.ceil(count / limit);
     var currentPage = (skip / limit) + 1;
-    var addable = ["users", "testimonials", "blogposts", "contacts", "socials"];
-    var deleteable = ["users", "testimonials", "blogposts", "socials"];
+    var addable = ["users", "testimonials", "blogposts", "contacts", "socials", "quotes", "subscribed"];
+    var deleteable = ["users", "testimonials", "blogposts", "socials", "contacts", "quotes", "subscribed"];
 
     data(
             function (dataObj) {
@@ -521,6 +531,7 @@ function websiteDesign(response, request) {
                     console.log("No data found");
                     unknown(response, request);
                 } else {
+                    aboutObj.contacts = false;
                     _getServicePage(response, request, aboutObj);
                 }
             },
@@ -541,6 +552,7 @@ function logoDesign(response, request) {
                     console.log("No data found");
                     unknown(response, request);
                 } else {
+                    aboutObj.contacts = false;
                     _getServicePage(response, request, aboutObj);
                 }
             },
@@ -561,6 +573,7 @@ function branding(response, request) {
                     console.log("No data found");
                     unknown(response, request);
                 } else {
+                    aboutObj.contacts = false;
                     _getServicePage(response, request, aboutObj);
                 }
             },
@@ -569,6 +582,128 @@ function branding(response, request) {
                 unknown(response, request);
             });
 
+}
+
+function quotes(response, request) {
+    var head = _getHeadTemplate();
+    var menus = _getMenuTemplate();
+    var footer = _getFooterTemplate();
+    var serviceheaderpage = deferred();
+    var quotesection = deferred();
+
+    fs.readFile("sources/templates/servicesheaderpage.html", function (error, data) {
+        if (error) {
+            serviceheaderpage.reject(error);
+        } else {
+            serviceheaderpage.resolve(data);
+        }
+    });
+
+    fs.readFile("sources/templates/quotes.html", function (error, data) {
+        if (error) {
+            quotesection.reject(error);
+        } else {
+            quotesection.resolve(data);
+        }
+    });
+
+    deferred(head, menus, footer, serviceheaderpage.promise, quotesection.promise, footer)(
+            function (data) {
+                response.writeHead(200, {"Content-Type": "text/html", "AccessControlAllowOrigin": "*"});
+                _.forEach(data, function (content) {
+                    response.write(content);
+                });
+                response.write('<script type="text/javascript" src="/javascript/quotes.js"></script>');
+                response.write('<script type="text/javascript" src="/thirdParty/svgChecks.js"></script>');
+                response.write('</body></html>');
+                response.end();
+            },
+            function (error) {
+                console.log(error);
+                unknown(response, request);
+            });
+}
+
+function testimonials(response, request, query) {
+    var head = _getHeadTemplate();
+    var menus = _getMenuTemplate();
+    var footer = _getFooterTemplate();
+    var serviceheaderpage = deferred();
+    var quotesection = deferred();
+    var page = querystring.parse(query).page;
+    var count = db.getTestimonialsCount();
+    var limit = 8;
+    var skip = 0;
+    var rlimit = 3;
+    var pagecount = 0;
+    var testimonials = deferred();
+    var recent = db.getTestimonials({}, rlimit, 0, {checked: -1});
+
+    count(
+            function (data) {
+                pagecount = Math.ceil(data / limit);
+                
+                if (page && page <= pagecount) {
+                    skip = (page - 1) * limit;
+                }
+                
+                db.getTestimonials({}, limit, skip, {added: -1, checked: -1})(
+                        function (dataObj) {
+                            testimonials.resolve(dataObj);
+                        },
+                        function (error) {
+                            testimonials.reject(error);
+                        });
+            },
+            function (error) {
+                testimonials.reject(error);
+            });
+
+    fs.readFile("sources/templates/servicesheaderpage.html", function (error, data) {
+        if (error) {
+            serviceheaderpage.reject(error);
+        } else {
+            serviceheaderpage.resolve(data);
+        }
+    });
+
+    deferred(testimonials.promise, recent)(
+            function (result) {
+                fs.readFile("sources/templates/testimonialspage.html", function (error, data) {
+                    if (error) {
+                        quotesection.reject(error);
+                    } else {
+                        var template = _.template(data);
+                        quotesection.resolve(template({
+                            testimonials: result[0],
+                            currentPage: Number((page && page <= pagecount) ? page : 1),
+                            pageCount: Number(pagecount),
+                            recents: result[1]
+                        }));
+                    }
+                });
+            },
+            function (error) {
+                quotesection.reject(error);
+            });
+
+    deferred(head, menus, footer, serviceheaderpage.promise, quotesection.promise, footer)(
+            function (data) {
+                response.writeHead(200, {"Content-Type": "text/html", "AccessControlAllowOrigin": "*"});
+                _.forEach(data, function (content) {
+                    response.write(content);
+                });
+                response.write('<script type="text/javascript" src="/thirdParty/masonry.pkgd.min.js"></script>');
+                response.write('<script type="text/javascript" src="/thirdParty/jquery.waypoints.min.js"></script>');
+                response.write('<script type="text/javascript" src="/thirdParty/sticky.min.js"></script>');
+                response.write('<script type="text/javascript" src="/javascript/testimonials.js"></script>');
+                response.write('</body></html>');
+                response.end();
+            },
+            function (error) {
+                console.log(error);
+                unknown(response, request);
+            });
 }
 
 function portfolio(response, request) {
@@ -608,7 +743,8 @@ function contactUs(response, request) {
     var instagram = db.getSocialLink("Instagram");
     var aboutObj = {
         titleTop: "lets talk",
-        titleBottom: "contact us now!"
+        titleBottom: "contact us now!",
+        contacts: true
     };
 
     deferred(facebook, twitter, instagram)(
@@ -632,7 +768,7 @@ function contactUs(response, request) {
 
 function leavemessage(response, request) {
     function start(data) {
-        if (!data.name || !data.email || !data.message) {
+        if (!data.name || !data.email || !data.message || !(new RegExp("^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$").exec(data.email))) {
             return result.reject("Incorrect data");
         }
 
@@ -648,7 +784,7 @@ function leavemessage(response, request) {
             added: new Date(),
             changed: null
         };
-        
+
         db.createDocument(dataObj)(
                 function (data) {
                     result.resolve("Your message was sent successfully. Thanks.");
@@ -684,6 +820,153 @@ function leavemessage(response, request) {
             });
 }
 
+function leavequote(response, request) {
+    function start(data) {
+        if (!data.fullName || !data.email ||
+                !(new RegExp("^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$").exec(data.email))) {
+            return result.reject("Incorrect data");
+        }
+
+        var dataObj = {
+            tablename: 'quotes',
+            fullName: data.fullName,
+            email: data.email,
+            website: data.website,
+            company: data.company,
+            phone: data.phone,
+            country: data.country,
+            describe: data.describe,
+            budget: data.budget,
+            know: data.know,
+            processComment: "",
+            processStatus: "Not started",
+            processed: false,
+            responsible: null,
+            added: new Date(),
+            changed: null,
+            webDesign: data.webDesign,
+            webHosting: data.webHosting,
+            blogDesign: data.blogDesign,
+            logoDesign: data.logoDesign,
+            completeBranding: data.completeBranding,
+            businessCardDesign: data.businessCardDesign,
+            domainName: data.domainName,
+            stationaryDesign: data.stationaryDesign,
+            eCommerceStore: data.eCommerceStore
+        };
+
+        db.createDocument(dataObj)(
+                function (data) {
+                    result.resolve("Your quote would be sent to your e-mail. Thanks.");
+                },
+                function (error) {
+                    console.log(error);
+                    result.reject("Some troubles with leaving your data. Please, try again later.");
+                });
+    }
+
+    var postData = "";
+    var result = deferred();
+
+    request.on("data", function (chunk) {
+        postData += chunk;
+    });
+
+    request.on("end", function () {
+        postData = querystring.parse(postData);
+        start(postData);
+    });
+
+    result.promise(
+            function (data) {
+                response.writeHead(200, {"Content-Type": "application/json", "AccessControlAllowOrigin": "*"});
+                response.write(JSON.stringify({succ: true, result: data}));
+                response.end();
+            },
+            function (error) {
+                response.writeHead(200, {"Content-Type": "application/json", "AccessControlAllowOrigin": "*"});
+                response.write(JSON.stringify({succ: false, result: error}));
+                response.end();
+            });
+}
+
+function subscribe(response, request, pathname) {
+    function start(data) {
+        if (!data.email || !(new RegExp("^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$").exec(data.email))) {
+            return result.reject("You need to enter the e-mail to subscribe");
+        }
+
+        var dataObj = {
+            tablename: 'subscribed',
+            name: data.name || "",
+            email: data.email,
+            active: true,
+            added: new Date(),
+            changed: null
+        };
+
+
+        db.checkSubscription(dataObj)(
+                function (data) {
+                    result.resolve(data);
+                },
+                function (error) {
+                    console.log(error);
+                    result.reject("Some troubles with subscribing. Please, try again later");
+                });
+    }
+
+    var postData = "";
+    var result = deferred();
+    var head = _getHeadTemplate();
+    var body = deferred();
+
+    request.on("data", function (chunk) {
+        postData += chunk;
+    });
+
+    request.on("end", function () {
+        postData = querystring.parse(postData);
+        start(postData);
+    });
+
+    result.promise(
+            function (message) {
+                fs.readFile("sources/templates/subscribed.html", function (error, data) {
+                    if (error) {
+                        body.reject(error);
+                    } else {
+                        var template = _.template(data);
+                        body.resolve(template({"message": message}));
+                    }
+                });
+            },
+            function (message) {
+                fs.readFile("sources/templates/subscribed.html", function (error, data) {
+                    if (error) {
+                        body.reject(error);
+                    } else {
+                        var template = _.template(data);
+                        body.resolve(template({message: message}));
+                    }
+                });
+            });
+
+
+    deferred(head, body.promise)(
+            function (data) {
+                response.writeHead(200, {"Content-Type": "text/html", "AccessControlAllowOrigin": "*"});
+                response.write(data[0]);
+                response.write(data[1]);
+                response.write('</body></html>');
+                response.end();
+            },
+            function (error) {
+                console.log(error);
+                unknown(response, request, pathname);
+            });
+}
+
 function unknown(response, request, pathname) {
     pathname = pathname || url.parse(request.url).pathname;
     if (request.url.indexOf(".css") !== -1) {
@@ -695,7 +978,7 @@ function unknown(response, request, pathname) {
     } else if (request.url.indexOf(".png") !== -1 || request.url.indexOf(".gif") !== -1
             || request.url.indexOf(".ico") !== -1 || request.url.indexOf(".jpg") !== -1) {
         _getResponse(response, request, "image");
-    } else if (request.url.indexOf(".oft") !== -1) {
+    } else if (request.url.indexOf(".otf") !== -1) {
         _getResponse(response, request, "application/font-otf");
     } else if (request.url.indexOf(".ttf") !== -1) {
         _getResponse(response, request, "application/font-ttf");
@@ -962,13 +1245,39 @@ function adminUsers(response, request, query, pathname) {
             });
 }
 
+function adminQuotes(response, request, query, pathname) {
+    var pageCount = db.getUsersCount();
+
+    pageCount(
+            function (count) {
+                _getAdminTable(response, request, query, pathname, 'quotes', count);
+            },
+            function (error) {
+                console.log(error);
+                unknown(response, request, pathname);
+            });
+}
+
+function adminSubscribed(response, request, query, pathname) {
+    var pageCount = db.getSubscribedCount();
+
+    pageCount(
+            function (count) {
+                _getAdminTable(response, request, query, pathname, 'subscribed', count);
+            },
+            function (error) {
+                console.log(error);
+                unknown(response, request, pathname);
+            });
+}
+
 function adminEdit(response, request, query) {
     var head = _getHeadTemplate();
     var menus = _getAdminMenuTemplate(request.session.login);
     var footer = _getFooterTemplate();
     var body = deferred();
     var baseData = deferred();
-    var editable = ["users", "testimonials", "blogposts", "contacts", "socials", "about"];
+    var editable = ["users", "testimonials", "blogposts", "contacts", "socials", "about", "quotes", "subscribed"];
     var notDisplayed = ["password"];
     var qs = querystring.parse(query);
     var tablename;
@@ -1026,62 +1335,62 @@ function adminEdit(response, request, query) {
     }
 
     var userObj = {
-        _id: {type: "hidden", value: "", disabled: false},
-        name: {type: "text", value: "", maxlength: 32, pattern: "^[A-Za-z ]{4,}$", disabled: false, help: "Min 4 symbols A-Z", required: true},
-        login: {type: "text", value: "", maxlength: 16, pattern: "[A-Za-z0-9]{8,}", disabled: false, help: "Min 8 symbols A-Z or digits", required: true, check: true},
+        _id: {type: "hidden", value: "", pattern: "[a-z0-9]{24}", disabled: false},
+        name: {type: "text", value: "", maxlength: 32, pattern: "^[A-Za-z\\s\.\,]{4,32}$", disabled: false, help: "Min 4 symbols A-Z", required: true},
+        login: {type: "text", value: "", maxlength: 16, pattern: "[A-Za-z0-9]{8,16}", disabled: false, help: "Min 8 symbols A-Z or digits", required: true, check: true},
         password: {type: "text", value: "", maxlength: 16, pattern: "[A-Za-z0-9]{8,}", disabled: false, help: "Min 8 symbols A-Z or digits", required: true},
         registered: {type: "hidden", value: "", disabled: false}
     };
 
     var testimonialObj = {
-        _id: {type: "hidden", value: "", disabled: false},
+        _id: {type: "hidden", value: "", pattern: "[a-z0-9]{24}", disabled: false},
         accepted: {type: "select", selects: [{_id: true, name: "true"}, {_id: false, name: "false"}], selected: false, disabled: false, required: true},
         added: {type: "hidden", value: "", disabled: false, required: false},
-        alt: {type: "text", value: "", maxlength: 52, pattern: "[A-Za-z0-9\-]+", disabled: false, help: "Alt name for image", required: true},
+        alt: {type: "text", value: "", maxlength: 52, pattern: "[A-Za-z0-9 \-\\.]+", disabled: false, help: "Alt name for image", required: true},
         changed: {type: "hidden", value: "", disabled: false, required: false},
         checked: {type: "hidden", value: "", required: false},
         image: {type: "text", value: "", maxlength: 128, pattern: "[A-Za-z0-9\-\.\&\/]+", disabled: false, help: "Path to image", required: true},
-        name: {type: "text", value: "", maxlength: 64, pattern: "[A-Za-z0-9 \-\.]+", disabled: false, help: "Path to image", required: true},
+        name: {type: "text", value: "", maxlength: 64, pattern: "[A-Za-z0-9\\s\-\.\,]+", disabled: false, help: "Path to image", required: true},
         responsible: {type: "select", selects: [], selected: "", disabled: false, required: false},
         testimonial: {type: "textarea", value: "", rows: 6, maxlength: 1000, help: "Max 1000 symbols", disabled: false, required: true}
     };
 
     var blogpostsObj = {
-        _id: {type: "hidden", value: "", disabled: false},
-        aText: {type: "text", value: "", maxlength: 200, pattern: "[A-Za-z0-9 \-\.\|\&\,\;\?]+", disabled: false, help: "Max 200 symbols", required: true},
+        _id: {type: "hidden", value: "", pattern: "[a-z0-9]{24}", disabled: false},
+        aText: {type: "text", value: "", maxlength: 200, pattern: "[A-Za-z0-9\\s\-\.\|\&\,\;\?]+", disabled: false, help: "Max 200 symbols", required: true},
         added: {type: "hidden", value: "", disabled: false, required: false},
         author: {type: "select", selects: [], selected: "", disabled: false, required: false},
         changed: {type: "hidden", value: "", disabled: false, required: false},
         fullText: {type: "textarea", value: "", rows: 6, maxlength: 10000, help: "Max 10000 symbols", disabled: false, required: false},
-        image: {type: "text", value: "", maxlength: 128, pattern: "[A-Za-z0-9 \-\.\&\/]+", disabled: false, help: "Path to image", required: true},
-        imageSmall: {type: "text", value: "", maxlength: 128, pattern: "[A-Za-z0-9\-\.\&\/]+", disabled: false, help: "Path to image", required: true},
+        image: {type: "text", value: "", maxlength: 128, pattern: "[A-Za-z0-9\\s\-\.\&\/]+", disabled: false, help: "Path to image", required: true},
+        imageSmall: {type: "text", value: "", maxlength: 128, pattern: "[A-Za-z0-9\\s\-\.\&\/]+", disabled: false, help: "Path to image", required: true},
         link: {type: "text", value: "", maxlength: 200, pattern: "[A-Za-z0-9\-\.\&\?\=\/]+", disabled: false, help: "Max 200 symbols", required: true},
         postDate: {type: "date", value: "", disabled: false, required: true}
     };
 
     var contactsObj = {
-        _id: {type: "hidden", value: "", disabled: false},
-        email: {type: "text", value: "", maxlength: 64, disabled: false, help: "Max 64 symbols", required: true},
+        _id: {type: "hidden", value: "", pattern: "[a-z0-9]{24}", disabled: false},
+        email: {type: "email", value: "", maxlength: 40, pattern: "^[A-Za-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$", disabled: false, help: "Max 64 symbols", required: true},
         message: {type: "text", value: "", maxlength: 200, pattern: "[A-Za-z0-9 \-\.\&\?\=\/\,\;\!\@\*\"\']+", disabled: false, help: "Max 200 symbols", required: true},
-        name: {type: "text", value: "", maxlength: 32, pattern: "^[A-Za-z ]{4,}$", disabled: false, help: "Min 4 symbols A-Z", required: true},
+        name: {type: "text", value: "", maxlength: 32, pattern: "^[A-Za-z\\s\.\,]{4,}$", disabled: false, help: "Min 4 symbols A-Z", required: true},
         processComment: {type: "textarea", value: "", rows: 6, maxlength: 10000, help: "Max 10000 symbols", disabled: false, required: false},
         processStatus: {type: "select", selects: [{_id: "Not started", name: "Not started"}, {_id: "In progress", name: "In progress"}, {_id: "Fail", name: "Failed"}, {_id: "Done", name: "Done"}], selected: "Not started", disabled: false, required: true},
-        processed: {type: "select", selects: [{_id: true, name: "true"}, {_id: false, name: "false"}], selected: false, disabled: true, required: true},
+        processed: {type: "select", selects: [{_id: true, name: "true"}, {_id: false, name: "false"}], selected: false, disabled: true},
         responsible: {type: "select", selects: [], selected: "", disabled: false, required: false},
         added: {type: "hidden", value: "", disabled: false, required: false},
         changed: {type: "hidden", value: "", disabled: false, required: false}
     };
 
     var socialsObj = {
-        _id: {type: "hidden", value: "", disabled: false},
-        name: {type: "text", value: "", maxlength: 32, pattern: "^[A-Za-z0-9 \-\!]{2,}$", disabled: false, help: "Min 2 symbols A-Z 0-9", required: true},
+        _id: {type: "hidden", value: "", pattern: "[a-z0-9]{24}", disabled: false},
+        name: {type: "text", value: "", maxlength: 32, pattern: "^[A-Za-z0-9\\s\.\-\!]{2,}$", disabled: false, help: "Min 2 symbols A-Z 0-9", required: true},
         link: {type: "url", value: "", maxlength: 64, disabled: false, required: true},
         class: {type: "text", value: "", maxlength: 32, pattern: "^[A-Za-z0-9\-]{5,}$", disabled: false, help: "Min 5 symbols A-Z 0-9", required: true}
     };
 
     var aboutObj = {
-        _id: {type: "hidden", value: "", disabled: false},
-        titleTop: {type: "text", value: "", maxlength: 20, pattern: "^[A-Za-z0-9 \-\!\&\?]{4,}$", disabled: false, help: "Min 4 symbols A-Z 0-9", required: true},
+        _id: {type: "hidden", value: "", pattern: "[a-z0-9]{24}", disabled: false},
+        titleTop: {type: "text", value: "", maxlength: 20, pattern: "^[A-Za-z0-9\\s\-\!\&\?]{4,}$", disabled: false, help: "Min 4 symbols A-Z 0-9", required: true},
         titleBottom: {type: "text", value: "", maxlength: 20, pattern: "^[A-Za-z0-9 \-\!\&\?]{4,}$", disabled: false, help: "Min 4 symbols A-Z 0-9", required: true},
         text1: {type: "textarea", value: "", rows: 6, maxlength: 600, help: "Max 600 symbols", disabled: false, required: true},
         text2: {type: "textarea", value: "", rows: 6, maxlength: 600, help: "Max 600 symbols", disabled: false, required: true},
@@ -1089,6 +1398,54 @@ function adminEdit(response, request, query) {
         link: {type: "text", value: "", maxlength: 200, pattern: "[A-Za-z0-9\-\.\&\?\=\/]+", disabled: false, help: "Max 200 symbols", required: true}
     };
 
+    var quotesObj = {
+        _id: {type: "hidden", value: "", pattern: "[a-z0-9]{24}", disabled: false},
+        fullname: {type: "text", value: "", maxlength: 32, pattern: "^[A-Za-z\\s\.\,]{4,}$", disabled: false, help: "Min 4 symbols A-Z", required: true},
+        email: {type: "email", value: "", maxlength: 40, pattern: "^[A-Za-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$", disabled: false, help: "Max 64 symbols", required: true},
+        website: {type: "url", value: "", maxlength: 64, disabled: false, required: false},
+        company: {type: "text", value: "", maxlength: 32, pattern: "^[A-Za-z \.]{4,}$", disabled: false, help: "Min 4 symbols A-Z", required: false},
+        phone: {type: "tel", maxLength: 13, disabled: false, required: false},
+        country: {type: "text", value: "", maxlength: 32, pattern: "^[A-Za-z \.]{2,}$", disabled: false, help: "Min 2 symbols A-Z", required: false},
+        describe: {type: "textarea", value: "", rows: 6, maxlength: 1500, help: "Max 1500 symbols", disabled: false, required: false},
+        budget: {type: "text", value: "", maxlength: 16, pattern: "^[A-Za-z \.]*$", disabled: false, required: false},
+        know: {type: "select", selects: [
+                {_id: "", name: "---"},
+                {_id: "Search Engine", name: "Search Engine"},
+                {_id: "Referred by Associate", name: "Referred by Associate"},
+                {_id: "Facebook", name: "Facebook"},
+                {_id: "Instagram", name: "Instagram"},
+                {_id: "Twitter", name: "Twitter"},
+                {_id: "Google+", name: "Google+"},
+                {_id: "Pinterest", name: "Pinterest"},
+                {_id: "Newsletter", name: "Newsletter"},
+                {_id: "Link from another site", name: "Link from another site"},
+                {_id: "Other", name: "Other"}
+            ], selected: "---", disabled: false, required: false},
+        processComment: {type: "textarea", value: "", rows: 6, maxlength: 10000, help: "Max 10000 symbols", disabled: false, required: false},
+        processStatus: {type: "select", selects: [{_id: "Not started", name: "Not started"}, {_id: "In progress", name: "In progress"}, {_id: "Fail", name: "Failed"}, {_id: "Done", name: "Done"}], selected: "Not started", disabled: false, required: true},
+        processed: {type: "select", selects: [{_id: true, name: "true"}, {_id: false, name: "false"}], selected: false, disabled: true},
+        responsible: {type: "select", selects: [], selected: "", disabled: false, required: false},
+        added: {type: "hidden", value: "", disabled: false, required: false},
+        changed: {type: "hidden", value: "", disabled: false, required: false},
+        webDesign: {type: "select", selects: [{_id: true, name: "true"}, {_id: false, name: "false"}], selected: false, disabled: true, required: false},
+        webHosting: {type: "select", selects: [{_id: true, name: "true"}, {_id: false, name: "false"}], selected: false, disabled: true, required: false},
+        blogDesign: {type: "select", selects: [{_id: true, name: "true"}, {_id: false, name: "false"}], selected: false, disabled: true, required: false},
+        logoDesign: {type: "select", selects: [{_id: true, name: "true"}, {_id: false, name: "false"}], selected: false, disabled: true, required: false},
+        completeBranding: {type: "select", selects: [{_id: true, name: "true"}, {_id: false, name: "false"}], selected: false, disabled: true, required: false},
+        businessCardDesign: {type: "select", selects: [{_id: true, name: "true"}, {_id: false, name: "false"}], selected: false, disabled: true, required: false},
+        domainName: {type: "select", selects: [{_id: true, name: "true"}, {_id: false, name: "false"}], selected: false, disabled: true, required: false},
+        stationaryDesign: {type: "select", selects: [{_id: true, name: "true"}, {_id: false, name: "false"}], selected: false, disabled: true, required: false},
+        eCommerceStore: {type: "select", selects: [{_id: true, name: "true"}, {_id: false, name: "false"}], selected: false, disabled: true, required: false}
+    };
+
+    var subscribedObj = {
+        _id: {type: "hidden", value: "", pattern: "[a-z0-9]{24}", disabled: false},
+        name: {type: "text", value: "", maxlength: 32, pattern: "^[A-Za-z\\s\.\,]{4,}$", disabled: false, help: "Min 4 symbols A-Z", required: true},
+        email: {type: "email", value: "", maxlength: 40, pattern: "^[A-Za-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$", disabled: false, help: "Max 64 symbols", required: true},
+        active: {type: "select", selects: [{_id: true, name: "true"}, {_id: false, name: "false"}], selected: false, disabled: true},
+        added: {type: "hidden", value: "", disabled: false, required: false},
+        changed: {type: "hidden", value: "", disabled: false, required: false}
+    };
 
     if (qs.tablename) {
         tablename = qs.tablename;
@@ -1119,6 +1476,12 @@ function adminEdit(response, request, query) {
             break;
         case "about":
             dataObject = aboutObj;
+            break;
+        case "quotes":
+            dataObject = quotesObj;
+            break;
+        case "subscribed":
+            dataObject = subscribedObj;
             break;
     }
 
@@ -1195,7 +1558,7 @@ function adminEditData(response, request, query) {
                 break;
             case "testimonials":
                 tablename = recievedData.tablename;
-                recievedData.checked = (recievedData.added) ? new Date() : null;
+                recievedData.checked = (recievedData.checked) ? new Date() : (recievedData.accepted) ? new Date() : null;
                 recievedData.added = (recievedData.added) ? new Date(recievedData.added) : new Date();
                 recievedData.changed = new Date();
                 break;
@@ -1207,6 +1570,17 @@ function adminEditData(response, request, query) {
                 break;
             case "about":
                 tablename = "services";
+                break;
+            case "quotes":
+                tablename = "quotes";
+                recievedData.added = (recievedData.added) ? new Date(recievedData.added) : new Date();
+                recievedData.changed = new Date();
+                recievedData.processed = (recievedData.processStatus === "Done" || recievedData.processStatus === "Fail") ? "true" : "false";
+                break;
+            case "subscribed":
+                tablename = "subscribed";
+                recievedData.added = (recievedData.added) ? new Date(recievedData.added) : new Date();
+                recievedData.changed = new Date();
                 break;
             default:
                 tablename = recievedData.tablename;
@@ -1452,6 +1826,7 @@ exports.adminContacts = adminContacts;
 exports.adminBlogposts = adminBlogposts;
 exports.adminServices = adminServices;
 exports.adminOffers = adminOffers;
+exports.adminQuotes = adminQuotes;
 exports.authorization = authorization;
 exports.checkLogin = checkLogin;
 exports.logout = logout;
@@ -1464,3 +1839,8 @@ exports.adminDeleteData = adminDeleteData;
 exports.uniqueExist = uniqueExist;
 exports.contactUs = contactUs;
 exports.leavemessage = leavemessage;
+exports.quotes = quotes;
+exports.leavequote = leavequote;
+exports.testimonials = testimonials;
+exports.subscribe = subscribe;
+exports.adminSubscribed = adminSubscribed;
