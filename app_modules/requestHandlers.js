@@ -642,11 +642,11 @@ function testimonials(response, request, query) {
     count(
             function (data) {
                 pagecount = Math.ceil(data / limit);
-                
+
                 if (page && page <= pagecount) {
                     skip = (page - 1) * limit;
                 }
-                
+
                 db.getTestimonials({}, limit, skip, {added: -1, checked: -1})(
                         function (dataObj) {
                             testimonials.resolve(dataObj);
@@ -975,9 +975,11 @@ function unknown(response, request, pathname) {
         _getResponse(response, request, "text/javascript");
     } else if (request.url.indexOf(".html") !== -1) {
         _getResponse(response, request, "text/html");
-    } else if (request.url.indexOf(".png") !== -1 || request.url.indexOf(".gif") !== -1
+    } else if (request.url.indexOf(".png") !== -1 
             || request.url.indexOf(".ico") !== -1 || request.url.indexOf(".jpg") !== -1) {
         _getResponse(response, request, "image");
+    } else if (request.url.indexOf(".gif") !== -1) {
+        _getResponse(response, request, "image/gif");
     } else if (request.url.indexOf(".otf") !== -1) {
         _getResponse(response, request, "application/font-otf");
     } else if (request.url.indexOf(".ttf") !== -1) {
