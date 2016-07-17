@@ -5,12 +5,12 @@
 var deferred = require('deferred');
 var mongo = require('mongodb');
 var mongoClient = mongo.MongoClient;
-var host = 'ds013891.mlab.com';
-var port = '13891';
+var host = 'SG-medianovak-7929.servers.mongodirector.com';
+var port = '27017';
 var login = "grimstal";
-var password = "DfCzUq5VVb";
-var dataBase = "heroku_g32zx5zq";
-var connectStr = "mongodb://" + login + ":" + password + "@" + host + ":" + port + "/" + dataBase;
+var password = "1234567890123456";
+var dataBase = "medianovak";
+var connectStr = "mongodb://" + login + ":" + password + "@" + host + ":" + port + "/" + dataBase + "?ssl=true";
 var _ = require('lodash');
 
 /** Param 'options' is object of options, like 'sort', fields, 'etc'
