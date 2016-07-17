@@ -21,7 +21,7 @@ function start(route, handlers) {
         route(handlers, fullPathname, query, response, request);
     }
 
-    var medianovakserver = http.createServer(onRequest).listen(80);
+    var medianovakserver = http.createServer(onRequest).listen(process.env.PORT || 8080);
     console.log("Server is started");
 }
 
