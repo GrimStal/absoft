@@ -2,7 +2,7 @@
  * AB-Soft test project
  * @author Borshchov Dimitriy <grimstal@bigmir.net> 
  */
-var server = require('./app_modules/p_server');
+var serv = require('./app_modules/p_server');
 var router = require('./app_modules/router');
 var requestHandlers = require('./app_modules/p_requestHandlers');
 
@@ -54,4 +54,4 @@ handle(aHandle, "/adminpage/editdata", requestHandlers, "adminEditData");
 //handle(aHandle, "/adminpage/userexists", requestHandlers, "userExist");
 handle(aHandle, "/adminpage/uniqueexists", requestHandlers, "uniqueExist");
 
-server.start(router.route, [uHandle, aHandle]);
+serv.start(router.route, [uHandle, aHandle]);
