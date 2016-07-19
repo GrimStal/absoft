@@ -20,8 +20,9 @@
                                 <% _.forEach(item, function(link){ %>
                                 <% number++; %>
                                 <div class="form-group" id="<%-key%>-form-group-<%-number%>">
-                                <label for="<%-key%>-field-<%-number%>"><%-key%><%=number%></label>
-                                <input type="file" id="<%-key%>-field-<%-number%>" class="form-control" name='<%-(key + "" + number)%>'>
+                                <label for="<%-key%>-field-<%-number%>"><%-key%><%=number%>:</label>
+                                <img src="<%-link%>" alt="<%-link%>" class="img-thumbnail">
+                                <input type="file" id="<%-key%>-field-<%-number%>" name='<%-(key + "" + number)%>' accept="image/*,image/jpeg,image/png">
                                 </div>
                                 <% }) %>
                             <% } else { %>
