@@ -1312,7 +1312,9 @@ function adminEdit(response, request, query) {
                             _.forEach(data, function (value, key) {
                                 if (dataObject.hasOwnProperty(key)) {
                                     if (notDisplayed.indexOf(key) === -1) {
-                                        if (dataObject[key].type !== "select") {
+                                        if (_.isArray(dataObject[key]) && _.isArray(value)){
+                                            dataObject[key] = value;
+                                        } else if (dataObject[key].type !== "select") {
                                             dataObject[key].value = value;
                                         } else if (dataObject[key].type === "select") {
                                             dataObject[key].selected = value;
@@ -1354,7 +1356,8 @@ function adminEdit(response, request, query) {
         image: {type: "text", value: "", maxlength: 128, pattern: "[A-Za-z0-9\-\.\&\/]+", disabled: false, help: "Path to image", required: true},
         name: {type: "text", value: "", maxlength: 64, pattern: "[A-Za-z0-9\\s\-\.\,]+", disabled: false, help: "Path to image", required: true},
         responsible: {type: "select", selects: [], selected: "", disabled: false, required: false},
-        testimonial: {type: "textarea", value: "", rows: 6, maxlength: 1000, help: "Max 1000 symbols", disabled: false, required: true}
+        testimonial: {type: "textarea", value: "", rows: 6, maxlength: 1000, help: "Max 1000 symbols", disabled: false, required: true},
+        examples: []
     };
 
     var blogpostsObj = {

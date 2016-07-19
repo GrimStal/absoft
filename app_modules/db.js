@@ -5,13 +5,31 @@
 var deferred = require('deferred');
 var mongo = require('mongodb');
 var mongoClient = mongo.MongoClient;
-var host = 'localhost';
-var port = '27017';
-var login = "medianovak";
-var password = "1zaBEtcVmv";
-var dataBase = "medianovak";
-var connectStr = "mongodb://" + login + ":" + password + "@" + host + ":" + port + "/" + dataBase;
 var _ = require('lodash');
+
+var host;
+var port;
+var login;
+var password;
+var dataBase;
+var connectStr;
+
+if (process.env.NODE_ENV === "development") {
+    host = 'localhost';
+    port = '27017';
+    login = "medianovak";
+    password = "1zaBEtcVmv";
+    dataBase = "medianovak";
+    connectStr = "mongodb://" + login + ":" + password + "@" + host + ":" + port + "/" + dataBase;
+} else {
+    host = 'SG-medianovak-7929.servers.mongodirector.com';
+    port = '27017';
+    login = "grimstal";
+    password = "1234567890123456";
+    dataBase = "medianovak";
+    connectStr = "mongodb://" + login + ":" + password + "@" + host + ":" + port + "/" + dataBase + "?ssl=true";
+}
+
 
 /** Param 'options' is object of options, like 'sort', fields, 'etc'
  * 
@@ -563,16 +581,16 @@ function getSocialLink(name) {
     return _findOneTemplate('socials', {name: name}, {_id: 0, class: 0});
 }
 
-function getTestimonials(search, limit, skip, sort){
+function getTestimonials(search, limit, skip, sort) {
     sort = sort || {};
     search = search || {};
-    if (!limit){
+    if (!limit) {
         var result = deferred();
         result.reject("Incorrect data");
         return result.promise;
     }
     search.accepted = true;
-    return _findTemplate('testimonials', search, {fields:{_id: 0, added: 0, changed: 0, accepted: 0, responsible: 0, checked: 0}, sort: sort, limit: limit, skip: skip});
+    return _findTemplate('testimonials', search, {fields: {_id: 0, added: 0, changed: 0, accepted: 0, responsible: 0, checked: 0}, sort: sort, limit: limit, skip: skip});
 }
 
 exports.getMenu = getMenu;
