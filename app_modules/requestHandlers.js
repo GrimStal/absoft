@@ -10,6 +10,7 @@ var deferred = require('deferred');
 var db = require("./db");
 var md5 = require("./md5");
 var querystring = require('querystring');
+var multiparty = require('multiparty');
 
 function _getMenuTemplate() {
     var menuObj = db.getMenu();
@@ -975,7 +976,7 @@ function unknown(response, request, pathname) {
         _getResponse(response, request, "text/javascript");
     } else if (request.url.indexOf(".html") !== -1) {
         _getResponse(response, request, "text/html");
-    } else if (request.url.indexOf(".png") !== -1 
+    } else if (request.url.indexOf(".png") !== -1
             || request.url.indexOf(".ico") !== -1 || request.url.indexOf(".jpg") !== -1) {
         _getResponse(response, request, "image");
     } else if (request.url.indexOf(".gif") !== -1) {
@@ -1312,7 +1313,7 @@ function adminEdit(response, request, query) {
                             _.forEach(data, function (value, key) {
                                 if (dataObject.hasOwnProperty(key)) {
                                     if (notDisplayed.indexOf(key) === -1) {
-                                        if (_.isArray(dataObject[key]) && _.isArray(value)){
+                                        if (_.isArray(dataObject[key]) && _.isArray(value)) {
                                             dataObject[key] = value;
                                         } else if (dataObject[key].type !== "select") {
                                             dataObject[key].value = value;
@@ -1544,9 +1545,15 @@ function adminEdit(response, request, query) {
             });
 }
 
-function adminEditData(response, request, query) {
-    function checkData(recievedData) {
+function adminEditData(response, request) {
+    function checkData(recievedData, files) {
         var tablename;
+        
+        _.forEach(recievedData, function(item, key){
+            if (key !== "examples")
+            recievedData[key] = item.join();
+        });
+        
         switch (recievedData.tablename) {
             case "users":
                 tablename = recievedData.tablename;
@@ -1566,6 +1573,23 @@ function adminEditData(response, request, query) {
                 recievedData.checked = (recievedData.checked) ? new Date() : (recievedData.accepted) ? new Date() : null;
                 recievedData.added = (recievedData.added) ? new Date(recievedData.added) : new Date();
                 recievedData.changed = new Date();
+
+                files.examplesnew.forEach(function (file, number) {
+                    if (file.originalFilename) {
+                        var lastIndex = file.originalFilename.lastIndexOf(".");
+                        var extension = file.originalFilename.slice(lastIndex);
+                        var filename = recievedData.alt + "-" + number + extension;
+                        var filepath = "/content/sources/temp/" + filename;
+                        var fullfilepath = "sources" + filepath
+                        fs.rename(file.path, fullfilepath, function (err) {
+                            if (err) {
+                                fs.unlink(fullfilepath);
+                                fs.rename(file.path, fullfilepath);
+                            }
+                            recievedData.examples[number] = filepath;
+                        });
+                    }
+                });
                 break;
             case "blogposts":
                 tablename = recievedData.tablename;
@@ -1612,18 +1636,17 @@ function adminEditData(response, request, query) {
     }
 
     var process = deferred();
-    var postData = "";
+    var form = new multiparty.Form({encoding: "utf8"});
 
     if (request.method !== "POST") {
         process.reject({error: "Incorrect method"});
     } else {
-        request.setEncoding("utf8");
-        request.on('data', function (chunk) {
-            postData += chunk;
-        });
-        request.on('end', function () {
-            postData = querystring.parse(postData);
-            checkData(postData);
+        form.parse(request, function (error, fields, files) {
+            if (error) {
+                process.reject({error: "Parsing data error"});
+            } else {
+                checkData(fields, files);
+            }
         });
     }
 
