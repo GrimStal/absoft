@@ -4,7 +4,6 @@
  */
 var fs = require("fs");
 var url = require('url');
-var formidable = require("formidable");
 var _ = require('lodash');
 var deferred = require('deferred');
 var db = require("./db");
@@ -1535,6 +1534,7 @@ function adminEdit(response, request, query) {
                     response.write(content);
                 });
                 response.write('<script type="text/javascript" src="/javascript/adminmenu.js"></script>');
+                response.write('<script type="text/javascript" src="/thirdParty/bootstrap.file-input.js"></script>');
                 response.write('<script type="text/javascript" src="/javascript/adminedit.js"></script>');
                 response.write('</body></html>');
                 response.end();
@@ -1578,9 +1578,9 @@ function adminEditData(response, request) {
                     if (file.originalFilename) {
                         var lastIndex = file.originalFilename.lastIndexOf(".");
                         var extension = file.originalFilename.slice(lastIndex);
-                        var filename = recievedData.alt + "-" + number + extension;
-                        var filepath = "/content/sources/temp/" + filename;
-                        var fullfilepath = "sources" + filepath
+                        var filename = recievedData._id + "-" + number + extension;
+                        var filepath = "/content/sources/testimonials/examples/" + filename;
+                        var fullfilepath = "public" + filepath
                         fs.rename(file.path, fullfilepath, function (err) {
                             if (err) {
                                 fs.unlink(fullfilepath);
@@ -1806,24 +1806,24 @@ function uniqueExist(response, request) {
             });
 }
 
-function upload(response, request) {
-    console.log("Upload action");
-    var form = new formidable.IncomingForm();
-    console.log("about to parse");
-    form.parse(request, function (error, fields, files) {
-        console.log("parsing done");
-        fs.rename(files.upload.path, "public/content/sources/logo.png", function (err) {
-            if (err) {
-                fs.unlink("public/content/sources/logo.png");
-                fs.rename(files.upload.path, "public/content/sources/logo.png");
-            }
-        });
-        response.writeHead(200, {"Content-Type": "text/html", "AccessControlAllowOrigin": "*"});
-        response.write("recieved image: <br/>");
-        response.write("<img src='/show' />");
-        response.end();
-    });
-}
+//function upload(response, request) {
+//    console.log("Upload action");
+//    var form = new formidable.IncomingForm();
+//    console.log("about to parse");
+//    form.parse(request, function (error, fields, files) {
+//        console.log("parsing done");
+//        fs.rename(files.upload.path, "public/content/sources/logo.png", function (err) {
+//            if (err) {
+//                fs.unlink("public/content/sources/logo.png");
+//                fs.rename(files.upload.path, "public/content/sources/logo.png");
+//            }
+//        });
+//        response.writeHead(200, {"Content-Type": "text/html", "AccessControlAllowOrigin": "*"});
+//        response.write("recieved image: <br/>");
+//        response.write("<img src='/show' />");
+//        response.end();
+//    });
+//}
 
 function show(response, request) {
     fs.readFile("public/content/sources/logo.png", "binary", function (error, file) {
@@ -1843,7 +1843,7 @@ exports.home = home;
 exports.websiteDesign = websiteDesign;
 exports.logoDesign = logoDesign;
 exports.branding = branding;
-exports.upload = upload;
+//exports.upload = upload;
 exports.portfolio = portfolio;
 exports.show = show;
 exports.unknown = unknown;

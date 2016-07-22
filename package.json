@@ -13,7 +13,6 @@
   "dependencies": {
     "cookie-session": "^2.0.0-alpha.1",
     "deferred": "^0.7.5",
-    "formidable": "^1.0.17",
     "keygrip": "^1.0.1",
     "lodash": "^4.13.1",
     "mongodb": "^2.1.18",

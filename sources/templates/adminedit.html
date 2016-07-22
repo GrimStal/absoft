@@ -18,14 +18,19 @@
                                 <% var number = 0;%>
                                 <label><%-key%></label>
                                 <% _.forEach(item, function(link){ %>
-                                <% number++; %>
-                                <div class="form-group <%-key%>-form-groups" id="<%-key%>-form-group-<%-number%>">
-                                <label for="<%-key%>-field-<%-number%>"><% if (key=="examples") { %>Image <% } else { %><%-key%><% } %><%=number%>:</label>
-                                <img src="<%-link%>" alt="<%-link%>" class="img-thumbnail">
-                                <input type="file" id="<%-key%>-field-<%-number%>" name='<%-key + "new"%>' accept="image/*,image/jpeg,image/png">
-                                <input type="hidden" id="<%-key%>" name='<%-key%>' class="form-control" value="<%-link%>">
-                                </div>
+                                    <% number++; %>
+                                    <div class="form-group <%-key%>-form-groups" id="<%-key%>-form-group-<%-number%>">
+                                    <label for="<%-key%>-field-<%-number%>"><% if (key=="examples") { %>Image <% } else { %><%-key%><% } %><%=number%>:</label>
+                                        <% if (key === "examples"){ %>
+                                        <img src="<%-link%>" alt="<%-link%>" class="img-thumbnail" width="150" height="180">
+                                        <input type="file" id="<%-key%>-field-<%-number%>" title="Select file to add" name='<%-key + "new"%>' accept="image/*,image/jpeg,image/png">
+                                        <button class="btn btn-danger" id="<%-key%>-delete-<%-number%>" onclick="$('#<%-key%>-<%-number%>').prop('name', '');$('#<%-key%>-field-<%-number%>').parent().addClass("disabled");$('#<%-key%>-delete-<%-number%>').prop('disabled', 'true');">Delete</button>
+                                        <input type="hidden" id="<%-key%>-<%-number%>" name='<%-key%>' class="form-control" value="<%-link%>">
+                                        <% } else { %>
+                                        <% } %>
+                                    </div>
                                 <% }) %>
+                                <input type="button" class="btn btn-success" value="Add more">
                                 
                             <% } else { %>
                                 <% if (item.type !== "hidden"){%>

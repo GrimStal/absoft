@@ -76,6 +76,8 @@ $("[data-check]").each(function (num, elem) {
     });
 });
 
+$('input[type=file]').bootstrapFileInput();
+
 checkReady();
 
 
