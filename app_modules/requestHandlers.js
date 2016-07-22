@@ -1318,6 +1318,9 @@ function adminEdit(response, request, query) {
                                             dataObject[key].value = value;
                                         } else if (dataObject[key].type === "select") {
                                             dataObject[key].selected = value;
+                                        } else if (dataObject[key].type === "file") {
+                                            dataObject[key].value = value;
+                                            dataObject[key].required = false;
                                         }
                                     } else {
                                         dataObject[key].required = false;
@@ -1353,7 +1356,7 @@ function adminEdit(response, request, query) {
         alt: {type: "text", value: "", maxlength: 52, pattern: "[A-Za-z0-9 \-\\.]+", disabled: false, help: "Alt name for image", required: true},
         changed: {type: "hidden", value: "", disabled: false, required: false},
         checked: {type: "hidden", value: "", required: false},
-        image: {type: "text", value: "", maxlength: 128, pattern: "[A-Za-z0-9\-\.\&\/]+", disabled: false, help: "Path to image", required: true},
+        image: {type: "file", value: "", disabled: false, help: "Path to image", required: true},
         name: {type: "text", value: "", maxlength: 64, pattern: "[A-Za-z0-9\\s\-\.\,]+", disabled: false, help: "Path to image", required: true},
         responsible: {type: "select", selects: [], selected: "", disabled: false, required: false},
         testimonial: {type: "textarea", value: "", rows: 6, maxlength: 1000, help: "Max 1000 symbols", disabled: false, required: true},
@@ -1575,6 +1578,23 @@ function adminEditData(response, request) {
                 recievedData.changed = new Date();
                 recievedData.examples = recievedData.examples || [];
 
+                if (files.imagenew) {
+                    if (files.imagenew.originalFilename) {
+                        var lastIndex = files.imagenew.originalFilename.lastIndexOf(".");
+                        var extension = files.imagenew.originalFilename.slice(lastIndex);
+                        var filename = recievedData._id + extension;
+                        var filepath = "/content/sources/testimonials/" + filename;
+                        var fullfilepath = "public" + filepath;
+                        recievedData.image = filepath;
+                        fs.rename(files.imagenew.path, fullfilepath, function (err) {
+                            if (err) {
+                                fs.unlink(fullfilepath);
+                                fs.rename(files.imagenew.path, fullfilepath);
+                            }
+                        });
+                    }
+                }
+
                 if (files.examplesnew) {
                     files.examplesnew.forEach(function (file, number) {
                         if (file.originalFilename) {
@@ -1597,16 +1617,16 @@ function adminEditData(response, request) {
                 fs.readdir("public/content/sources/testimonials/examples/", function (err, files) {
                     var id = recievedData._id;
                     var childrenFiles = [];
-                    _.forEach(files, function(file){
-                        if (file.indexOf(id !== -1)){
+                    _.forEach(files, function (file) {
+                        if (file.indexOf(id !== -1)) {
                             childrenFiles.push(file);
                         }
                     });
-                    
-                    if (childrenFiles.length > recievedData.examples.length){
+
+                    if (childrenFiles.length > recievedData.examples.length) {
                         var count = recievedData.examples.length;
-                        _.forEach(childrenFiles, function(file){
-                            if (parseInt(file.slice(id.length + 1, file.lastIndexOf("."))) > count){
+                        _.forEach(childrenFiles, function (file) {
+                            if (parseInt(file.slice(id.length + 1, file.lastIndexOf("."))) > count) {
                                 fs.unlink("public/content/sources/testimonials/examples/" + file);
                             }
                         });

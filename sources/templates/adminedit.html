@@ -36,30 +36,33 @@
                         </div>
                         <% }) %>
                         <button class="btn btn-success" id="add-<%-key%>" onclick="return false;">Add more</button>
-
                         <% } else { %>
-                        <% if (item.type !== "hidden"){%>
-                        <label for="<%-key%>Field"><%-key%></label>
-                        <% } %>
-                        <% if (item.type !== "select" && item.type !== "textarea"){ %>
-                        <input type="<%-item.type%>" id="<%-key%>-field" class="form-control" <% if (!item.value) {%> placeholder="Enter <%-key%>" <% } else { %> value="<%-item.value%>"<% } %> name='<%-key%>' <% if (item.pattern){%> pattern=<%-item.pattern%><% }%><% if (item.maxlength){%> maxlength=<%-item.maxlength%><% }%> <% if (item.required){%> required<%}%> <% if (item.disabled){%> disabled<%}%>>
-                               <% } %>
-                               <% if (item.type === "select"){ %>
-                               <select id="<%-key%>-field" class="form-control" name='<%-key%>' <% if (item.required){%> required<%}%>>
-                               <% _.forEach(item.selects, function(select){ %>
-                               <option value="<%-select._id%>" <% if (String(item.selected) == String(select._id)){%> selected<% } %> ><%-select.name%></option>
-                            <% }) %>
-                        </select>
-                        <% } %>
-                        <% if (item.type === "textarea"){ %>
-                        <textarea id="<%-key%>-field" class="form-control" <% if (item.rows) {%> rows=<%-item.rows%> <% } %> name='<%-key%>'<% if (item.maxlength){%> maxlength=<%-item.maxlength%><% } %> <% if (item.required){%> required<%  }%> <% if (item.disabled){ %> disabled<% } %>><% if (item.value){%><%-item.value%><%}%></textarea>
-                        <% } %>
-                        <% if (item.help) {%>
-                        <p class="help-block"><%-item.help%></p>
-                        <% } %>
-                        <% if (item.check) {%>
-                        <input type="button" id="<%-key%>-check-button" data-check="<%-key%>" value="Check">
-                        <% } %>
+                            <% if (item.type !== "hidden"){%>
+                            <label for="<%-key%>Field"><%-key%></label>
+                            <% } %>
+                            <% if (item.type !== "select" && item.type !== "textarea"){ %>
+                                <input type="<%-item.type%>" id="<%-key%>-field" class="form-control" <% if (!item.value) {%> placeholder="Enter <%-key%>" <% } else { %> value="<%-item.value%>"<% } %> name='<%-key%>' <% if (item.pattern){%> pattern=<%-item.pattern%><% }%><% if (item.maxlength){%> maxlength=<%-item.maxlength%><% }%> <% if (item.required){%> required<%}%> <% if (item.disabled){%> disabled<%}%>>
+                            <% } %>
+                            <% if (item.type === "select"){ %>
+                                <select id="<%-key%>-field" class="form-control" name='<%-key%>' <% if (item.required){%> required<%}%>>
+                                <% _.forEach(item.selects, function(select){ %>
+                                   <option value="<%-select._id%>" <% if (String(item.selected) == String(select._id)){%> selected<% } %> ><%-select.name%></option>
+                                <% }) %>
+                                </select>
+                            <% } %>
+                            <% if (item.type === "textarea"){ %>
+                                <textarea id="<%-key%>-field" class="form-control" <% if (item.rows) {%> rows=<%-item.rows%> <% } %> name='<%-key%>'<% if (item.maxlength){%> maxlength=<%-item.maxlength%><% } %> <% if (item.required){%> required<%  }%> <% if (item.disabled){ %> disabled<% } %>><% if (item.value){%><%-item.value%><%}%></textarea>
+                            <% } %>
+                            <% if (item.type === "file"){ %>
+                                <input type="file" id="<%-key%>-field" title="Select file to add" name='<%-key + "new"%>' accept="image/*,image/jpeg,image/png">
+                                <input type="hidden" id="<%-key%>" name='<%-key%>' class="form-control" value="<%-item.value%>">
+                            <% } %>
+                            <% if (item.help) {%>
+                            <p class="help-block"><%-item.help%></p>
+                            <% } %>
+                            <% if (item.check) {%>
+                            <input type="button" id="<%-key%>-check-button" data-check="<%-key%>" value="Check">
+                            <% } %>
                         <% } %>
                     </div>
                     <% }) %>
