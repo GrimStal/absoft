@@ -1548,12 +1548,12 @@ function adminEdit(response, request, query) {
 function adminEditData(response, request) {
     function checkData(recievedData, files) {
         var tablename;
-        
-        _.forEach(recievedData, function(item, key){
+
+        _.forEach(recievedData, function (item, key) {
             if (key !== "examples")
-            recievedData[key] = item.join();
+                recievedData[key] = item.join();
         });
-        
+
         switch (recievedData.tablename) {
             case "users":
                 tablename = recievedData.tablename;
@@ -1573,23 +1573,26 @@ function adminEditData(response, request) {
                 recievedData.checked = (recievedData.checked) ? new Date() : (recievedData.accepted) ? new Date() : null;
                 recievedData.added = (recievedData.added) ? new Date(recievedData.added) : new Date();
                 recievedData.changed = new Date();
+                recievedData.examples = recievedData.examples || [];
 
-                files.examplesnew.forEach(function (file, number) {
-                    if (file.originalFilename) {
-                        var lastIndex = file.originalFilename.lastIndexOf(".");
-                        var extension = file.originalFilename.slice(lastIndex);
-                        var filename = recievedData._id + "-" + number + extension;
-                        var filepath = "/content/sources/testimonials/examples/" + filename;
-                        var fullfilepath = "public" + filepath
-                        fs.rename(file.path, fullfilepath, function (err) {
-                            if (err) {
-                                fs.unlink(fullfilepath);
-                                fs.rename(file.path, fullfilepath);
-                            }
-                            recievedData.examples[number] = filepath;
-                        });
-                    }
-                });
+                if (files.examplesnew) {
+                    files.examplesnew.forEach(function (file, number) {
+                        if (file.originalFilename) {
+                            var lastIndex = file.originalFilename.lastIndexOf(".");
+                            var extension = file.originalFilename.slice(lastIndex);
+                            var filename = recievedData._id + "-" + number + extension;
+                            var filepath = "/content/sources/testimonials/examples/" + filename;
+                            var fullfilepath = "public" + filepath
+                            fs.rename(file.path, fullfilepath, function (err) {
+                                if (err) {
+                                    fs.unlink(fullfilepath);
+                                    fs.rename(file.path, fullfilepath);
+                                }
+                                recievedData.examples[number] = filepath;
+                            });
+                        }
+                    });
+                }
                 break;
             case "blogposts":
                 tablename = recievedData.tablename;
