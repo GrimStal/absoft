@@ -1583,12 +1583,12 @@ function adminEditData(response, request) {
                             var filename = recievedData._id + "-" + (number + 1) + extension;
                             var filepath = "/content/sources/testimonials/examples/" + filename;
                             var fullfilepath = "public" + filepath;
+                            recievedData.examples[number] = filepath;
                             fs.rename(file.path, fullfilepath, function (err) {
                                 if (err) {
                                     fs.unlink(fullfilepath);
                                     fs.rename(file.path, fullfilepath);
                                 }
-                                recievedData.examples[number] = filepath;
                             });
                         }
                     });

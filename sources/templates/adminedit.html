@@ -13,7 +13,7 @@
                 <form id='editing' role="form" method='post' enctype="multipart/form-data" action='/adminpage/editdata'>
                     <input type="hidden" id="tablename" name="tablename" value="<%-tablename%>">
                     <% _.forEach(fields, function(item, key){ %>
-                    <div class="form-group<% if (item.check && !fields._id.value) { %> error<% } %>" id="<%-key%>-form-group">
+                    <div class="form-group <% if (item.check && !fields._id.value) { %>error<% } %>" id="<%-key%>-form-group">
                         <% if (_.isArray(item)) { %>
                         <% var number = 0;%>
                         <label><%-key%></label>
@@ -35,7 +35,7 @@
                             <% } %>
                         </div>
                         <% }) %>
-                        <input type="button" class="btn btn-success" value="Add more">
+                        <button class="btn btn-success" id="add-<%-key%>" onclick="return false;">Add more</button>
 
                         <% } else { %>
                         <% if (item.type !== "hidden"){%>
