@@ -1580,9 +1580,9 @@ function adminEditData(response, request) {
                         if (file.originalFilename) {
                             var lastIndex = file.originalFilename.lastIndexOf(".");
                             var extension = file.originalFilename.slice(lastIndex);
-                            var filename = recievedData._id + "-" + number + extension;
+                            var filename = recievedData._id + "-" + (number + 1) + extension;
                             var filepath = "/content/sources/testimonials/examples/" + filename;
-                            var fullfilepath = "public" + filepath
+                            var fullfilepath = "public" + filepath;
                             fs.rename(file.path, fullfilepath, function (err) {
                                 if (err) {
                                     fs.unlink(fullfilepath);
@@ -1593,6 +1593,25 @@ function adminEditData(response, request) {
                         }
                     });
                 }
+
+                fs.readdir("public/content/sources/testimonials/examples/", function (err, files) {
+                    var id = recievedData._id;
+                    var childrenFiles = [];
+                    _.forEach(files, function(file){
+                        if (file.indexOf(id !== -1)){
+                            childrenFiles.push(file);
+                        }
+                    });
+                    
+                    if (childrenFiles.length > recievedData.examples.length){
+                        var count = recievedData.examples.length;
+                        _.forEach(childrenFiles, function(file){
+                            if (parseInt(file.slice(id.length + 1, file.lastIndexOf("."))) > count){
+                                fs.unlink("public/content/sources/testimonials/examples/" + file);
+                            }
+                        });
+                    }
+                });
                 break;
             case "blogposts":
                 tablename = recievedData.tablename;
