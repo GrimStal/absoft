@@ -2040,6 +2040,12 @@ div{
         font-weight: bold;
     }
     
+    #image-form-group{
+        label, img{
+            display: block;
+        }
+    }
+    
     .examples-form-groups{
         margin-left: 10px;
         

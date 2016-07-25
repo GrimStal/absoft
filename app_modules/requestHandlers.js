@@ -1077,6 +1077,7 @@ function checkLogin(response, request) {
                     }
                 },
                 function (error) {
+                    console.log(error);
                     process.reject("Username or password incorrect.");
                 }
         );
@@ -1107,6 +1108,7 @@ function checkLogin(response, request) {
                 response.end();
             },
             function (error) {
+                console.log(error);
                 response.writeHead(303, {Location: "/authorization"});
                 response.end();
             });

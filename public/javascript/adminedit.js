@@ -78,27 +78,6 @@ $("[data-check]").each(function (num, elem) {
 
 $('input[type=file]').bootstrapFileInput();
 
-$("#add-examples").on({
-    'click': function(){
-        var number = ($("#examples-form-group .examples-form-groups").last().attr("id") ? parseInt($("#examples-form-group .examples-form-groups").last().attr("id").slice('examples-form-group-'.length)) + 1 : 1);
-        var block = "<div class='form-group examples-form-groups' id='examples-form-group-" + number + "'>";
-        block += "<label for='examples-field-" + number + "'>Image " + number + ":</label>";
-        block += "<input type='file' id='examples-field-" + number + "' title='Select file to add' name='examplesnew' accept='image/*,image/jpeg,image/png'>";
-        block += "<button class='btn btn-danger' id='examples-delete-" + number + "' onclick=\"";
-        block += "$(\'#examples-" + number + "\').prop(\'name\', \'\');";
-        block += "$(\'#examples-field-" + number + "\').prop(\'name\', \'\');";
-        block += "$($(\'#examples-field-" + number + "\').parent()).addClass(\'disabled\');";
-        block += " $(\'#examples-delete-" + number + "\').prop(\'disabled\', \'true\');"; 
-        block += "\">Delete</button>";
-        block += "<input type='hidden' id='examples-" + number + "' name='examples' class='form-control' value=''>";
-        block += "</div>";
-        $("#examples-form-group").append(block);
-        console.log(number);
-        $($("#add-examples")).insertAfter($("#examples-form-group-" + number));
-        $("#examples-field-" + number).bootstrapFileInput();
-    }
-});
-
 checkReady();
 
 

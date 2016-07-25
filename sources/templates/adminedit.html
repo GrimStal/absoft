@@ -40,7 +40,7 @@
                             <% if (item.type !== "hidden"){%>
                             <label for="<%-key%>Field"><%-key%></label>
                             <% } %>
-                            <% if (item.type !== "select" && item.type !== "textarea"){ %>
+                            <% if (item.type !== "select" && item.type !== "textarea" && item.type !== "file"){ %>
                                 <input type="<%-item.type%>" id="<%-key%>-field" class="form-control" <% if (!item.value) {%> placeholder="Enter <%-key%>" <% } else { %> value="<%-item.value%>"<% } %> name='<%-key%>' <% if (item.pattern){%> pattern=<%-item.pattern%><% }%><% if (item.maxlength){%> maxlength=<%-item.maxlength%><% }%> <% if (item.required){%> required<%}%> <% if (item.disabled){%> disabled<%}%>>
                             <% } %>
                             <% if (item.type === "select"){ %>
@@ -54,6 +54,7 @@
                                 <textarea id="<%-key%>-field" class="form-control" <% if (item.rows) {%> rows=<%-item.rows%> <% } %> name='<%-key%>'<% if (item.maxlength){%> maxlength=<%-item.maxlength%><% } %> <% if (item.required){%> required<%  }%> <% if (item.disabled){ %> disabled<% } %>><% if (item.value){%><%-item.value%><%}%></textarea>
                             <% } %>
                             <% if (item.type === "file"){ %>
+                                <img src="<%-item.value%>" alt="<%-item.value%>" class="img-thumbnail" width="150" height="180">
                                 <input type="file" id="<%-key%>-field" title="Select file to add" name='<%-key + "new"%>' accept="image/*,image/jpeg,image/png">
                                 <input type="hidden" id="<%-key%>" name='<%-key%>' class="form-control" value="<%-item.value%>">
                             <% } %>
