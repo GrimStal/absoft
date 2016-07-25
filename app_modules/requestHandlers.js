@@ -1368,7 +1368,8 @@ function adminEdit(response, request, query) {
         responsible: {type: "select", selects: [], selected: "", disabled: false, required: false},
         testimonial: {type: "textarea", value: "", rows: 6, maxlength: 1000, help: "Max 1000 symbols", disabled: false, required: true},
         link: {type: "text", value: "", maxlength: 200, pattern: "[A-Za-z0-9\-\.\&\?\=\/]+", disabled: false, help: "Max 200 symbols", required: true, check: true},
-        examples: []
+        examples: [],
+        socials: []
     };
 
     var blogpostsObj = {
@@ -1609,7 +1610,7 @@ function adminEditData(response, request) {
         }
 
         _.forEach(recievedData, function (item, key) {
-            if (key !== "examples")
+            if (key !== "examples" && key !== "socials")
                 recievedData[key] = item.join();
         });
 
@@ -1668,6 +1669,7 @@ function adminEditData(response, request) {
                 recievedData.added = (recievedData.added) ? new Date(recievedData.added) : new Date();
                 recievedData.changed = new Date();
                 recievedData.examples = recievedData.examples || [];
+                recievedData.socials = recievedData.socials || [];
                 recievedData.image = recievedData.image || "";
 
                 if (files.imagenew) {

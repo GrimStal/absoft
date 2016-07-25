@@ -93,9 +93,26 @@ $("#add-examples").on({
         block += "<input type='hidden' id='examples-" + number + "' name='examples' class='form-control' value=''>";
         block += "</div>";
         $("#examples-form-group").append(block);
-        console.log(number);
         $($("#add-examples")).insertAfter($("#examples-form-group-" + number));
         $("#examples-field-" + number).bootstrapFileInput();
+    }
+});
+
+$("#add-socials").on({
+    'click': function(){
+        var number = ($("#socials-form-group .socials-form-groups").last().attr("id") ? parseInt($("#socials-form-group .socials-form-groups").last().attr("id").slice('socials-form-group-'.length)) + 1 : 1);
+        var block = "<div class='form-group socials-form-groups' id='socials-form-group-" + number + "'>";
+        block += "<label for='socials-field-" + number + "'>Social " + number + ":</label>";
+        block += "<input type='url' id='socials-field-" + number + "' class='form-control' name='socials' required>";
+        block += "<button class='btn btn-danger' id='socials-delete-" + number + "' onclick=\"";
+        block += "$(\'#socials-field-" + number + "\').prop(\'name\', \'\');";
+        block += "$(\'#socials-field-" + number + "\').prop(\'disabled\', \'true\');";
+        block += "$(\'#socials-field-" + number + "\').prop(\'required\', \'false\');";
+        block += " $(\'#socials-delete-" + number + "\').prop(\'disabled\', \'true\');"; 
+        block += "\">Delete</button>";
+        block += "</div>";
+        $("#socials-form-group").append(block);
+        $($("#add-socials")).insertAfter($("#socials-form-group-" + number));
     }
 });
 

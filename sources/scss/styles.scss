@@ -2050,11 +2050,19 @@ div{
         }
     }
     
-    .examples-form-groups{
+    .examples-form-groups, .socials-form-groups{
         margin-left: 10px;
         
         label, img{
             display: block;
+        }
+    }
+    
+    .socials-form-groups{
+        
+        input{
+            display: inline-block;
+            width: 80%;
         }
     }
 }
