@@ -432,6 +432,8 @@ function createDocument(dataObj) {
             } else {
                 toCreate[key] = field;
             }
+        } else if (key === "_id"){
+            toCreate[key] = new mongo.ObjectId(field);
         }
     });
 

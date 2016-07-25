@@ -10,7 +10,11 @@ var db = require("./db");
 var md5 = require("./md5");
 var querystring = require('querystring');
 var multiparty = require('multiparty');
-//var resize = require('resize');
+var resize = require('resize-img');
+
+// heroku buildpacks:set https://github.com/heroku/heroku-buildpack-ruby
+// heroku buildpacks:add --index 1 https://github.com/ello/heroku-buildpack-imagemagick
+
 
 function _getMenuTemplate() {
     var menuObj = db.getMenu();
@@ -1369,14 +1373,14 @@ function adminEdit(response, request, query) {
 
     var blogpostsObj = {
         _id: {type: "hidden", value: "", pattern: "[a-z0-9]{24}", disabled: false},
-        aText: {type: "text", value: "", maxlength: 200, pattern: "[A-Za-z0-9\\s\-\.\|\&\,\;\?]+", disabled: false, help: "Max 200 symbols", required: true},
+        aText: {type: "text", value: "", maxlength: 200, pattern: "[A-Za-z0-9 \-\.\|\&\,\;\?\`\!]+", disabled: false, help: "Max 200 symbols", required: true},
         added: {type: "hidden", value: "", disabled: false, required: false},
         author: {type: "select", selects: [], selected: "", disabled: false, required: false},
         changed: {type: "hidden", value: "", disabled: false, required: false},
         fullText: {type: "textarea", value: "", rows: 6, maxlength: 10000, help: "Max 10000 symbols", disabled: false, required: false},
 //        image: {type: "text", value: "", maxlength: 128, pattern: "[A-Za-z0-9\\s\-\.\&\/]+", disabled: false, help: "Path to image", required: true},
         image: {type: "file", value: "", disabled: false, help: "Upload image", required: true},
-        imageSmall: {type: "text", value: "", maxlength: 128, pattern: "[A-Za-z0-9\\s\-\.\&\/]+", disabled: false, help: "Path to image", required: true},
+        imageSmall: {type: "hidden", value: "", pattern: "[A-Za-z0-9\\s\-\.\&\/]+", disabled: false, help: "Path to image", required: false},
         link: {type: "text", value: "", maxlength: 200, pattern: "[A-Za-z0-9\-\.\&\?\=\/]+", disabled: false, help: "Max 200 symbols", required: true},
         postDate: {type: "date", value: "", disabled: false, required: true}
     };
@@ -1556,14 +1560,16 @@ function adminEdit(response, request, query) {
 function adminEditData(response, request) {
     function checkData(recievedData, files) {
         var tablename;
-        var dataReady = deferred();
+        var ready = deferred();
+        var resizeDone;
 
         function saveFiles(filesArray, key, isArray, savePath) {
             filesArray.forEach(function (file, number) {
                 if (file.originalFilename) {
+                    var filename;
                     var lastIndex = file.originalFilename.lastIndexOf(".");
                     var extension = file.originalFilename.slice(lastIndex);
-                    var filename = recievedData._id + "-" + (number + 1) + extension;
+                    filename = isArray ? recievedData._id + "-" + (number + 1) + extension : recievedData._id + extension;
                     var filepath = savePath + filename;
                     var fullfilepath = "public" + filepath;
                     if (isArray) {
@@ -1586,7 +1592,7 @@ function adminEditData(response, request) {
                 var id = recievedData._id;
                 var childrenFiles = [];
                 _.forEach(files, function (file) {
-                    if (file.indexOf(id !== -1)) {
+                    if (file.indexOf(id) !== -1) {
                         childrenFiles.push(file);
                     }
                 });
@@ -1607,14 +1613,31 @@ function adminEditData(response, request) {
                 recievedData[key] = item.join();
         });
 
-//        function doResize(targetDir) {
-//            fs.readdir("public" + targetDir, function (err, files) {
-//                var id = recievedData._id;
-//                var childrenFile;
-//            });
-//
-//
-//        }
+        function doResize(targetDir, fileEnding, startSize,newSize, newKey) {
+            var result = deferred();
+            fs.readdir("public" + targetDir, function (err, files) {
+                var id = recievedData._id;
+                _.forEach(files, function (file) {
+                    var extension = file.slice(file.lastIndexOf("."));
+                    if (file.indexOf(id + fileEnding + extension) !== -1) {
+                        var filename = file.slice(0, file.lastIndexOf("."));
+                        var newName = filename + "_" + newSize.width + "x" + newSize.height + extension;
+                        recievedData[newKey] = targetDir + newName;
+                        resize(fs.readFileSync("public" + targetDir + file), newSize).then(
+                                function (buf) {
+                                    fs.writeFileSync("public" + targetDir + newName, buf);
+                                });
+                        resize(fs.readFileSync("public" + targetDir + file), startSize).then(
+                                function (buf) {
+                                    fs.writeFileSync("public" + targetDir + file, buf);
+                                });
+                    }
+                });
+                result.resolve();
+            });
+
+            return result.promise;
+        }
 
         if (!recievedData._id) {
             recievedData._id = new db.mongo.ObjectID();
@@ -1630,12 +1653,14 @@ function adminEditData(response, request) {
                     recievedData.password = md5(md5(recievedData.password));
                 }
                 recievedData.registered = (!recievedData.registered) ? new Date() : new Date(recievedData.registered);
+                ready.resolve();
                 break;
             case "contacts":
                 tablename = "to-contact";
                 recievedData.added = (recievedData.added) ? new Date(recievedData.added) : new Date();
                 recievedData.changed = new Date();
                 recievedData.processed = (recievedData.processStatus === "Done" || recievedData.processStatus === "Fail") ? "true" : "false";
+                ready.resolve();
                 break;
             case "testimonials":
                 tablename = recievedData.tablename;
@@ -1654,7 +1679,7 @@ function adminEditData(response, request) {
                 }
 
                 clearFolder("/content/sources/testimonials/examples/", "examples");
-
+                ready.resolve();
                 break;
             case "blogposts":
                 tablename = recievedData.tablename;
@@ -1664,48 +1689,64 @@ function adminEditData(response, request) {
 
                 if (files.imagenew) {
                     saveFiles(files.imagenew, "image", false, "/content/sources/blogposts/");
-                    resize("public/content/sources/blogposts/");
+                    resizeDone = doResize("/content/sources/blogposts/", "", {width: 1200, height: 823}, {width: 600, height: 407}, "imageSmall");
+                } else {
+                    ready.resolve();
                 }
-
+                
+                resizeDone(function(){
+                    ready.resolve();
+                });               
                 break;
             case "about":
                 tablename = "services";
+                ready.resolve();
                 break;
             case "quotes":
                 tablename = "quotes";
                 recievedData.added = (recievedData.added) ? new Date(recievedData.added) : new Date();
                 recievedData.changed = new Date();
                 recievedData.processed = (recievedData.processStatus === "Done" || recievedData.processStatus === "Fail") ? "true" : "false";
+                ready.resolve();
                 break;
             case "subscribed":
                 tablename = "subscribed";
                 recievedData.added = (recievedData.added) ? new Date(recievedData.added) : new Date();
                 recievedData.changed = new Date();
+                ready.resolve();
                 break;
             default:
                 tablename = recievedData.tablename;
+                ready.resolve();
                 break;
         }
 
-        if (recievedData.exist) {
-            delete recievedData.exist;
-            db.updateDocument(recievedData)(
-                    function (data) {
-                        process.resolve({tablename: tablename, doc: recievedData._id});
-                    },
-                    function (error) {
-                        process.reject({error: error, tablename: tablename, doc: recievedData._id});
-                    });
-        } else {
-            delete recievedData.exist;
-            db.createDocument(recievedData)(
-                    function (data) {
-                        process.resolve({tablename: tablename});
-                    },
-                    function (error) {
-                        process.reject({error: error, tablename: tablename, doc: recievedData._id});
-                    });
-        }
+        ready.promise(
+                function () {
+                    if (recievedData.exist) {
+                        delete recievedData.exist;
+                        db.updateDocument(recievedData)(
+                                function (data) {
+                                    process.resolve({tablename: tablename, doc: recievedData._id});
+                                },
+                                function (error) {
+                                    process.reject({error: error, tablename: tablename, doc: recievedData._id});
+                                });
+                    } else {
+                        delete recievedData.exist;
+                        db.createDocument(recievedData)(
+                                function (data) {
+                                    process.resolve({tablename: tablename});
+                                },
+                                function (error) {
+                                    process.reject({error: error, tablename: tablename, doc: recievedData._id});
+                                });
+                    }
+                },
+                function (error) {
+                    process.reject({error: error, tablename: tablename, doc: recievedData._id});
+                });
+
     }
 
     var process = deferred();
@@ -1740,8 +1781,8 @@ function adminDeleteData(response, request, query) {
         _.forEach(savePath, function (path) {
             fs.readdir("public" + path, function (err, files) {
                 _.forEach(files, function (file) {
-                    if (file.indexOf(id !== -1)) {
-                        console.log("public" + path + file);
+                    if (file.indexOf(id) !== -1) {
+                        fs.unlink("public" + path + file);
                     }
                 });
             });
