@@ -55,7 +55,7 @@
                             <% } %>
                             <% if (item.type === "file"){ %>
                                 <img src="<%-item.value%>" alt="<%-item.value%>" class="img-thumbnail" width="150" height="180">
-                                <input type="file" id="<%-key%>-field" title="Select file to add" name='<%-key + "new"%>' accept="image/*,image/jpeg,image/png">
+                                <input type="file" id="<%-key%>-field" title="Select file to add" name='<%-key + "new"%>' accept="image/*,image/jpeg,image/png" <% if (item.required){ %>required<%}%>>
                                 <input type="hidden" id="<%-key%>" name='<%-key%>' class="form-control" value="<%-item.value%>">
                             <% } %>
                             <% if (item.help) {%>

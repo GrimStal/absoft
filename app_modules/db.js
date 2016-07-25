@@ -637,3 +637,4 @@ exports.getUsers = getUsers;
 exports.getSocialLink = getSocialLink;
 exports.checkSubscription = checkSubscription;
 exports.getTestimonials = getTestimonials;
+exports.mongo = mongo;

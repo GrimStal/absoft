@@ -10,6 +10,7 @@ var db = require("./db");
 var md5 = require("./md5");
 var querystring = require('querystring');
 var multiparty = require('multiparty');
+//var resize = require('resize');
 
 function _getMenuTemplate() {
     var menuObj = db.getMenu();
@@ -1316,7 +1317,7 @@ function adminEdit(response, request, query) {
                                     if (notDisplayed.indexOf(key) === -1) {
                                         if (_.isArray(dataObject[key]) && _.isArray(value)) {
                                             dataObject[key] = value;
-                                        } else if (dataObject[key].type !== "select") {
+                                        } else if (dataObject[key].type !== "select" && dataObject[key].type !== "file") {
                                             dataObject[key].value = value;
                                         } else if (dataObject[key].type === "select") {
                                             dataObject[key].selected = value;
@@ -1358,10 +1359,11 @@ function adminEdit(response, request, query) {
         alt: {type: "text", value: "", maxlength: 52, pattern: "[A-Za-z0-9 \-\\.]+", disabled: false, help: "Alt name for image", required: true},
         changed: {type: "hidden", value: "", disabled: false, required: false},
         checked: {type: "hidden", value: "", required: false},
-        image: {type: "file", value: "", disabled: false, help: "Path to image", required: true},
-        name: {type: "text", value: "", maxlength: 64, pattern: "[A-Za-z0-9\\s\-\.\,]+", disabled: false, help: "Path to image", required: true},
+        image: {type: "file", value: "", disabled: false, help: "Upload image", required: true},
+        name: {type: "text", value: "", maxlength: 64, pattern: "[A-Za-z0-9\\s\-\.\,]+", disabled: false, help: "User name", required: true},
         responsible: {type: "select", selects: [], selected: "", disabled: false, required: false},
         testimonial: {type: "textarea", value: "", rows: 6, maxlength: 1000, help: "Max 1000 symbols", disabled: false, required: true},
+        link: {type: "text", value: "", maxlength: 200, pattern: "[A-Za-z0-9\-\.\&\?\=\/]+", disabled: false, help: "Max 200 symbols", required: true, check: true},
         examples: []
     };
 
@@ -1372,7 +1374,8 @@ function adminEdit(response, request, query) {
         author: {type: "select", selects: [], selected: "", disabled: false, required: false},
         changed: {type: "hidden", value: "", disabled: false, required: false},
         fullText: {type: "textarea", value: "", rows: 6, maxlength: 10000, help: "Max 10000 symbols", disabled: false, required: false},
-        image: {type: "text", value: "", maxlength: 128, pattern: "[A-Za-z0-9\\s\-\.\&\/]+", disabled: false, help: "Path to image", required: true},
+//        image: {type: "text", value: "", maxlength: 128, pattern: "[A-Za-z0-9\\s\-\.\&\/]+", disabled: false, help: "Path to image", required: true},
+        image: {type: "file", value: "", disabled: false, help: "Upload image", required: true},
         imageSmall: {type: "text", value: "", maxlength: 128, pattern: "[A-Za-z0-9\\s\-\.\&\/]+", disabled: false, help: "Path to image", required: true},
         link: {type: "text", value: "", maxlength: 200, pattern: "[A-Za-z0-9\-\.\&\?\=\/]+", disabled: false, help: "Max 200 symbols", required: true},
         postDate: {type: "date", value: "", disabled: false, required: true}
@@ -1553,11 +1556,72 @@ function adminEdit(response, request, query) {
 function adminEditData(response, request) {
     function checkData(recievedData, files) {
         var tablename;
+        var dataReady = deferred();
+
+        function saveFiles(filesArray, key, isArray, savePath) {
+            filesArray.forEach(function (file, number) {
+                if (file.originalFilename) {
+                    var lastIndex = file.originalFilename.lastIndexOf(".");
+                    var extension = file.originalFilename.slice(lastIndex);
+                    var filename = recievedData._id + "-" + (number + 1) + extension;
+                    var filepath = savePath + filename;
+                    var fullfilepath = "public" + filepath;
+                    if (isArray) {
+                        recievedData[key][number] = filepath;
+                    } else {
+                        recievedData[key] = filepath;
+                    }
+                    fs.rename(file.path, fullfilepath, function (err) {
+                        if (err) {
+                            fs.unlink(fullfilepath);
+                            fs.rename(file.path, fullfilepath);
+                        }
+                    });
+                }
+            });
+        }
+
+        function clearFolder(savePath, key) {
+            fs.readdir("public" + savePath, function (err, files) {
+                var id = recievedData._id;
+                var childrenFiles = [];
+                _.forEach(files, function (file) {
+                    if (file.indexOf(id !== -1)) {
+                        childrenFiles.push(file);
+                    }
+                });
+
+                if (childrenFiles.length > recievedData[key].length) {
+                    var count = recievedData[key].length;
+                    _.forEach(childrenFiles, function (file) {
+                        if (parseInt(file.slice(id.length + 1, file.lastIndexOf("."))) > count) {
+                            fs.unlink("public" + savePath + file);
+                        }
+                    });
+                }
+            });
+        }
 
         _.forEach(recievedData, function (item, key) {
             if (key !== "examples")
                 recievedData[key] = item.join();
         });
+
+//        function doResize(targetDir) {
+//            fs.readdir("public" + targetDir, function (err, files) {
+//                var id = recievedData._id;
+//                var childrenFile;
+//            });
+//
+//
+//        }
+
+        if (!recievedData._id) {
+            recievedData._id = new db.mongo.ObjectID();
+            recievedData.exist = false;
+        } else {
+            recievedData.exist = true;
+        }
 
         switch (recievedData.tablename) {
             case "users":
@@ -1579,67 +1643,30 @@ function adminEditData(response, request) {
                 recievedData.added = (recievedData.added) ? new Date(recievedData.added) : new Date();
                 recievedData.changed = new Date();
                 recievedData.examples = recievedData.examples || [];
+                recievedData.image = recievedData.image || "";
 
                 if (files.imagenew) {
-                    if (files.imagenew.originalFilename) {
-                        var lastIndex = files.imagenew.originalFilename.lastIndexOf(".");
-                        var extension = files.imagenew.originalFilename.slice(lastIndex);
-                        var filename = recievedData._id + extension;
-                        var filepath = "/content/sources/testimonials/" + filename;
-                        var fullfilepath = "public" + filepath;
-                        recievedData.image = filepath;
-                        fs.rename(files.imagenew.path, fullfilepath, function (err) {
-                            if (err) {
-                                fs.unlink(fullfilepath);
-                                fs.rename(files.imagenew.path, fullfilepath);
-                            }
-                        });
-                    }
+                    saveFiles(files.imagenew, "image", false, "/content/sources/testimonials/");
                 }
 
                 if (files.examplesnew) {
-                    files.examplesnew.forEach(function (file, number) {
-                        if (file.originalFilename) {
-                            var lastIndex = file.originalFilename.lastIndexOf(".");
-                            var extension = file.originalFilename.slice(lastIndex);
-                            var filename = recievedData._id + "-" + (number + 1) + extension;
-                            var filepath = "/content/sources/testimonials/examples/" + filename;
-                            var fullfilepath = "public" + filepath;
-                            recievedData.examples[number] = filepath;
-                            fs.rename(file.path, fullfilepath, function (err) {
-                                if (err) {
-                                    fs.unlink(fullfilepath);
-                                    fs.rename(file.path, fullfilepath);
-                                }
-                            });
-                        }
-                    });
+                    saveFiles(files.examplesnew, "examples", true, "/content/sources/testimonials/examples/");
                 }
 
-                fs.readdir("public/content/sources/testimonials/examples/", function (err, files) {
-                    var id = recievedData._id;
-                    var childrenFiles = [];
-                    _.forEach(files, function (file) {
-                        if (file.indexOf(id !== -1)) {
-                            childrenFiles.push(file);
-                        }
-                    });
+                clearFolder("/content/sources/testimonials/examples/", "examples");
 
-                    if (childrenFiles.length > recievedData.examples.length) {
-                        var count = recievedData.examples.length;
-                        _.forEach(childrenFiles, function (file) {
-                            if (parseInt(file.slice(id.length + 1, file.lastIndexOf("."))) > count) {
-                                fs.unlink("public/content/sources/testimonials/examples/" + file);
-                            }
-                        });
-                    }
-                });
                 break;
             case "blogposts":
                 tablename = recievedData.tablename;
                 recievedData.postDate = new Date(recievedData.postDate);
                 recievedData.added = (recievedData.added) ? new Date(recievedData.added) : new Date();
                 recievedData.changed = new Date();
+
+                if (files.imagenew) {
+                    saveFiles(files.imagenew, "image", false, "/content/sources/blogposts/");
+                    resize("public/content/sources/blogposts/");
+                }
+
                 break;
             case "about":
                 tablename = "services";
@@ -1660,7 +1687,8 @@ function adminEditData(response, request) {
                 break;
         }
 
-        if (recievedData._id) {
+        if (recievedData.exist) {
+            delete recievedData.exist;
             db.updateDocument(recievedData)(
                     function (data) {
                         process.resolve({tablename: tablename, doc: recievedData._id});
@@ -1669,6 +1697,7 @@ function adminEditData(response, request) {
                         process.reject({error: error, tablename: tablename, doc: recievedData._id});
                     });
         } else {
+            delete recievedData.exist;
             db.createDocument(recievedData)(
                     function (data) {
                         process.resolve({tablename: tablename});
@@ -1707,11 +1736,25 @@ function adminEditData(response, request) {
 }
 
 function adminDeleteData(response, request, query) {
+    function clearFolder(savePath, id) {
+        _.forEach(savePath, function (path) {
+            fs.readdir("public" + path, function (err, files) {
+                _.forEach(files, function (file) {
+                    if (file.indexOf(id !== -1)) {
+                        console.log("public" + path + file);
+                    }
+                });
+            });
+        });
+        process.resolve("ready");
+    }
+
     var process = deferred();
     var qs = querystring.parse(query);
     var tablename = qs.tablename;
     var doc = qs.doc;
     var table = "";
+    var folders = ["/content/sources/blogposts/", "/content/sources/portfolios/", "/content/sources/testimonials/", "/content/sources/testimonials/examples/"];
 
     if (!tablename || !doc) {
         process.reject("Data not set");
@@ -1731,7 +1774,7 @@ function adminDeleteData(response, request, query) {
 
     db.deleteDocument(tablename, doc)(
             function (data) {
-                process.resolve(data);
+                clearFolder(folders, doc);
             },
             function (error) {
                 process.reject(error);
