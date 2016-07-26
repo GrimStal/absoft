@@ -1379,7 +1379,6 @@ function adminEdit(response, request, query) {
         author: {type: "select", selects: [], selected: "", disabled: false, required: false},
         changed: {type: "hidden", value: "", disabled: false, required: false},
         fullText: {type: "textarea", value: "", rows: 6, maxlength: 10000, help: "Max 10000 symbols", disabled: false, required: false},
-//        image: {type: "text", value: "", maxlength: 128, pattern: "[A-Za-z0-9\\s\-\.\&\/]+", disabled: false, help: "Path to image", required: true},
         image: {type: "file", value: "", disabled: false, help: "Upload image", required: true},
         imageSmall: {type: "hidden", value: "", pattern: "[A-Za-z0-9\\s\-\.\&\/]+", disabled: false, help: "Path to image", required: false},
         link: {type: "text", value: "", maxlength: 200, pattern: "[A-Za-z0-9\-\.\&\?\=\/]+", disabled: false, help: "Max 200 symbols", required: true},
@@ -1851,46 +1850,6 @@ function checkUpdates(response, request) {
             });
 }
 
-//function userExist(response, request) {
-//    var login = '';
-//    var result = deferred();
-//
-//    function checkData(login) {
-//        if (!login) {
-//            result.reject({result: "Username not set"});
-//        } else {
-//            db.userExists(login)(
-//                    function (data) {
-//                        result.resolve(data);
-//                    },
-//                    function (error) {
-//                        result.reject(error);
-//                    });
-//        }
-//    }
-//
-//    request.setEncoding("utf8");
-//    request.on('data', function (chunk) {
-//        login += chunk;
-//    });
-//    request.on('end', function () {
-//        login = querystring.parse(login).login;
-//        checkData(login);
-//    });
-//
-//    result.promise(
-//            function (data) {
-//                response.writeHead(200, {"Content-Type": "application/json", "AccessControlAllowOrigin": "*"});
-//                response.write(JSON.stringify(data));
-//                response.end();
-//            },
-//            function (error) {
-//                response.writeHead(200, {"Content-Type": "application/json", "AccessControlAllowOrigin": "*"});
-//                response.write(JSON.stringify(error));
-//                response.end();
-//            });
-//}
-
 function uniqueExist(response, request) {
     var data = '';
     var result = deferred();
@@ -1899,7 +1858,7 @@ function uniqueExist(response, request) {
         var tablename = data.tablename;
         var dataObj = {};
         dataObj[data.key] = data.data;
-        dataObj["id"] = data.id;
+        data.id ? dataObj["_id"] = data.id : false;
 
         if (!data) {
             result.reject({result: "Data not set"});

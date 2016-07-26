@@ -11,8 +11,8 @@ function handle(handler, link, reqHandler, func){
         handler[link] = reqHandler[func];
         handler[link + "/"] = handler[link];
     }else{
-         handler[link] = reqHandler[func];
-         handler[link.slice(0,-1)] = reqHandler[func];
+        handler[link] = reqHandler[func];
+        handler[link.slice(0,-1)] = reqHandler[func];
     }
 }
 
@@ -51,7 +51,6 @@ handle(aHandle, "/adminpage/subscribed", requestHandlers, "adminSubscribed");
 handle(aHandle, "/adminpage/edit", requestHandlers, "adminEdit");
 handle(aHandle, "/adminpage/delete", requestHandlers, "adminDeleteData");
 handle(aHandle, "/adminpage/editdata", requestHandlers, "adminEditData");
-//handle(aHandle, "/adminpage/userexists", requestHandlers, "userExist");
 handle(aHandle, "/adminpage/uniqueexists", requestHandlers, "uniqueExist");
 
 server.start(router.route, [uHandle, aHandle]);

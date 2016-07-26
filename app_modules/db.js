@@ -432,7 +432,7 @@ function createDocument(dataObj) {
             } else {
                 toCreate[key] = field;
             }
-        } else if (key === "_id"){
+        } else if (key === "_id") {
             toCreate[key] = new mongo.ObjectId(field);
         }
     });
@@ -545,18 +545,30 @@ function checkSubscription(dataObj) {
 //}
 
 function uniqueExists(data, tablename) {
-    var check;
+    var check = [];
     var result = deferred();
+    var checkArray = [];
 
     if (data._id) {
         data._id = {$ne: new mongo.ObjectId(data._id)};
+    } 
+
+    if (!Array.isArray(tablename)){
+        tablename = new Array(tablename);
     }
+    
+    _.forEach(tablename, function (table) {
+        checkArray.push(_findOneTemplate(table, data));
+    });
 
-    check = _findOneTemplate(tablename, data);
-
-    check(
-            function (data) {
-                if (!data) {
+    deferred.map(checkArray)(
+            function (found) {
+                found.forEach(function(value){
+                    if (value) {
+                        check.push(value);
+                    }
+                });
+                if (check.length === 0) {
                     result.resolve({result: "OK"});
                 } else {
                     result.reject({result: "Data exists"});
@@ -564,8 +576,7 @@ function uniqueExists(data, tablename) {
             },
             function (error) {
                 result.reject({result: "Problem on connecting:" + error});
-            }
-    );
+            });
 
     return result.promise;
 }

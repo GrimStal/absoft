@@ -45,13 +45,13 @@ $("[data-check]").each(function (num, elem) {
 
     $(elem).on({
         "click": function () {
+            var tablenames = ($("#tablename").val() === "users" ? "users" : JSON.stringify(["testimonials", "blogposts", "about"]));
             $.ajax({
                 url: "/adminpage/uniqueexists",
                 dataType: "json",
-                data: {tablename: $("#tablename").val(), key: key, data: $("#" + key + "-field").val(), id: $("#_id-field").val()},
+                data: {tablename: tablenames, key: key, data: $("#" + key + "-field").val(), id: $("#_id-field").val()},
                 method: "post",
                 success: function (data) {
-                    console.log(data);
                     if (data.result === "OK") {
                         $("#" + key + "-form-group").removeClass("has-error");
                         $("#" + key + "-form-group").removeClass("error");
